@@ -1,3 +1,27 @@
 {
-  "welcome": "환영합니다"
+  "login": {
+    "login": "로그인",
+    "id": "아이디",
+    "password": "비밀번호",
+    "info": "아이디와 비밀번호를 입력하세요",
+    "rememberMe": "로그인 유지하기",
+    "passwordError": "비밀번호는 8자 이상 15자 이하이어야 하며, 영어, 숫자, 특수문자를 모두 포함해야 합니다",
+    "loginFail": "로그인 실패",
+    "description": "아이디와 비밀번호를 모두 입력하세요",
+    "successTitle": "로그인 성공",
+    "successDescription": "성공적으로 로그인되었습니다",
+    "failTitle": "로그인 실패",
+    "failDescription": "유효하지 않은 비밀번호입니다",
+    "error": "오류가 발생하였습니다.",
+    "loginError": "아이디와 비밀번호가 일치하지 않습니다",
+    "idError": "아이디는 5자 이상이여야 하며, 영어 숫자 . _ 만 포함해야 합니다.",
+    "forgotPassword": "비밀번호 찾기"
+  },
+  "logout": {
+    "successTitle": "로그아웃 성공",
+    "successDescription": "성공적으로 로그아웃되었습니다"
+  },
+  "signup": {
+    "signup": "회원가입"
+  }
 }
