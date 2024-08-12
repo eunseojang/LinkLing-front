@@ -1,3 +1,27 @@
 {
-  "welcome": "Reactとi18nextへようこそ"
+  "login": {
+    "login": "ログイン",
+    "id": "ID",
+    "password": "パスワード",
+    "info": "IDとパスワードを入力してください",
+    "rememberMe": "ログイン状態を保持する",
+    "passwordError": "パスワードは8文字以上15文字以内で、英字、数字、特殊文字を含む必要があります",
+    "loginFail": "ログインに失敗しました",
+    "description": "IDとパスワードの両方を入力してください",
+    "successTitle": "ログイン成功",
+    "successDescription": "正常にログインしました",
+    "failTitle": "ログイン失敗",
+    "failDescription": "無効なパスワードです",
+    "error": "エラーが発生しました",
+    "loginError": "IDとパスワードが一致しません",
+    "idError": "IDは5文字以上で、英字、数字、ドット、アンダースコアを含めることができます。",
+    "forgotPassword": "パスワードを忘れた"
+  },
+  "logout": {
+    "successTitle": "ログアウト成功",
+    "successDescription": "正常にログアウトしました"
+  },
+  "signup": {
+    "signup": "サインアップ"
+  }
 }
