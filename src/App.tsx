@@ -1,30 +1,47 @@
-import { useTranslation } from "react-i18next";
-import { LANGUAGES, i18n } from "./locales/i18n";
-import { Button, Box, Text } from "@chakra-ui/react";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useAuthStore } from "./common/store/AuthStore";
+import HomePage from "./domain/home/HomePage";
+import LoginPage from "./domain/login/LoginPage";
+import SignupPage from "./domain/signup/SingupPage";
+import PrivateRoute from "./common/components/PrivateRoute";
 
 function App() {
-  const { t } = useTranslation();
+  const { checkAuth, isAuthenticated } = useAuthStore();
+  const [initialized, setInitialized] = useState(false);
 
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
-  };
+  useEffect(() => {
+    const authenticate = () => {
+      checkAuth();
+      console.log(isAuthenticated);
+      setInitialized(true);
+    };
+
+    authenticate();
+  }, [checkAuth]);
+
+  if (!initialized) {
+    return null; // 로딩 상태를 표시할 수도 있습니다.
+  }
 
   return (
-    <Box textAlign="center" fontSize="xl">
-      <Text>{t("welcome")}</Text>
-      <Button onClick={() => changeLanguage(LANGUAGES.EN)} m={2}>
-        English
-      </Button>
-      <Button onClick={() => changeLanguage(LANGUAGES.KO)} m={2}>
-        한국어
-      </Button>
-      <Button onClick={() => changeLanguage(LANGUAGES.ZH)} m={2}>
-        中文
-      </Button>
-      <Button onClick={() => changeLanguage(LANGUAGES.JA)} m={2}>
-        日本語
-      </Button>
-    </Box>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<PrivateRoute element={<HomePage />} />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="*"
+          element={
+            isAuthenticated ? (
+              <Navigate to="/" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

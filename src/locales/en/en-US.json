@@ -1,3 +1,27 @@
 {
-  "welcome": "welcome"
+  "login": {
+    "login": "Login",
+    "id": "ID",
+    "password": "Password",
+    "info": "Please enter your ID and password",
+    "rememberMe": "Remember me",
+    "passwordError": "Password must be between 8 and 15 characters long and include letters, numbers, and special characters",
+    "loginFail": "Login failed",
+    "description": "Please enter both ID and password",
+    "successTitle": "Login successful",
+    "successDescription": "You have successfully logged in",
+    "failTitle": "Login failed",
+    "failDescription": "Invalid password",
+    "error": "An error occurred",
+    "loginError": "ID and password do not match",
+    "idError": "ID must be at least 5 characters long and can include letters, numbers, dots, or underscores.",
+    "forgotPassword": "Forgot Password"
+  },
+  "logout": {
+    "successTitle": "Logout successful",
+    "successDescription": "You have successfully logged out"
+  },
+  "signup": {
+    "signup": "Sign Up"
+  }
 }
