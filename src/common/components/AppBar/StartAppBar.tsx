@@ -9,7 +9,6 @@ const StartAppBar: React.FC = () => {
       h="60px"
       justify="space-between"
       direction="row"
-      position="fixed"
       top="0"
       bg="#F7F9F4"
       zIndex="1000"
