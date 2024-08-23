@@ -1,58 +1,42 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useToastMessage } from "../../../common/components/useToastMessage";
-import { register } from "../api/SingUpAPI";
-import { useNavigate } from "react-router-dom";
 
-interface SignUpFormValues {
+interface OauthSignUpFormValues {
   id: string;
-  email: string;
-  password: string;
-  correctpassword: string;
   gender: string;
   nationality: string;
   nickname: string;
 }
 
-interface SignUpFormErrors {
+interface OauthSignUpFormErrors {
   idError: string | null;
-  emailError: string | null;
-  passwordError: string | null;
-  correctpasswordError: string | null;
   genderError: string | null;
   nationalityError: string | null;
   nicknameError: string | null;
 }
 
-export const useSignUpForm = () => {
+export const useOauthSignUpForm = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { showToast } = useToastMessage();
 
-  const [values, setValues] = useState<SignUpFormValues>({
+  const [values, setValues] = useState<OauthSignUpFormValues>({
     id: "",
-    email: "",
-    password: "",
-    correctpassword: "",
     gender: "",
     nationality: "",
     nickname: "",
   });
 
-  const [errors, setErrors] = useState<SignUpFormErrors>({
+  const [errors, setErrors] = useState<OauthSignUpFormErrors>({
     idError: null,
-    emailError: null,
-    passwordError: null,
-    correctpasswordError: null,
     genderError: null,
     nationalityError: null,
     nicknameError: null,
   });
 
-  const [emailVerified, setEmailVerified] = useState(false);
   const [idVerified, setIdVerified] = useState(false);
 
-  const handleChange = (field: keyof SignUpFormValues, value: string) => {
+  const handleChange = (field: keyof OauthSignUpFormValues, value: string) => {
     setValues((prev) => ({
       ...prev,
       [field]: value,
@@ -81,66 +65,6 @@ export const useSignUpForm = () => {
     setErrors((prev) => ({
       ...prev,
       idError: null,
-    }));
-
-    return true;
-  };
-
-  const validateEmail = () => {
-    const { email } = values;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailRegex.test(email)) {
-      setErrors((prev) => ({
-        ...prev,
-        emailError: t("signup.emailError"),
-      }));
-      return false;
-    }
-
-    setErrors((prev) => ({
-      ...prev,
-      emailError: null,
-    }));
-
-    return true;
-  };
-
-  const validatePassword = () => {
-    const { password } = values;
-    const regex =
-      /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,15}$/;
-
-    if (!regex.test(password)) {
-      setErrors((prev) => ({
-        ...prev,
-        passwordError: t("signup.passwordError"),
-      }));
-      return false;
-    }
-
-    setErrors((prev) => ({
-      ...prev,
-      passwordError: null,
-    }));
-
-    return true;
-  };
-
-  const validateConfirmPassword = () => {
-    const { password, correctpassword } = values;
-
-    if (password !== correctpassword) {
-      setErrors((prev) => ({
-        ...prev,
-        correctpasswordError: t("signup.passwordMismatchError"),
-      }));
-      return false;
-    }
-
-    setErrors((prev) => ({
-      ...prev,
-      correctpasswordError: null,
     }));
 
     return true;
@@ -207,10 +131,7 @@ export const useSignUpForm = () => {
     event.preventDefault();
 
     if (
-      !validateEmail() ||
       !validateId() ||
-      !validatePassword() ||
-      !validateConfirmPassword() ||
       !validateGender() ||
       !validateNationality() ||
       !validateNickname()
@@ -219,54 +140,21 @@ export const useSignUpForm = () => {
       return;
     }
 
-    if (!emailVerified) {
-      showToast("signup.emailVertifyFail", "signup.emailVertifyGo", "error");
-      return;
-    }
-
     if (!idVerified) {
       showToast("signup.idVertifyFail", "signup.idVertifyGo", "error");
       return;
-    }
-
-    const response = await register(
-      values.id,
-      values.password,
-      values.email,
-      values.nickname,
-      values.gender,
-      values.nationality
-    );
-
-    try {
-      if (response) {
-        navigate(`/login`, { replace: true });
-        showToast("singup.success", "singup.successDescription", "success");
-      }
-    } catch {
-      showToast("singup.fail", "singup.failDescription", "error");
     }
   };
 
   return {
     id: values.id,
-    email: values.email,
-    password: values.password,
-    correctpassword: values.correctpassword,
-    gender: values.gender,
-    nationality: values.nationality,
     nickname: values.nickname,
     idError: errors.idError,
-    emailError: errors.emailError,
-    passwordError: errors.passwordError,
-    correctpasswordError: errors.correctpasswordError,
     genderError: errors.genderError,
     nationalityError: errors.nationalityError,
     nicknameError: errors.nicknameError,
     handleChange,
-    emailVerified,
     handleIdCheck,
-    setEmailVerified,
     onSubmit,
     idVerified,
   };

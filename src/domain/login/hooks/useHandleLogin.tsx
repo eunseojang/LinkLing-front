@@ -7,13 +7,9 @@ export const useHandleLogin = () => {
   const { showToast } = useToastMessage();
   const { login } = useAuthStore();
 
-  const handleLogin = async (
-    accessToken: string,
-    refreshToken: string,
-    rememberMe: boolean
-  ) => {
+  const handleLogin = async (accessToken: string, refreshToken: string) => {
     try {
-      login(accessToken, refreshToken, rememberMe);
+      login(accessToken, refreshToken);
       showToast("login.successTitle", "login.successDescription", "success");
       navigate(`/`, { replace: true });
     } catch (error) {

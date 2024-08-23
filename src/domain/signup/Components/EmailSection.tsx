@@ -17,6 +17,8 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
+import { useToastMessage } from "../../../common/components/useToastMessage";
+// import { checkEmail } from "../api/EmailAPI";
 
 interface SignUpFormValues {
   id: string;
@@ -43,13 +45,14 @@ const EmailSection: React.FC<EmailSectionProps> = ({
   setEmailVerified,
   handleChange,
 }) => {
+  const { showToast } = useToastMessage();
   const { t } = useTranslation();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [verificationCode, setVerificationCode] = useState<string>("");
   const [verificationCodeError, setVerificationCodeError] = useState<
     string | null
   >(null);
-  const [timer, setTimer] = useState<number>(300); // 5 minutes timer
+  const [timer, setTimer] = useState<number>(300);
   const [isCodeSent, setIsCodeSent] = useState<boolean>(false);
 
   useEffect(() => {
@@ -71,19 +74,22 @@ const EmailSection: React.FC<EmailSectionProps> = ({
 
   const handleVerificationButtonClick = () => {
     if (!emailVerified) {
-      onOpen();
       sendVerificationCode();
-      setIsCodeSent(true);
     }
   };
 
-  const sendVerificationCode = () => {
-    // Simulate sending the code. Replace this with your actual code sending logic.
-    console.log("Sending verification code to", email);
+  const sendVerificationCode = async () => {
+    try {
+      // await checkEmail(email);
+      onOpen();
+      setIsCodeSent(true);
+    } catch {
+      showToast("email.sendfail", "email.rightEmail", "error");
+    }
   };
 
   const verifyCode = () => {
-    const mockCode = "123456"; // Replace with your actual code
+    const mockCode = "123456";
     if (verificationCode === mockCode) {
       setEmailVerified(true);
       setVerificationCodeError(null);
@@ -102,8 +108,8 @@ const EmailSection: React.FC<EmailSectionProps> = ({
   return (
     <>
       <FormControl isInvalid={!!emailError}>
-        <Flex mb={4} align="center">
-          <FormLabel htmlFor="email" w="150px" mb={0}>
+        <Flex mb={2} align="center">
+          <FormLabel htmlFor="email" w="120px" mb={0}>
             {t("signup.email")}
           </FormLabel>
           <Input
@@ -114,8 +120,10 @@ const EmailSection: React.FC<EmailSectionProps> = ({
             flex="1"
           />
           <Button
+            minW={"90px"}
             onClick={handleVerificationButtonClick}
-            colorScheme="teal"
+            bg="#73DA95"
+            color="white"
             size="sm"
             ml={2}
             isDisabled={emailVerified}
@@ -125,7 +133,9 @@ const EmailSection: React.FC<EmailSectionProps> = ({
               : t("signup.verifyEmail")}
           </Button>
         </Flex>
-        <FormErrorMessage>{emailError}</FormErrorMessage>
+        <FormErrorMessage ml={"130px"} mb={2}>
+          {emailError}
+        </FormErrorMessage>
       </FormControl>
 
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -154,7 +164,7 @@ const EmailSection: React.FC<EmailSectionProps> = ({
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="teal" mr={3} onClick={verifyCode}>
+            <Button bg="#73DA95" color="white" mr={3} onClick={verifyCode}>
               {t("signup.verify")}
             </Button>
           </ModalFooter>

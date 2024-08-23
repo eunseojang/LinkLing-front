@@ -1,8 +1,8 @@
-import StartAppBar from "../../common/components/AppBar/StartAppBar";
-import LoginForm from "./components/LoginForm";
 import { Flex } from "@chakra-ui/react";
+import StartAppBar from "../../common/components/AppBar/StartAppBar";
+import FindPasswordForm from "./components/FindPasswordForm";
 
-const LoginPage = () => {
+const FindPasswordPage = () => {
   return (
     <>
       <Flex minH="100vh" direction="column" bg={"#F7F9F4"}>
@@ -13,11 +13,11 @@ const LoginPage = () => {
           direction={"row"}
           align={"center"}
         >
-          <LoginForm />
+          <FindPasswordForm />
         </Flex>
       </Flex>
     </>
   );
 };
 
-export default LoginPage;
+export default FindPasswordPage;
