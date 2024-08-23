@@ -1,10 +1,13 @@
 import React from "react";
 import { Text, Flex, Image } from "@chakra-ui/react";
 import LanguageMenu from "./LanguageMenu";
+import { useNavigate } from "react-router-dom";
 
 const StartAppBar: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <Flex
+      position={"fixed"}
       w="full"
       h="60px"
       justify="space-between"
@@ -15,7 +18,7 @@ const StartAppBar: React.FC = () => {
       alignItems="center"
       px="20px"
     >
-      <Flex align="center">
+      <Flex align="center" onClick={() => navigate("/login")}>
         <Image
           src="/greenLogo.png"
           alt={"linkling"}
