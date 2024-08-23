@@ -14,7 +14,7 @@ const IdInput: React.FC<IdInputProps> = ({ id, idError, handleIdChange }) => {
   return (
     <>
       <Input
-        placeholder={t(`login.id`)}
+        placeholder={t(`signup.email`)}
         value={id}
         onChange={(e) => handleIdChange(e.target.value)}
         isInvalid={!!idError}

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHandleLogin } from "./useHandleLogin";
 import { useToastMessage } from "../../../common/components/useToastMessage";
+import { useLoginUser } from "../api/LoginAPI";
 
 interface LoginFormValues {
   id: string;
@@ -18,7 +19,7 @@ export const useLoginForm = () => {
   const { t } = useTranslation();
   const handleLogin = useHandleLogin();
   const { showToast } = useToastMessage();
-
+  const { loginUser } = useLoginUser();
   const [values, setValues] = useState<LoginFormValues>({
     id: "",
     password: "",
@@ -54,12 +55,12 @@ export const useLoginForm = () => {
   const validateId = () => {
     const { id } = values;
 
-    const idRegex = /^(?=.*[a-zA-Z])[a-zA-Z0-9.]{5,}$/;
+    const idRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     if (!idRegex.test(id)) {
       setErrors((prev) => ({
         ...prev,
-        idError: t("login.idError"),
+        idError: t("login.emailError"),
       }));
       return false;
     }
@@ -102,23 +103,19 @@ export const useLoginForm = () => {
     }
 
     if (validateId() && validatePassword()) {
-      // const response = await loginUser({
-      //   id: values.id,
-      //   password: values.password,
-      //   rememberMe: values.rememberMe,
-      // });
+      const { access_token, refresh_token } = await loginUser({
+        id: values.id,
+        password: values.password,
+        rememberMe: values.rememberMe,
+      });
 
-      // try {
-      //   if (response && response.accessToken && response.refreshToken) {
-      //     const { accessToken, refreshToken } = response;
-      //     await handleLogin(accessToken, refreshToken, values.rememberMe);
-      //   }
-      // } catch {
-      //   showToast("login.failTitle", "login.loginError", "error");
-      // }
-      const accessToken = "adfads";
-      const refreshToken = "asdfad";
-      await handleLogin(accessToken, refreshToken, values.rememberMe);
+      try {
+        if (access_token && refresh_token) {
+          await handleLogin(access_token, refresh_token);
+        }
+      } catch {
+        showToast("login.failTitle", "login.loginError", "error");
+      }
     }
   };
 

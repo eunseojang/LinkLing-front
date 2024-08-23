@@ -22,7 +22,7 @@ const LoginForm = () => {
   } = useLoginForm();
 
   return (
-    <Box bg="white" p={8} maxW="md" w="full" borderRadius="3xl">
+    <Box bg="white" p={8} maxW="md" w="full" borderRadius="3xl" margin={"0 auto"}>
       <form onSubmit={onSubmit}>
         <Text fontSize="2xl" fontWeight="600" mb={1} textAlign="center">
           {t(`login.login`)}
@@ -59,7 +59,7 @@ const LoginForm = () => {
             </Link>
             <Link
               as={RouterLink}
-              to="/forgot-password"
+              to="/findpassword"
               fontSize="xs"
               color="gray.500"
             >

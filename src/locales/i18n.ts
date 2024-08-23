@@ -35,7 +35,6 @@ i18n
   .init({
     resources,
     debug: true,
-    lng: LANGUAGES.KO,
     fallbackLng: LANGUAGES.EN,
     interpolation: {
       escapeValue: false,

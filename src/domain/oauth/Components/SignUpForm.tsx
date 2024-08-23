@@ -11,32 +11,23 @@ import {
   FormErrorMessage,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-import { useSignUpForm } from "../hooks/useSignupForm";
-import EmailSection from "./EmailSection";
 import SelectionButton from "../../../common/components/SelectedButton";
+import { useOauthSignUpForm } from "../hooks/useSignupForm";
 
-const SignUpForm = () => {
+const OauthSignUpForm = () => {
   const { t } = useTranslation();
   const {
     id,
-    email,
-    password,
-    correctpassword,
     nickname,
     idError,
-    emailError,
-    passwordError,
-    correctpasswordError,
     genderError,
     nationalityError,
     nicknameError,
     handleChange,
     onSubmit,
     handleIdCheck,
-    emailVerified,
-    setEmailVerified,
     idVerified,
-  } = useSignUpForm();
+  } = useOauthSignUpForm();
 
   const [selectedGender, setSelectedGender] = useState<string | null>(null);
   const [selectedNationality, setSelectedNationality] = useState<string | null>(
@@ -63,18 +54,10 @@ const SignUpForm = () => {
           {t(`signup.info`)}
         </Text>
         <Stack spacing={0}>
-          <EmailSection
-            email={email}
-            emailError={emailError}
-            emailVerified={emailVerified}
-            setEmailVerified={setEmailVerified}
-            handleChange={handleChange}
-          />
-
           {/* ID 입력 필드 */}
           <FormControl isInvalid={!!idError}>
             <Flex mb={2} align="center">
-              <FormLabel htmlFor="id" w="120px" mb={0}>
+              <FormLabel htmlFor="id" w="80px" mb={0}>
                 {t("signup.id")}
               </FormLabel>
               <Input
@@ -85,7 +68,7 @@ const SignUpForm = () => {
                 flex="1"
               />
               <Button
-                minW={"90px"}
+                w={"90px"}
                 onClick={handleIdCheck}
                 bg="#73DA95"
                 color="white"
@@ -96,57 +79,15 @@ const SignUpForm = () => {
                 {t("signup.checkId")}
               </Button>
             </Flex>
-            <FormErrorMessage ml={"130px"} mb={2}>
+            <FormErrorMessage ml={"90px"} mb={2}>
               {idError}
-            </FormErrorMessage>
-          </FormControl>
-
-          {/* 비밀번호 입력 필드 */}
-          <FormControl isInvalid={!!passwordError}>
-            <Flex mb={2} align="center">
-              <FormLabel htmlFor="password" w="120px" mb={0}>
-                {t("signup.password")}
-              </FormLabel>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => handleChange("password", e.target.value)}
-                placeholder={t("signup.passwordPlaceHolder")}
-                flex="1"
-              />
-            </Flex>
-            <FormErrorMessage ml={"130px"} mb={2}>
-              {passwordError}
-            </FormErrorMessage>
-          </FormControl>
-
-          {/* 비밀번호 확인 입력 필드 */}
-          <FormControl isInvalid={!!correctpasswordError}>
-            <Flex mb={2} align="center">
-              <FormLabel htmlFor="correctpassword" w="120px" mb={0}>
-                {t("signup.correctpassword")}
-              </FormLabel>
-              <Input
-                id="correctpassword"
-                type="password"
-                value={correctpassword}
-                onChange={(e) =>
-                  handleChange("correctpassword", e.target.value)
-                }
-                placeholder={t("signup.correctpasswordPlaceHolder")}
-                flex="1"
-              />
-            </Flex>
-            <FormErrorMessage ml={"130px"} mb={3}>
-              {correctpasswordError}
             </FormErrorMessage>
           </FormControl>
 
           {/* 성별 선택 */}
           <FormControl isInvalid={!!genderError} mt={3}>
             <Flex mb={2} wrap="wrap" gap={2} align={"center"}>
-              <FormLabel w={"120px"}>{t("signup.gender")}</FormLabel>
+              <FormLabel width={"80px"}>{t("signup.gender")}</FormLabel>
               <SelectionButton
                 onClick={() => handleGenderSelect("male")}
                 isSelected={selectedGender === "male"}
@@ -163,7 +104,7 @@ const SignUpForm = () => {
                 label={t("signup.other")}
               />
             </Flex>
-            <FormErrorMessage ml={"130px"} mb={2}>
+            <FormErrorMessage mb={3} ml={"100px"}>
               {genderError}
             </FormErrorMessage>
           </FormControl>
@@ -171,7 +112,7 @@ const SignUpForm = () => {
           {/* 국가 선택 */}
           <FormControl isInvalid={!!nationalityError} mt={2}>
             <Flex align="center">
-              <FormLabel width="120px" mb={0}>
+              <FormLabel width="80px" mb={0}>
                 {t("signup.nationality")}
               </FormLabel>
               <Flex wrap="wrap" ml={2} gap={2} flex="1">
@@ -202,7 +143,7 @@ const SignUpForm = () => {
                 />
               </Flex>
             </Flex>
-            <FormErrorMessage ml="140px" mt={2}>
+            <FormErrorMessage ml="100px" mt={2}>
               {nationalityError}
             </FormErrorMessage>
           </FormControl>
@@ -210,7 +151,7 @@ const SignUpForm = () => {
           {/* 닉네임 입력 필드 */}
           <FormControl isInvalid={!!nicknameError} mt={5}>
             <Flex mb={2} align="center">
-              <FormLabel htmlFor="nickname" w="120px" mb={0}>
+              <FormLabel htmlFor="nickname" width={"80px"} mb={0}>
                 {t("signup.nickname")}
               </FormLabel>
               <Input
@@ -221,7 +162,7 @@ const SignUpForm = () => {
                 flex="1"
               />
             </Flex>
-            <FormErrorMessage ml={"130px"}>{nicknameError}</FormErrorMessage>
+            <FormErrorMessage ml={"90px"}>{nicknameError}</FormErrorMessage>
           </FormControl>
 
           <Button
@@ -240,4 +181,4 @@ const SignUpForm = () => {
   );
 };
 
-export default SignUpForm;
+export default OauthSignUpForm;
