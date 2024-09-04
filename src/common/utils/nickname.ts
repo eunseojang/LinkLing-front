@@ -19,8 +19,8 @@ export const getNicknameToken = () => {
 
     const decodingInfoJson = JSON.parse(decodingInfo);
 
-    if (decodingInfoJson.nickname) {
-      return decodingInfoJson.nickname;
+    if (decodingInfoJson.userId) {
+      return decodingInfoJson.userId;
     } else {
       console.warn("Nickname not found in token payload");
       return null;

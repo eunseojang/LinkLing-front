@@ -1,7 +1,13 @@
 import React from "react";
 import { Text, Flex, Image, Button, Icon } from "@chakra-ui/react";
-import { FaUserCircle, FaLink, FaUsers } from "react-icons/fa";
-import { useNavigate } from "react-router-dom"; // 추가된 부분
+import {
+  FaUserCircle,
+  FaLink,
+  FaUsers,
+  FaCommentAlt,
+  FaCog,
+} from "react-icons/fa";
+import { useNavigate } from "react-router-dom"; 
 import LanguageMenu from "./LanguageMenu";
 import { useAuthStore } from "../../store/AuthStore";
 import { getNicknameToken } from "../../utils/nickname";
@@ -9,15 +15,21 @@ import { useTranslation } from "react-i18next";
 
 const AppBar: React.FC = () => {
   const { logout } = useAuthStore();
-  const navigate = useNavigate(); // 추가된 부분
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const menuItems = [
+    { label: `menu.linkchat`, icon: FaCommentAlt, path: "/linkchat" },
     { label: `menu.community`, icon: FaUsers, path: "/community" },
     { label: `menu.ling`, icon: FaLink, path: "/links" },
     {
       label: `menu.profile`,
       icon: FaUserCircle,
-      path: `${getNicknameToken()}`,
+      path: `/${getNicknameToken()}`,
+    },
+    {
+      label: `menu.setting`,
+      icon: FaCog,
+      path: `/setting`,
     },
   ];
 
@@ -25,8 +37,6 @@ const AppBar: React.FC = () => {
     <Flex
       w="full"
       h="60px"
-      // borderBottom="1px"
-      // borderColor="gray.200"
       shadow="xs"
       justify="space-between"
       direction="row"
@@ -75,7 +85,7 @@ const AppBar: React.FC = () => {
               color="black"
               _hover={{ color: "#73DA95" }}
               transition="color 0.3s ease-in-out"
-              onClick={() => navigate(item.path)} // 경로로 이동
+              onClick={() => navigate(item.path)}
             >
               {t(item.label)}
             </Button>
