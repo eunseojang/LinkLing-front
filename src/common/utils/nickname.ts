@@ -2,7 +2,6 @@ import base64 from "base-64";
 
 export const getNicknameToken = () => {
   const accessToken = localStorage.getItem("accessToken") || "";
-  console.log(accessToken);
 
   if (accessToken.split(".").length !== 3) {
     console.error("Invalid access token format");

@@ -4,9 +4,14 @@ import SettingForm from "./components/SettingForm";
 
 const SettingPage = () => {
   return (
-    <Box bg={"#F7F9F4"}>
+    <Box>
       <AppBar />
-      <Flex mt={"60px"} h={"calc(100vh - 60px)"} alignItems={"center"}>
+      <Flex
+        mt={"60px"}
+        bg={"#F7F9F4"}
+        h={"calc(100vh - 60px)"}
+        alignItems={"center"}
+      >
         <SettingForm />
       </Flex>
     </Box>

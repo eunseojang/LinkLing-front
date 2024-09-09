@@ -100,7 +100,9 @@
     "community": "커뮤니티",
     "ling": "링",
     "profile": "프로필",
-    "setting": "설정"
+    "setting": "설정",
+    "login": "로그인",
+    "logout": "로그아웃"
   },
   "settings": {
     "id": "아이디",

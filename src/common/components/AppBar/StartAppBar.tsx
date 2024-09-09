@@ -18,7 +18,7 @@ const StartAppBar: React.FC = () => {
       alignItems="center"
       px="20px"
     >
-      <Flex align="center" onClick={() => navigate("/login")}>
+      <Flex align="center" onClick={() => navigate("/")}>
         <Image
           src="/greenLogo.png"
           alt={"linkling"}

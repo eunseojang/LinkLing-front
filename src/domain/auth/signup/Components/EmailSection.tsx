@@ -15,6 +15,7 @@ import {
   useDisclosure,
   Text,
   ModalCloseButton,
+  Spinner,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { checkEmail, verifyEmail } from "../api/EmailAPI";
@@ -54,6 +55,7 @@ const EmailSection: React.FC<EmailSectionProps> = ({
   >(null);
   const [timer, setTimer] = useState<number>(300);
   const [isCodeSent, setIsCodeSent] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let interval: any;
@@ -80,9 +82,11 @@ const EmailSection: React.FC<EmailSectionProps> = ({
 
   const sendVerificationCode = async () => {
     try {
+      setLoading(true);
       await checkEmail(email);
       onOpen();
       setIsCodeSent(true);
+      setLoading(false);
     } catch {
       showToast("email.sendfail", "email.rightEmail", "error");
     }
@@ -127,11 +131,15 @@ const EmailSection: React.FC<EmailSectionProps> = ({
             color="white"
             size="sm"
             ml={2}
-            isDisabled={emailVerified}
+            isDisabled={loading || emailVerified}
           >
-            {emailVerified
-              ? t("signup.emailVerified")
-              : t("signup.verifyEmail")}
+            {emailVerified ? (
+              t("signup.emailVerified")
+            ) : loading ? (
+              <Spinner size="sm" />
+            ) : (
+              t("signup.verifyEmail")
+            )}
           </Button>
         </Flex>
         <FormErrorMessage ml={"130px"} mb={2}>

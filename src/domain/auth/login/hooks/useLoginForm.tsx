@@ -76,7 +76,7 @@ export const useLoginForm = () => {
   const validatePassword = () => {
     const { password } = values;
     const regex =
-      /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,15}$/;
+      /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,15}$/;
 
     if (!regex.test(password)) {
       setErrors((prev) => ({

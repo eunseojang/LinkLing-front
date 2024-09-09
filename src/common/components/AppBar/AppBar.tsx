@@ -1,5 +1,15 @@
 import React from "react";
-import { Text, Flex, Image, Button, Icon } from "@chakra-ui/react";
+import {
+  Text,
+  Flex,
+  Image,
+  Button,
+  Icon,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+} from "@chakra-ui/react";
 import {
   FaUserCircle,
   FaLink,
@@ -7,29 +17,26 @@ import {
   FaCommentAlt,
   FaCog,
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom"; 
+import { ChevronDownIcon } from "@chakra-ui/icons";
+import { useNavigate } from "react-router-dom";
 import LanguageMenu from "./LanguageMenu";
 import { useAuthStore } from "../../store/AuthStore";
 import { getNicknameToken } from "../../utils/nickname";
 import { useTranslation } from "react-i18next";
 
 const AppBar: React.FC = () => {
-  const { logout } = useAuthStore();
+  const { isAuthenticated, logout } = useAuthStore();
   const navigate = useNavigate();
   const { t } = useTranslation();
+
   const menuItems = [
     { label: `menu.linkchat`, icon: FaCommentAlt, path: "/linkchat" },
     { label: `menu.community`, icon: FaUsers, path: "/community" },
-    { label: `menu.ling`, icon: FaLink, path: "/links" },
+    { label: `menu.ling`, icon: FaLink, path: "/ling" },
     {
       label: `menu.profile`,
       icon: FaUserCircle,
       path: `/${getNicknameToken()}`,
-    },
-    {
-      label: `menu.setting`,
-      icon: FaCog,
-      path: `/setting`,
     },
   ];
 
@@ -49,7 +56,7 @@ const AppBar: React.FC = () => {
     >
       <Flex
         align="center"
-        cursor={"pointer"}
+        cursor="pointer"
         onClick={() => {
           navigate("/");
         }}
@@ -70,29 +77,62 @@ const AppBar: React.FC = () => {
           LinkLing
         </Text>
       </Flex>
-      <Button onClick={logout} ml="20px">
-        임시 로그아웃
-      </Button>
 
-      <Flex justifyContent="space-between" align="center">
-        <Flex mr={50}>
-          {menuItems.map((item, index) => (
-            <Button
-              key={index}
-              leftIcon={<Icon as={item.icon} />}
-              variant="ghost"
-              fontSize="lg"
-              color="black"
-              _hover={{ color: "#73DA95" }}
-              transition="color 0.3s ease-in-out"
-              onClick={() => navigate(item.path)}
-            >
-              {t(item.label)}
-            </Button>
-          ))}
+      {!isAuthenticated ? (
+        <Flex>
+          <Button
+            onClick={() => navigate("/login")}
+            ml="20px"
+            mr={3}
+            colorScheme="linkling"
+          >
+            {t("menu.login")}
+          </Button>
+          <LanguageMenu />
         </Flex>
-        <LanguageMenu />
-      </Flex>
+      ) : (
+        <Flex justifyContent="space-between" align="center">
+          <Flex mr={"10px"}>
+            {menuItems.map((item, index) => (
+              <Button
+                key={index}
+                leftIcon={<Icon as={item.icon} />}
+                variant="ghost"
+                fontSize="lg"
+                color="#333333"
+                _hover={{ color: "#73DA95" }}
+                transition="color 0.3s ease-in-out"
+                onClick={() => navigate(item.path)}
+              >
+                {t(item.label)}
+              </Button>
+            ))}
+          </Flex>
+
+          <Menu>
+            <MenuButton
+              mr={"10px"}
+              as={Button}
+              rightIcon={<ChevronDownIcon />}
+              variant="ghost"
+              colorScheme="customGreen"
+              border={"1px solid"}
+            >
+              @{getNicknameToken()}
+            </MenuButton>
+            <MenuList>
+              <MenuItem icon={<FaCog />} onClick={() => navigate("/setting")}>
+                {t("menu.setting")}
+              </MenuItem>
+              <MenuItem icon={<FaUserCircle />} onClick={logout}>
+                {t("menu.logout")}
+              </MenuItem>
+            </MenuList>
+          </Menu>
+
+          <LanguageMenu />
+        </Flex>
+      )}
     </Flex>
   );
 };

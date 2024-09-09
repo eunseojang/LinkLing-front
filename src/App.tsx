@@ -12,6 +12,9 @@ import AuthCallback from "./domain/auth/oauth/Components/AuthCallback";
 import LoginPage from "./domain/auth/login/LoginPage";
 import FindPasswordPage from "./domain/auth/findPassword/FindPasswordPage";
 import SettingPage from "./domain/setting/SettingPage";
+import SpeechPage from "./domain/chat/speech";
+import SpeechToText from "./domain/chat/stt";
+import LingPage from "./domain/ling/LingPage";
 
 function App() {
   const { checkAuth, isAuthenticated } = useAuthStore();
@@ -27,13 +30,13 @@ function App() {
   }, [checkAuth]);
 
   if (!initialized) {
-    return null; // 로딩 상태를 표시할 수도 있습니다.
+    return null;
   }
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<PrivateRoute element={<HomePage />} />} />
+        <Route path="/" element={<HomePage />} />
         <Route
           path="/:nickName"
           element={<PrivateRoute element={<ProfilePage />} />}
@@ -42,6 +45,7 @@ function App() {
           path="/community"
           element={<PrivateRoute element={<CommunityPage />} />}
         />
+        <Route path="/ling" element={<PrivateRoute element={<LingPage />} />} />
         <Route
           path="/linkchat"
           element={<PrivateRoute element={<ChatPage />} />}
@@ -50,11 +54,14 @@ function App() {
           path="/setting"
           element={<PrivateRoute element={<SettingPage />} />}
         />
+        <Route path="/tts" element={<SpeechPage />} />
+        <Route path="/sst" element={<SpeechToText />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/signup/oauth" element={<OauthSignupPage />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/findpassword" element={<FindPasswordPage />} />
+        <Route path="/" element={<HomePage />} />
         <Route
           path="*"
           element={

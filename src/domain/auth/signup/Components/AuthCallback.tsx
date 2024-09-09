@@ -4,16 +4,15 @@ import { useNavigate, useLocation } from "react-router-dom";
 const AuthCallback = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  console.log("sff");
 
   useEffect(() => {
     const fetchAuthToken = () => {
-      console.log("sff");
-
       const urlParams = new URLSearchParams(location.search);
       const isLogin = urlParams.get("isLogin") === "true";
       const accessToken = urlParams.get("accessToken");
       const refreshToken = urlParams.get("refreshToken");
+      const email = urlParams.get("email");
+
       if (isLogin && accessToken && refreshToken) {
         try {
           localStorage.setItem("accessToken", accessToken);
@@ -24,7 +23,7 @@ const AuthCallback = () => {
           console.error("Error storing tokens", error);
         }
       } else {
-        navigate("/signup/oauth");
+        navigate(`/signup/oauth?email=${email}`);
       }
     };
 

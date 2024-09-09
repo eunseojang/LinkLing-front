@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -13,8 +13,12 @@ import {
 import { useTranslation } from "react-i18next";
 import { useOauthSignUpForm } from "../hooks/useSignupForm";
 import SelectionButton from "../../../../common/components/SelectedButton";
-
+import { useLocation } from "react-router-dom";
 const OauthSignUpForm = () => {
+  const location = useLocation();
+  const urlParams = new URLSearchParams(location.search);
+  const email = urlParams.get("email");
+
   const { t } = useTranslation();
   const {
     id,
@@ -33,6 +37,12 @@ const OauthSignUpForm = () => {
   const [selectedNationality, setSelectedNationality] = useState<string | null>(
     null
   );
+
+  useEffect(() => {
+    if (email) {
+      handleChange("email", email);
+    }
+  }, []);
 
   const handleGenderSelect = (gender: string) => {
     setSelectedGender(gender);

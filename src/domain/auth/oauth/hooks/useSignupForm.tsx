@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useToastMessage } from "../../../../common/components/useToastMessage";
+import { registerAuth, verifyId } from "../api/OauthAPI";
+import { useNavigate } from "react-router-dom";
 
 interface OauthSignUpFormValues {
+  email: string;
   id: string;
   gender: string;
   nationality: string;
@@ -17,10 +20,12 @@ interface OauthSignUpFormErrors {
 }
 
 export const useOauthSignUpForm = () => {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const { showToast } = useToastMessage();
 
   const [values, setValues] = useState<OauthSignUpFormValues>({
+    email: "",
     id: "",
     gender: "",
     nationality: "",
@@ -44,9 +49,15 @@ export const useOauthSignUpForm = () => {
     if (field === "id") setIdVerified(false);
   };
 
-  const handleIdCheck = () => {
+  const handleIdCheck = async () => {
     if (validateId()) {
-      setIdVerified(true);
+      try {
+        await verifyId(values.id);
+        setIdVerified(true);
+        showToast("email.idCheck", "email.idCheckdes", "success");
+      } catch {
+        showToast("email.idCheck", "email.idCheckfaildes", "error");
+      }
     }
   };
 
@@ -143,6 +154,23 @@ export const useOauthSignUpForm = () => {
     if (!idVerified) {
       showToast("signup.idVertifyFail", "signup.idVertifyGo", "error");
       return;
+    }
+
+    const response = await registerAuth(
+      values.id,
+      values.email,
+      values.nickname,
+      values.gender,
+      values.nationality
+    );
+
+    try {
+      if (response) {
+        navigate(`/login`, { replace: true });
+        showToast("singup.success", "singup.successDescription", "success");
+      }
+    } catch {
+      showToast("singup.fail", "singup.failDescription", "error");
     }
   };
 
