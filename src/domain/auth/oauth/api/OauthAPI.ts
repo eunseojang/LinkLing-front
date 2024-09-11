@@ -9,7 +9,7 @@ export const registerAuth = async (
   nation: string
 ) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/register`, {
+    const response = await axios.post(`${API_BASE_URL}/register-oauth`, {
       user_id: id,
       user_email: email,
       user_name: nickName,

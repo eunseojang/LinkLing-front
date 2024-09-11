@@ -1,20 +1,39 @@
-import React, { useState, useEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+  MouseEvent,
+  useRef,
+  useTransition,
+} from "react";
 import {
   Box,
   Image,
   VStack,
   Text,
   HStack,
-  Button,
   Avatar,
   Icon,
+  Button,
+  Popover,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverBody,
 } from "@chakra-ui/react";
-import { AiOutlineHeart, AiOutlineMessage } from "react-icons/ai";
+import {
+  AiOutlineHeart,
+  AiOutlineMessage,
+  AiOutlineSound,
+  AiOutlineGlobal,
+} from "react-icons/ai";
 import { PostData, commentsData } from "../utils/FeedUtils";
 import { default_img } from "../../../common/utils/img";
 import CommentItem from "./CommentItem";
-import CommentInput from "./CommentInput"; // 댓글 입력 컴포넌트 가져오기
+import CommentInput from "./CommentInput";
 import { useNavigate } from "react-router-dom";
+import { detectDominantLanguage } from "../../../common/utils/language";
+import { translateText } from "../../../common/utils/translate";
+import { useTranslation } from "react-i18next";
 
 const FeedItem: React.FC<PostData> = ({
   post_img,
@@ -29,8 +48,16 @@ const FeedItem: React.FC<PostData> = ({
   const [textToSpeak, setTextToSpeak] = useState<string | null>(null);
   const [comments, setComments] = useState(commentsData);
   const navigate = useNavigate();
+  const { i18n } = useTranslation();
 
   const [isClicked, setIsClicked] = useState(false);
+  const [selectedText, setSelectedText] = useState<string | null>(null);
+  const [menuPosition, setMenuPosition] = useState<{
+    top: number;
+    left: number;
+  } | null>(null);
+
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleClick = () => {
     setIsClicked(true);
@@ -39,31 +66,66 @@ const FeedItem: React.FC<PostData> = ({
 
   useEffect(() => {
     if (textToSpeak) {
-      const langCode = "ja-JP";
+      const langCode = detectDominantLanguage(textToSpeak);
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
       utterance.lang = langCode;
       speechSynthesis.speak(utterance);
     }
   }, [textToSpeak]);
 
-  const handleTextSelection = () => {
+  const handleTextSelection = (e: MouseEvent) => {
+    if (!containerRef.current) return;
+
     const selectedText = window.getSelection()?.toString();
+    const containerRect = containerRef.current.getBoundingClientRect();
+
+    if (selectedText && containerRect) {
+      const rect = window.getSelection()?.getRangeAt(0).getBoundingClientRect();
+      if (rect) {
+        const isWithinContainer =
+          rect.top >= containerRect.top &&
+          rect.left >= containerRect.left &&
+          rect.bottom <= containerRect.bottom &&
+          rect.right <= containerRect.right;
+
+        if (isWithinContainer) {
+          setMenuPosition({
+            top: rect.top - containerRect.top + rect.height + 10,
+            left: rect.left - containerRect.left,
+          });
+          setSelectedText(selectedText);
+        } else {
+          setMenuPosition(null);
+          setSelectedText(null);
+        }
+      }
+    } else {
+      setMenuPosition(null);
+      setSelectedText(null);
+    }
+  };
+
+  const handleTranslateClick = async () => {
+    if (selectedText) {
+      const translatedText = await translateText(selectedText, i18n.language);
+      console.log("번역된 텍스트:", translatedText);
+    }
+  };
+
+  const handleSpeakClick = () => {
     if (selectedText) {
       setTextToSpeak(selectedText);
     }
   };
 
+  const handleContextMenu = (e: MouseEvent) => {
+    e.preventDefault();
+    handleTextSelection(e);
+  };
+
   // 댓글 추가 함수
   const handleCommentSubmit = (newComment: string) => {
-    console.log(newComment);
-    // const newCommentData = {
-    //   comment_id: comments.length + 1,
-    //   comment_detail: newComment,
-    //   comment_owner: "현재 사용자", // 여기에 현재 사용자 이름 설정
-    //   owner_img: null, // 사용자 이미지
-    //   comment_time: new Date().toISOString(),
-    // };
-    // setComments([...comments, newCommentData]);
+    // 댓글 추가 로직
   };
 
   return (
@@ -74,6 +136,9 @@ const FeedItem: React.FC<PostData> = ({
       boxShadow="0 4px 12px rgba(0, 0, 0, 0.1)"
       overflow="hidden"
       onMouseUp={handleTextSelection}
+      onContextMenu={handleContextMenu}
+      position="relative"
+      ref={containerRef}
     >
       <HStack padding="10px" spacing="8px">
         <Avatar
@@ -106,7 +171,9 @@ const FeedItem: React.FC<PostData> = ({
       )}
 
       <Box padding="10px">
-        <Text mb="5px">{post_detail}</Text>
+        <Text mb="5px" id="post-detail">
+          {post_detail}
+        </Text>
       </Box>
 
       <HStack padding="10px" paddingTop="0" justifyContent="space-between">
@@ -151,9 +218,38 @@ const FeedItem: React.FC<PostData> = ({
           {comments.map((comment) => (
             <CommentItem key={comment.comment_id} {...comment} />
           ))}
-
           <CommentInput onCommentSubmit={handleCommentSubmit} />
         </Box>
+      )}
+
+      {menuPosition && (
+        <Popover
+          isOpen={true}
+          onClose={() => setMenuPosition(null)}
+          placement="top-start"
+          closeOnBlur={true}
+        >
+          <PopoverContent
+            position="absolute"
+            top={`${menuPosition.top}px`}
+            left={`${menuPosition.left}px`}
+            zIndex="popover"
+          >
+            <PopoverArrow />
+            <PopoverCloseButton />
+            <PopoverBody>
+              <Button
+                onClick={handleTranslateClick}
+                leftIcon={<AiOutlineGlobal />}
+              >
+                번역
+              </Button>
+              <Button onClick={handleSpeakClick} leftIcon={<AiOutlineSound />}>
+                소리내어 읽기
+              </Button>
+            </PopoverBody>
+          </PopoverContent>
+        </Popover>
       )}
     </Box>
   );

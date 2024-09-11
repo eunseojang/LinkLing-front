@@ -13,12 +13,10 @@ import {
 import { useTranslation } from "react-i18next";
 import { useOauthSignUpForm } from "../hooks/useSignupForm";
 import SelectionButton from "../../../../common/components/SelectedButton";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 const OauthSignUpForm = () => {
-  const location = useLocation();
-  const urlParams = new URLSearchParams(location.search);
-  const email = urlParams.get("email");
-
+  const { email } = useParams<{ email: string }>();
+  console.log(email);
   const { t } = useTranslation();
   const {
     id,
@@ -31,7 +29,7 @@ const OauthSignUpForm = () => {
     onSubmit,
     handleIdCheck,
     idVerified,
-  } = useOauthSignUpForm();
+  } = useOauthSignUpForm(email!);
 
   const [selectedGender, setSelectedGender] = useState<string | null>(null);
   const [selectedNationality, setSelectedNationality] = useState<string | null>(
@@ -42,7 +40,7 @@ const OauthSignUpForm = () => {
     if (email) {
       handleChange("email", email);
     }
-  }, []);
+  }, [email]);
 
   const handleGenderSelect = (gender: string) => {
     setSelectedGender(gender);
@@ -64,7 +62,6 @@ const OauthSignUpForm = () => {
           {t(`signup.info`)}
         </Text>
         <Stack spacing={0}>
-          {/* ID 입력 필드 */}
           <FormControl isInvalid={!!idError}>
             <Flex mb={2} align="center">
               <FormLabel htmlFor="id" w="80px" mb={0}>

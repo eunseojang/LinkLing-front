@@ -19,13 +19,14 @@ interface OauthSignUpFormErrors {
   nicknameError: string | null;
 }
 
-export const useOauthSignUpForm = () => {
+export const useOauthSignUpForm = (email: string) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { showToast } = useToastMessage();
+  console.log(email, "hook");
 
   const [values, setValues] = useState<OauthSignUpFormValues>({
-    email: "",
+    email,
     id: "",
     gender: "",
     nationality: "",

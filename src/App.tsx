@@ -57,7 +57,7 @@ function App() {
         <Route path="/tts" element={<SpeechPage />} />
         <Route path="/sst" element={<SpeechToText />} />
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/signup/oauth" element={<OauthSignupPage />} />
+        <Route path="/signup/oauth/:email" element={<OauthSignupPage />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/findpassword" element={<FindPasswordPage />} />

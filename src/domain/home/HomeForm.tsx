@@ -7,8 +7,6 @@ import {
   Text,
   VStack,
   IconButton,
-  HStack,
-  useBreakpointValue,
 } from "@chakra-ui/react";
 import { ArrowForwardIcon, ArrowBackIcon } from "@chakra-ui/icons";
 import { useState, useEffect } from "react";

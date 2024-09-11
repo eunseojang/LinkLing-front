@@ -1,7 +1,7 @@
 import { Flex, Box, Heading, Text } from "@chakra-ui/react";
 
 interface MatchingCardProps {
-  icon: React.ReactNode; // 아이콘을 Node로 받을 수 있게 설정
+  icon: React.ReactNode;
   heading: string;
   description: string;
 }
@@ -10,7 +10,7 @@ const MatchingCard = ({ icon, heading, description }: MatchingCardProps) => {
   return (
     <Flex
       alignItems={"center"}
-      justifyContent={"center"} // 세로로 가운데 정렬
+      justifyContent={"center"} 
       textAlign="center"
       padding="20px"
       backgroundColor="white"
@@ -21,9 +21,9 @@ const MatchingCard = ({ icon, heading, description }: MatchingCardProps) => {
       mb={{ base: "20px", md: "0" }}
       h={"300px"}
       flexDirection={"column"}
-      transition="transform 0.3s ease" // 애니메이션 효과 설정
+      transition="transform 0.3s ease" 
       _hover={{
-        transform: "scale(1.05)", // 호버 시 약간 확대
+        transform: "scale(1.05)", 
       }}
     >
       <Box fontSize="50px" mb="20px">

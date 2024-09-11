@@ -7,16 +7,12 @@ const AuthCallback = () => {
 
   useEffect(() => {
     const fetchAuthToken = () => {
-      //redirect_uri?isLogin=true&accessToken="dsff"&refreshToken="sdfsdfsfsdfsdf"
-      //redirect_uri?isLogin=false&email="sdfsdf"
-
       const urlParams = new URLSearchParams(location.search);
 
       const isLogin = urlParams.get("isLogin") === "true";
       const accessToken = urlParams.get("accessToken");
       const refreshToken = urlParams.get("refreshToken");
       const email = urlParams.get("email");
-      console.log(location.search, isLogin, email);
 
       if (isLogin && accessToken && refreshToken) {
         try {
@@ -28,7 +24,7 @@ const AuthCallback = () => {
           console.error("Error storing tokens", error);
         }
       } else {
-        navigate(`/signup/oauth?${email}`);
+        navigate(`/signup/oauth/${email}`);
       }
     };
 
