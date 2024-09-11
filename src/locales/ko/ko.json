@@ -74,16 +74,42 @@
   "email": {
     "sendsuccess": "이메일 전송 성공",
     "sendfail": "이메일 전송 실패",
+    "rightEmail": "올바른 이메일을 입력해주세요",
     "checkEmail": "이메일을 확인해주세요",
     "checkIDcheckEmail": "아이디와 이메일을 확인해주세요",
     "loginGo": "로그인으로 이동",
-    "existEamilId": "기존 계정의 아이디와 이메일을 입력해주세요",
+    "existEamilId": "기존 계정의 이메일을 입력해주세요",
     "findPassword": "비밀번호 찾기",
-    "rightEamil": "올바른 이메일을 입력해주세요"
+    "rightEamil": "올바른 이메일을 입력해주세요",
+    "sendVerify": "이메일 인증 성공",
+    "sendVerifydes": "이메일 인증에 성공했습니다",
+    "idCheck": "아이디 중복체크",
+    "idCheckdes": "아이디 중복 체크에 성공했습니다",
+    "idCheckfaildes": "아이디 중복 체크에 실패했습니다",
+    "resetsuccess": "변경 성공",
+    "passwordReset": "변경된 비밀번호를 이메일에서 확인해주세요",
+    "resetfail": "변경 실패",
+    "tokenInvalid": "코드가 올바르지 않습니다",
+    "sendToken": "비밀번호 변경 코드 보내기",
+    "enterToken": "이메일을 확인하여 인증코드를 입력하세요",
+    "tokenPlaceholder": "인증코드",
+    "resetPassword": "비밀번호 변경하기"
   },
   "menu": {
+    "linkchat": "링크챗",
     "community": "커뮤니티",
     "ling": "링",
-    "profile": "프로필"
+    "profile": "프로필",
+    "setting": "설정",
+    "login": "로그인",
+    "logout": "로그아웃"
+  },
+  "settings": {
+    "id": "아이디",
+    "idPlaceHolder": "변경할 아이디를 입력해주세요",
+    "changeID": "아이디 변경하기",
+    "passwordPlaceholder": "변경할 비밀번호를 입력해주세요",
+    "newPassword": "새 비밀번호",
+    "changePassword": "비밀번호 변경하기"
   }
 }

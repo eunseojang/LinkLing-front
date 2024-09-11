@@ -1,0 +1,162 @@
+import { useEffect, useState } from "react";
+import {
+  Box,
+  Image,
+  Text,
+  Badge,
+  Flex,
+  Spinner,
+  Button,
+  HStack,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { FC } from "react";
+import "flag-icons/css/flag-icons.min.css"; // Import CSS file
+import { getProfile } from "../api/ProfileAPI";
+import { default_img } from "../../../common/utils/img";
+import { getFlagClass, UserProfile } from "../utils/ProfileUtils";
+import { useParams } from "react-router-dom";
+import ProfileEditModal from "./ProfileEditModal";
+
+const UserProfileComponent: FC = () => {
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const { nickName: id } = useParams<{ nickName: string }>();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const fetchProfile = async () => {
+    try {
+      const response = await getProfile(id!);
+      setProfile({ ...response });
+    } catch (err) {
+      setError("존재하지 않는 사용자입니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchProfile();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <Flex justify="center" align="center" height="100vh">
+        <Spinner size="md" />
+      </Flex>
+    );
+  }
+
+  if (error) {
+    return (
+      <Flex justify="center" align="center" height="100vh">
+        <Text color="red.500">{error}</Text>
+      </Flex>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <Flex justify="center" align="center" height="100vh">
+        <Text>No profile data available.</Text>
+      </Flex>
+    );
+  }
+
+  return (
+    <Box
+      bg="white"
+      p={6}
+      borderRadius="md"
+      w={{ base: "90%", sm: "80%", md: "50%" }}
+      margin="auto"
+      borderWidth="1px"
+      borderColor="gray.200"
+      boxShadow="md"
+    >
+      <Flex align="center" mb={6} w={"80%"} margin={"0 auto"}>
+        <Image
+          borderRadius="full"
+          boxSize="120px"
+          src={profile?.user_profile || default_img}
+          alt={profile?.user_name || "Profile Image"}
+        />
+        <Box ml={5} flex={1}>
+          <Flex alignItems={"center"}>
+            <Text fontSize="xl" fontWeight="bold">
+              {profile.user_name}
+            </Text>
+            <Text fontSize="xs" color="gray.600">
+              {profile.user_nation && (
+                <span
+                  className={getFlagClass(profile.user_nation)}
+                  style={{ fontSize: "20px" }}
+                ></span>
+              )}
+            </Text>
+          </Flex>
+          <Text fontSize="md" color="gray.600" mt={-1}>
+            @{profile.user_id}
+          </Text>
+          <Badge
+            variant="subtle"
+            fontSize="sm"
+            colorScheme={profile.online ? "green" : "gray"}
+          >
+            {profile.online ? "온라인" : "오프라인"}
+          </Badge>
+        </Box>
+        <HStack spacing={4} justify="center">
+          {profile.profile_info === "HOST" && (
+            <Button colorScheme="pink" onClick={onOpen}>
+              프로필 수정하기
+            </Button>
+          )}
+          {profile.profile_info === "FRIEND" && (
+            <Button colorScheme="gray" onClick={() => alert("Message sent!")}>
+              메세지 보내기
+            </Button>
+          )}
+          {profile.profile_info === "PENDING" && (
+            <Button colorScheme="gray" onClick={() => alert("Pending...")}>
+              대기중
+            </Button>
+          )}
+          {profile.profile_info === "ACCEPT" && (
+            <Button colorScheme="green" onClick={() => alert("Accept friend!")}>
+              수락하기
+            </Button>
+          )}
+          {profile.profile_info === "NOTFRIEND" && (
+            <Button colorScheme="linkling" onClick={() => alert("Add friend!")}>
+              친구 추가
+            </Button>
+          )}
+        </HStack>
+      </Flex>
+      {profile.user_info && (
+        <Box bg="#D8FAE6" p={3} borderRadius="md" w={"60%"} ml={"200px"}>
+          <Text>{profile.user_info}</Text>
+        </Box> 
+      )}
+      <Flex justify="center" mt={6}>
+        <Text mr={4}>
+          친구: <strong>{profile.follower}</strong>
+        </Text>
+        <Text>
+          게시물: <strong>{23}</strong>
+        </Text>
+      </Flex>
+      <ProfileEditModal
+        isOpen={isOpen}
+        onClose={onClose}
+        editedProfile={profile}
+        handleCancelClick={async () => {
+          onClose();
+        }}
+      />
+    </Box>
+  );
+};
+
+export default UserProfileComponent;
