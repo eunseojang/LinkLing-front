@@ -1,6 +1,5 @@
 import { Menu, MenuButton, MenuList, MenuItem, Button } from "@chakra-ui/react";
 import { AiOutlineGlobal } from "react-icons/ai";
-import { MdKeyboardArrowDown } from "react-icons/md";
 import { useTranslation } from "react-i18next";
 import { CheckIcon } from "@chakra-ui/icons";
 
@@ -18,7 +17,6 @@ const LanguageMenu = () => {
         border={"none"}
         aria-label="Language"
         variant="outline"
-        rightIcon={<MdKeyboardArrowDown />}
         display="flex"
         padding="10px"
       >

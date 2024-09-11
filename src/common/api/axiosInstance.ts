@@ -2,7 +2,7 @@ import axios from "axios";
 import { useAuthStore } from "../store/AuthStore";
 
 const axiosInstance = axios.create({
-  baseURL: "https://백엔드 주소",
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
 axiosInstance.interceptors.request.use(
@@ -12,6 +12,7 @@ axiosInstance.interceptors.request.use(
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
+    config.headers["ngrok-skip-browser-warning"] = "69420";
 
     return config;
   },
