@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, Avatar, HStack, VStack, Flex } from "@chakra-ui/react";
+import { Text, Avatar, HStack, Flex } from "@chakra-ui/react";
 import { default_img } from "../../../common/utils/img";
 import { useNavigate } from "react-router-dom";
 

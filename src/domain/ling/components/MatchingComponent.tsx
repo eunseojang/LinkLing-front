@@ -6,7 +6,6 @@ import {
   Text,
   VStack,
   Image,
-  HStack,
   Center,
 } from "@chakra-ui/react";
 import { default_img } from "../../../common/utils/img";

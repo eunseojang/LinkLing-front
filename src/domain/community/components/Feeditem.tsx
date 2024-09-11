@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  MouseEvent,
-  useRef,
-  useTransition,
-} from "react";
+import React, { useState, useEffect, MouseEvent, useRef } from "react";
 import {
   Box,
   Image,
@@ -73,7 +67,7 @@ const FeedItem: React.FC<PostData> = ({
     }
   }, [textToSpeak]);
 
-  const handleTextSelection = (e: MouseEvent) => {
+  const handleTextSelection = () => {
     if (!containerRef.current) return;
 
     const selectedText = window.getSelection()?.toString();
@@ -120,12 +114,20 @@ const FeedItem: React.FC<PostData> = ({
 
   const handleContextMenu = (e: MouseEvent) => {
     e.preventDefault();
-    handleTextSelection(e);
+    handleTextSelection();
   };
 
-  // 댓글 추가 함수
   const handleCommentSubmit = (newComment: string) => {
-    // 댓글 추가 로직
+    setComments([
+      ...comments,
+      {
+        comment_id: 10,
+        comment_detail: newComment,
+        comment_owner: "정메교",
+        owner_img: undefined,
+        comment_time: "2024-08-25",
+      },
+    ]);
   };
 
   return (
