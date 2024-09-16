@@ -7,19 +7,8 @@ import {
   HStack,
   Avatar,
   Icon,
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverBody,
 } from "@chakra-ui/react";
-import {
-  AiOutlineHeart,
-  AiOutlineMessage,
-  AiOutlineSound,
-  AiOutlineGlobal,
-} from "react-icons/ai";
+import { AiOutlineHeart, AiOutlineMessage } from "react-icons/ai";
 import { PostData, commentsData } from "../utils/FeedUtils";
 import { default_img } from "../../../common/utils/img";
 import CommentItem from "./CommentItem";
@@ -28,6 +17,8 @@ import { useNavigate } from "react-router-dom";
 import { detectDominantLanguage } from "../../../common/utils/language";
 import { translateText } from "../../../common/utils/translate";
 import { useTranslation } from "react-i18next";
+import PopoverMenu from "./PopoverMenu";
+import { useTextSelection } from "../hooks/useTextSelection";
 
 const FeedItem: React.FC<PostData> = ({
   post_img,
@@ -41,17 +32,15 @@ const FeedItem: React.FC<PostData> = ({
   const [showComments, setShowComments] = useState(false);
   const [textToSpeak, setTextToSpeak] = useState<string | null>(null);
   const [comments, setComments] = useState(commentsData);
+  const [translatedText, setTranslatedText] = useState<string | null>(null);
   const navigate = useNavigate();
   const { i18n } = useTranslation();
 
   const [isClicked, setIsClicked] = useState(false);
-  const [selectedText, setSelectedText] = useState<string | null>(null);
-  const [menuPosition, setMenuPosition] = useState<{
-    top: number;
-    left: number;
-  } | null>(null);
-
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const { selectedText, setMenuPosition, menuPosition, handleTextSelection } =
+    useTextSelection(containerRef);
 
   const handleClick = () => {
     setIsClicked(true);
@@ -67,42 +56,10 @@ const FeedItem: React.FC<PostData> = ({
     }
   }, [textToSpeak]);
 
-  const handleTextSelection = () => {
-    if (!containerRef.current) return;
-
-    const selectedText = window.getSelection()?.toString();
-    const containerRect = containerRef.current.getBoundingClientRect();
-
-    if (selectedText && containerRect) {
-      const rect = window.getSelection()?.getRangeAt(0).getBoundingClientRect();
-      if (rect) {
-        const isWithinContainer =
-          rect.top >= containerRect.top &&
-          rect.left >= containerRect.left &&
-          rect.bottom <= containerRect.bottom &&
-          rect.right <= containerRect.right;
-
-        if (isWithinContainer) {
-          setMenuPosition({
-            top: rect.top - containerRect.top + rect.height + 10,
-            left: rect.left - containerRect.left,
-          });
-          setSelectedText(selectedText);
-        } else {
-          setMenuPosition(null);
-          setSelectedText(null);
-        }
-      }
-    } else {
-      setMenuPosition(null);
-      setSelectedText(null);
-    }
-  };
-
   const handleTranslateClick = async () => {
     if (selectedText) {
       const translatedText = await translateText(selectedText, i18n.language);
-      console.log("번역된 텍스트:", translatedText);
+      setTranslatedText(translatedText);
     }
   };
 
@@ -141,22 +98,19 @@ const FeedItem: React.FC<PostData> = ({
       onContextMenu={handleContextMenu}
       position="relative"
       ref={containerRef}
+      zIndex="1"
     >
       <HStack padding="10px" spacing="8px">
         <Avatar
           src={user_img || default_img}
           cursor={"pointer"}
-          onClick={() => {
-            navigate(`/${post_owner}`);
-          }}
+          onClick={() => navigate(`/${post_owner}`)}
         />
         <VStack align="start" spacing="0" flex="1">
           <Text
             fontWeight="bold"
             cursor={"pointer"}
-            onClick={() => {
-              navigate(`/${post_owner}`);
-            }}
+            onClick={() => navigate(`/${post_owner}`)}
           >
             {post_owner}
           </Text>
@@ -224,35 +178,13 @@ const FeedItem: React.FC<PostData> = ({
         </Box>
       )}
 
-      {menuPosition && (
-        <Popover
-          isOpen={true}
-          onClose={() => setMenuPosition(null)}
-          placement="top-start"
-          closeOnBlur={true}
-        >
-          <PopoverContent
-            position="absolute"
-            top={`${menuPosition.top}px`}
-            left={`${menuPosition.left}px`}
-            zIndex="popover"
-          >
-            <PopoverArrow />
-            <PopoverCloseButton />
-            <PopoverBody>
-              <Button
-                onClick={handleTranslateClick}
-                leftIcon={<AiOutlineGlobal />}
-              >
-                번역
-              </Button>
-              <Button onClick={handleSpeakClick} leftIcon={<AiOutlineSound />}>
-                소리내어 읽기
-              </Button>
-            </PopoverBody>
-          </PopoverContent>
-        </Popover>
-      )}
+      <PopoverMenu
+        menuPosition={menuPosition}
+        translatedText={translatedText}
+        handleTranslateClick={handleTranslateClick}
+        handleSpeakClick={handleSpeakClick}
+        closeMenu={() => setMenuPosition(null)}
+      />
     </Box>
   );
 };

@@ -4,7 +4,7 @@ import axiosInstance from "../../../common/api/axiosInstance";
 export const resetID = async (id: string, new_id: string) => {
   try {
     const response = await axiosInstance.put(`/profile/${id}/id`, { new_id });
-    return response.data; //accesToken과 refreshToken이 담겨있음 localstorage에 담아야함
+    return response.data;
   } catch (error) {
     console.error("Failed to fetch comments:", error);
     throw error;
@@ -23,7 +23,6 @@ export const resetPassword = async (id: string, new_pw: string) => {
   }
 };
 
-//성별만 국적만 사용할 예정 PlaceHolder
 export const getProfile = async (id: string) => {
   try {
     const response = await axiosInstance.get(`/profile/${id}`);
@@ -34,7 +33,6 @@ export const getProfile = async (id: string) => {
   }
 };
 
-//성별만 국적만 수정할 예정 but API에서는 다 보내줘야함
 export const putProfile = async (
   id: string,
   user_profile: string,

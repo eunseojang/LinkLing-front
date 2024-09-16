@@ -31,7 +31,8 @@ export const feedData: PostData[] = [
   {
     post_id: 1,
     post_img: undefined,
-    post_detail: "This is the first post",
+    post_detail:
+      "Popover에 번역된 텍스트를 표시하려면 번역 버튼을 클릭했을 때, Popover의 내용을 업데이트해서 번역된 텍스트를 보여주면 됩니다. 다음 코드는 PopoverBody 내에 번역된 텍스트를 출력하는 방식으로 수정한 것입니다.",
     post_owner: "eunseo",
     post_time: "2024-08-25",
     post_like: 9999,

@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuthStore } from "../../../../common/store/AuthStore";
 
 const AuthCallback = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { login } = useAuthStore();
 
   useEffect(() => {
     const fetchAuthToken = () => {
@@ -16,8 +18,7 @@ const AuthCallback = () => {
 
       if (isLogin && accessToken && refreshToken) {
         try {
-          localStorage.setItem("accessToken", accessToken);
-          localStorage.setItem("refreshToken", refreshToken);
+          login(accessToken, refreshToken);
 
           navigate("/");
         } catch (error) {

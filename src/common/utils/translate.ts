@@ -6,7 +6,7 @@ const languageMap: Record<string, string> = {
 };
 
 const getDeepLLanguageCode = (userLangCode: string): string => {
-  return languageMap[userLangCode] || "KO";
+  return languageMap[userLangCode] || "EN";
 };
 
 export const translateText = async (text: string, targetLang: string) => {
