@@ -16,7 +16,7 @@ export const useLoginUser = () => {
         user_pw: credentials.password,
         remeber_me: credentials.rememberMe,
       });
-      return response.data;
+      return response.data.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.data?.code === 4010203) {
