@@ -3,7 +3,7 @@ import axiosInstance from "../../../common/api/axiosInstance";
 export const getProfile = async (id: string) => {
   try {
     const response = await axiosInstance.get(`/profile/${id}`);
-    return response.data;
+    return response.data.data;
   } catch (error) {
     console.error("Failed to fetch comments:", error);
     throw error;

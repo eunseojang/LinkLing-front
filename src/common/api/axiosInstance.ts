@@ -28,6 +28,12 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const { logout } = useAuthStore.getState();
 
+    if (error.message.includes("Mixed Content")) {
+      console.log("로그아웃", error.message);
+      logout(); // 로그아웃 함수 호출
+      return Promise.reject(error);
+    }
+
     const refreshToken = localStorage.getItem("refreshToken");
     const originalRequest = error.config;
 
