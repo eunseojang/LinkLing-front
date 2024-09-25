@@ -53,6 +53,9 @@ importers:
       react-router-dom:
         specifier: ^6.26.0
         version: 6.26.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-unity-webgl:
+        specifier: ^9.5.2
+        version: 9.5.2(react@18.3.1)
       react-world-flags:
         specifier: ^1.6.0
         version: 1.6.0(react@18.3.1)
@@ -1842,6 +1845,11 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  react-unity-webgl@9.5.2:
+    resolution: {integrity: sha512-m/vYHoIF5zNev/yxq6tBWOHg4LKcD9npHWzvIwDQcgTwKZFLnD3s7VUkueT8Z3cmrhEylCXq9P2zai28chW2Mw==}
+    peerDependencies:
+      react: '>=16.8.0'
 
   react-world-flags@1.6.0:
     resolution: {integrity: sha512-eutSeAy5YKoVh14js/JUCSlA6EBk1n4k+bDaV+NkNB50VhnG+f4QDTpYycnTUTsZ5cqw/saPmk0Z4Fa0VVZ1Iw==}
@@ -4040,6 +4048,10 @@ snapshots:
       tslib: 2.6.3
     optionalDependencies:
       '@types/react': 18.3.3
+
+  react-unity-webgl@9.5.2(react@18.3.1):
+    dependencies:
+      react: 18.3.1
 
   react-world-flags@1.6.0(react@18.3.1):
     dependencies:

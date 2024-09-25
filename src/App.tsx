@@ -15,6 +15,7 @@ import SettingPage from "./domain/setting/SettingPage";
 import SpeechPage from "./domain/chat/speech";
 import SpeechToText from "./domain/chat/stt";
 import LingPage from "./domain/ling/LingPage";
+import TestPage from "./common/TestPage";
 
 function App() {
   const { checkAuth, isAuthenticated } = useAuthStore();
@@ -36,6 +37,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/test" element={<TestPage />} />
+
         <Route path="/" element={<HomePage />} />
         <Route
           path="/:nickName"

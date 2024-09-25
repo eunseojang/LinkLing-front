@@ -90,7 +90,7 @@ const FeedItem: React.FC<PostData> = ({
   return (
     <Box
       borderRadius="md"
-      width="600px"
+      width="700px"
       backgroundColor="white"
       boxShadow="0 4px 12px rgba(0, 0, 0, 0.1)"
       overflow="hidden"

@@ -10,11 +10,21 @@ export const getPost = async (page: number) => {
   }
 };
 
-export const registerPost = async (post_img: string, post_detail: string) => {
+export const registerPost = async (
+  file: File | null,
+  postData: { post_detail: string }
+) => {
+  const formData = new FormData();
+  if (file) {
+    formData.append("file", file);
+  }
+  formData.append("postData", JSON.stringify(postData));
+
   try {
-    const response = await axiosInstance.post(`/post`, {
-      post_img,
-      post_detail,
+    const response = await axiosInstance.post(`/post`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
     return response.data;
   } catch (error) {

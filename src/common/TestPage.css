@@ -1,0 +1,122 @@
+/* 기본 설정 */
+#unity {
+  padding: 0;
+  margin: 0;
+  width: 100vw; /* 전체 브라우저 너비 */
+  height: 100vh; /* 전체 브라우저 높이 */
+  overflow: hidden; /* 스크롤 없애기 */
+}
+
+#unity-container {
+  position: absolute;
+  width: 100vw; /* 전체 브라우저 너비 */
+  height: 100vh; /* 전체 브라우저 높이 */
+}
+
+#unity-container.unity-desktop {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw; /* 전체 브라우저 너비 */
+  height: 100vh; /* 전체 브라우저 높이 */
+}
+
+#unity-container.unity-mobile {
+  position: fixed;
+  width: 100vw; /* 모바일에서 전체 화면 */
+  height: 100vh; /* 모바일에서 전체 화면 */
+}
+
+/* 캔버스 설정 */
+#unity-canvas {
+  background: #231f20;
+  width: 100vw; /* 전체 너비 */
+  height: 100vh; /* 전체 높이 */
+  display: block;
+}
+
+.unity-mobile #unity-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* 로딩 바 중앙 배치 */
+#unity-loading-bar {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+}
+
+#unity-logo {
+  width: 154px;
+  height: 130px;
+  background: url("/TemplateData/unity-logo-dark.png") no-repeat center;
+}
+/* 로딩 바 배경 및 채워지는 부분 */
+#unity-progress-bar-empty {
+  width: 200px; /* 로딩 바 더 크게 */
+  height: 18px;
+  margin-top: 10px;
+  margin-left: 6.5px;
+  background: url("/TemplateData/progress-bar-empty-dark.png") no-repeat center;
+}
+
+#unity-progress-bar-full {
+  width: 0%;
+  height: 18px;
+  margin-top: 10px;
+  background: url("/TemplateData/progress-bar-full-dark.png") no-repeat center;
+}
+
+/* 푸터 */
+#unity-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 50px; /* 푸터 크기 늘림 */
+  background: rgba(0, 0, 0, 0.2); /* 반투명 배경 */
+}
+
+.unity-mobile #unity-footer {
+  display: none;
+}
+
+/* WebGL 로고 */
+#unity-webgl-logo {
+  float: left;
+  width: 204px;
+  height: 38px;
+  background: url("/TemplateData/webgl-logo.png") no-repeat center;
+}
+
+/* 빌드 타이틀 */
+#unity-build-title {
+  float: right;
+  margin-right: 10px;
+  line-height: 38px;
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  color: white; /* 글씨 색을 흰색으로 변경 */
+}
+
+/* 전체화면 버튼 */
+#unity-fullscreen-button {
+  cursor: pointer;
+  float: right;
+  width: 38px;
+  height: 38px;
+  background: url("/TemplateData/fullscreen-button.png") no-repeat center;
+}
+
+/* 경고 메시지 */
+#unity-warning {
+  position: absolute;
+  left: 50%;
+  top: 5%;
+  transform: translate(-50%);
+  background: white;
+  padding: 10px;
+  display: none;
+}

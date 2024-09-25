@@ -28,7 +28,6 @@ export const useProfileSettings = () => {
   };
 
   const updateProfile = async (
-    user_profile: string,
     user_name: string,
     user_info: string,
     user_gender: string,
@@ -37,14 +36,12 @@ export const useProfileSettings = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await putProfile(
-        id,
-        user_profile,
+      const data = await putProfile(id, {
         user_name,
         user_info,
         user_gender,
-        user_nation
-      );
+        user_nation,
+      });
       setProfile(data);
     } catch (error) {
       setError("Failed to update profile");
@@ -68,13 +65,17 @@ export const useProfileSettings = () => {
     }
   };
 
-  const changePassword = async (id: string, new_pw: string) => {
+  const changePassword = async (
+    id: string,
+    curr_pw: string,
+    new_pw: string
+  ) => {
     setLoading(true);
     setError(null);
     try {
-      await resetPassword(id, new_pw);
+      await resetPassword(id, curr_pw, new_pw);
     } catch (error) {
-      setError("Failed to change password");
+      throw error;
     } finally {
       setLoading(false);
     }

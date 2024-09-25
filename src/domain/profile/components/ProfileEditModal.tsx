@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -12,12 +13,14 @@ import {
   FormLabel,
   HStack,
   useToast,
+  Image,
+  Icon,
+  Box,
 } from "@chakra-ui/react";
 import { UserProfile } from "../utils/ProfileUtils";
 import { putProfile } from "../api/ProfileAPI";
 import { getNicknameToken } from "../../../common/utils/nickname";
-import { useState } from "react";
-import { uploadImage } from "../../../common/api/Image";
+import { AiOutlinePicture } from "react-icons/ai";
 
 interface ProfileEditModalProps {
   isOpen: boolean;
@@ -34,29 +37,40 @@ const ProfileEditModal = ({
 }: ProfileEditModalProps) => {
   const id = getNicknameToken();
   const toast = useToast();
-  const [profile, setEditedProfile] = useState<UserProfile | null>(
-    editedProfile
-  );
+  const [profile, setEditedProfile] = useState<UserProfile | null>(null);
   const [newImage, setNewImage] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    setEditedProfile(editedProfile);
+  }, [editedProfile]);
+
+  useEffect(() => {
+    if (newImage) {
+      const objectUrl = URL.createObjectURL(newImage);
+      setPreviewUrl(objectUrl);
+
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+  }, [newImage]);
 
   const handleSaveClick = async () => {
     if (profile) {
       try {
-        await putProfile(
-          id!,
-          profile.user_profile,
-          profile.user_name,
-          profile.user_info,
-          profile.user_gender,
-          profile.user_nation
-        );
+        await putProfile(id!, newImage, {
+          user_name: profile?.user_name,
+          user_info: profile?.user_info,
+          user_gender: profile?.user_gender,
+          user_nation: profile?.user_nation,
+        });
+
         toast({
           title: "Profile updated.",
           status: "success",
           duration: 2000,
           isClosable: true,
         });
-        onClose(); // Close modal after save
+        onClose();
       } catch (error) {
         toast({
           title: "Update failed.",
@@ -70,40 +84,11 @@ const ProfileEditModal = ({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (editedProfile) {
+    if (profile) {
       setEditedProfile({
-        ...editedProfile,
+        ...profile,
         [e.target.name]: e.target.value,
       });
-    }
-  };
-
-  const handleImageUpload = async () => {
-    if (newImage) {
-      const formData = new FormData();
-      formData.append("file", newImage);
-
-      try {
-        const response = await uploadImage(formData);
-        setEditedProfile((prevProfile) => ({
-          ...prevProfile!,
-          user_profile: response.imageUrl,
-        }));
-        toast({
-          title: "Image uploaded.",
-          status: "success",
-          duration: 2000,
-          isClosable: true,
-        });
-      } catch (error) {
-        toast({
-          title: "Upload failed.",
-          description: "Unable to upload image.",
-          status: "error",
-          duration: 2000,
-          isClosable: true,
-        });
-      }
     }
   };
 
@@ -121,24 +106,59 @@ const ProfileEditModal = ({
         <ModalCloseButton />
         <ModalBody>
           <FormControl mb={4}>
-            <FormLabel>프로필 이미지 업로드</FormLabel>
-            <Input type="file" accept="image/*" onChange={handleImageChange} />
-            <Button onClick={handleImageUpload} mt={2} colorScheme="teal">
-              이미지 업로드
-            </Button>
+            <Box
+              position="relative"
+              width="100%"
+              height={previewUrl ? "auto" : "50px"}
+              display="flex"
+              flexDirection={"column"}
+              alignItems="center"
+              justifyContent="center"
+            >
+              {previewUrl && (
+                <Image
+                  src={previewUrl}
+                  borderRadius="full"
+                  boxSize="150px"
+                  alt="Preview"
+                  mb="10px"
+                />
+              )}
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                display="none"
+                id="post-image-upload"
+              />
+              <label htmlFor="post-image-upload">
+                <Button
+                  as="span"
+                  width="100%"
+                  leftIcon={<Icon as={AiOutlinePicture} boxSize="5" />}
+                  colorScheme="linkling"
+                  variant="outline"
+                  borderColor="linkling.400"
+                >
+                  {newImage ? "프로필 이미지 변경하기" : "프로필 이미지 업로드"}
+                </Button>
+              </label>
+            </Box>
           </FormControl>
+          별명
           <Input
             name="user_name"
             value={profile?.user_name || ""}
             onChange={handleChange}
-            placeholder="이름"
+            placeholder="별명"
             mb={2}
           />
+          자기소개
           <Input
             name="user_info"
             value={profile?.user_info || ""}
             onChange={handleChange}
-            placeholder="정보"
+            placeholder="자기소개"
             mb={2}
           />
         </ModalBody>

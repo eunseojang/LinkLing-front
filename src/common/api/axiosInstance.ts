@@ -30,7 +30,7 @@ axiosInstance.interceptors.response.use(
 
     if (error.message.includes("Mixed Content")) {
       console.log("로그아웃", error.message);
-      logout(); // 로그아웃 함수 호출
+      logout();
       return Promise.reject(error);
     }
 

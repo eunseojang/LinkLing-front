@@ -20,6 +20,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { checkEmail, verifyEmail } from "../api/EmailAPI";
 import { useToastMessage } from "../../../../common/components/useToastMessage";
+import axios from "axios";
 
 interface SignUpFormValues {
   id: string;
@@ -81,14 +82,25 @@ const EmailSection: React.FC<EmailSectionProps> = ({
   };
 
   const sendVerificationCode = async () => {
+    let response;
     try {
       setLoading(true);
-      await checkEmail(email);
+      response = await checkEmail(email);
       onOpen();
       setIsCodeSent(true);
-      setLoading(false);
-    } catch {
+    } catch (error) {
+      console.log("Error occurred:", error);
+
+      if (axios.isAxiosError(error)) {
+        if (error.response?.data?.error === 4000004) {
+          showToast(`email.duplication`, "email.duplicationDes", "error");
+          return;
+        }
+      }
+
       showToast("email.sendfail", "email.rightEmail", "error");
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -1,4 +1,4 @@
-import { Flex, Box, Heading, Text } from "@chakra-ui/react";
+import { Flex, Box, Heading, Text, useBreakpointValue } from "@chakra-ui/react";
 
 interface MatchingCardProps {
   icon: React.ReactNode;
@@ -7,10 +7,13 @@ interface MatchingCardProps {
 }
 
 const MatchingCard2 = ({ icon, heading, description }: MatchingCardProps) => {
+  const isMobile = useBreakpointValue({ base: true, md: false });
+
   return (
     <Flex
+      flexDirection={isMobile ? "column" : "row"}
       textAlign="center"
-      padding="50px"
+      padding="30px"
       backgroundColor="white"
       borderRadius="20px"
       alignItems={"center"}
@@ -23,11 +26,14 @@ const MatchingCard2 = ({ icon, heading, description }: MatchingCardProps) => {
         transform: "scale(1.03)",
       }}
     >
-      <Box fontSize="80px" width={"300px"}>
+      <Box
+        fontSize={isMobile ? "50px" : "80px"}
+        width={isMobile ? "100px" : "150px"}
+      >
         {icon}
       </Box>
       <Flex flexDirection={"column"} textAlign={"left"} ml={5}>
-        <Heading fontSize="3xl" mb="20px" color={"#73DA95"}>
+        <Heading fontSize="2xl" mb="20px" color={"#73DA95"}>
           {heading}
         </Heading>
         <Text color={"customBlack"}>{description}</Text>

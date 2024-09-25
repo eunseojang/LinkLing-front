@@ -1,4 +1,12 @@
-import { Box, Button, Stack, Text, Checkbox, Link } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Stack,
+  Text,
+  Checkbox,
+  Link,
+  useBreakpointValue,
+} from "@chakra-ui/react";
 import { useLoginForm } from "../hooks/useLoginForm";
 import { useTranslation } from "react-i18next";
 import IdInput from "./IdInput";
@@ -20,9 +28,17 @@ const LoginForm = () => {
     toggleRememberMe,
     onSubmit,
   } = useLoginForm();
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   return (
-    <Box bg="white" p={8} maxW="md" w="full" borderRadius="3xl" margin={"0 auto"}>
+    <Box
+      bg={isMobile ? "linkling" : "white"}
+      p={8}
+      maxW="md"
+      w="full"
+      borderRadius="3xl"
+      margin={"0 auto"}
+    >
       <form onSubmit={onSubmit}>
         <Text fontSize="2xl" fontWeight="600" mb={1} textAlign="center">
           {t(`login.login`)}

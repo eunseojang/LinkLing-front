@@ -7,6 +7,7 @@ import {
   Text,
   VStack,
   IconButton,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { ArrowForwardIcon, ArrowBackIcon } from "@chakra-ui/icons";
 import { useState, useEffect } from "react";
@@ -37,6 +38,7 @@ const slides = [
 
 export default function HomeForm() {
   const [slideIndex, setSlideIndex] = useState(0);
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   const handlePrev = () => {
     setSlideIndex((prevIndex) =>
@@ -123,7 +125,10 @@ export default function HomeForm() {
         />
       </Box>
 
-      <VStack paddingX={{ base: "20px", md: "50px", lg: "100px" }} my={"50px"}>
+      <VStack
+        paddingX={{ base: "20px", md: "50px", lg: "100px" }}
+        my={isMobile ? "20px" : "40px"}
+      >
         <Flex
           direction={{ base: "column", md: "row" }}
           justifyContent="space-between"
@@ -154,7 +159,7 @@ export default function HomeForm() {
           justifyContent="center"
           alignItems={"center"}
           wrap="wrap"
-          w={"100%"}
+          w={isMobile ? "300px" : "700px"}
         >
           <MatchingCard2
             icon="🎙️"
@@ -175,10 +180,14 @@ export default function HomeForm() {
       </VStack>
 
       {/* Details Section */}
-      <VStack padding={{ base: "30px", md: "50px", lg: "60px" }} spacing="60px">
+      <VStack
+        spacing={isMobile ? "30px" : "60px"}
+        padding={"10px"}
+        mb={isMobile ? "30px" : "60px"}
+      >
         <Box
           textAlign="center"
-          maxWidth="800px"
+          w={isMobile ? "300px" : "1000px"}
           padding="30px"
           border="1px solid #E2E8F0"
           borderRadius="20px"
@@ -212,13 +221,12 @@ export default function HomeForm() {
             실시간으로 소통하며 언어를 학습할 수 있는 플랫폼입니다.
           </Text>
         </Box>
-
         <Box
           textAlign="center"
-          maxWidth="800px"
+          w={isMobile ? "300px" : "1000px"}
           padding="30px"
           border="1px solid #E2E8F0"
-          borderRadius="md"
+          borderRadius="20px"
           backgroundColor="white"
           position="relative"
           _after={{
@@ -227,7 +235,7 @@ export default function HomeForm() {
             width: "50px",
             height: "5px",
             background: "linear-gradient(90deg, #73DA95, #C6F6D5)",
-            bottom: "-10px",
+            bottom: "-15px",
             left: "50%",
             transform: "translateX(-50%)",
             borderRadius: "2px",
@@ -242,10 +250,10 @@ export default function HomeForm() {
           </Heading>
           <Text
             fontSize={{ base: "md", md: "lg" }}
-            color={"customBlack"}
+            color="customBlack"
             lineHeight="tall"
           >
-            LinkLing과 함께라면 언어 학습의 한계는 없습니다.
+            LinkLing과 함께라면 언어학습의 한계는 없습니다.
           </Text>
         </Box>
       </VStack>

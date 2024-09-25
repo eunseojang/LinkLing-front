@@ -85,7 +85,7 @@
     "sendVerifydes": "이메일 인증에 성공했습니다",
     "idCheck": "아이디 중복체크",
     "idCheckdes": "아이디 중복 체크에 성공했습니다",
-    "idCheckfaildes": "아이디 중복 체크에 실패했습니다",
+    "idCheckfaildes": "이미 존재하는 아이디입니다.",
     "resetsuccess": "변경 성공",
     "passwordReset": "변경된 비밀번호를 이메일에서 확인해주세요",
     "resetfail": "변경 실패",
@@ -93,7 +93,9 @@
     "sendToken": "비밀번호 변경 코드 보내기",
     "enterToken": "이메일을 확인하여 인증코드를 입력하세요",
     "tokenPlaceholder": "인증코드",
-    "resetPassword": "비밀번호 변경하기"
+    "resetPassword": "비밀번호 변경하기",
+    "duplication": "이메일 중복",
+    "duplicationDes": "이미 존재하는 이메일 입니다."
   },
   "menu": {
     "linkchat": "링크챗",
@@ -111,5 +113,15 @@
     "passwordPlaceholder": "변경할 비밀번호를 입력해주세요",
     "newPassword": "새 비밀번호",
     "changePassword": "비밀번호 변경하기"
+  },
+  "password": {
+    "currentfail": "현재 비밀번호 오류",
+    "currentfailDes": "현재 비밀번호가 일치하지 않습니다",
+    "fail": "새로운 비밀번호 오류",
+    "failDes": "새로운 비밀번호는 8자 이상, 영문자, 숫자 및 특수문자를 포함해야 합니다",
+    "success": "비밀번호 변경 성공",
+    "successDes": "비밀번호가 성공적으로 변경되었습니다",
+    "duplication": "비밀번호 중복",
+    "duplicationDes": "기존 비밀번호와 현재 비밀번호가 동일합니다"
   }
 }

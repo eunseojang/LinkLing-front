@@ -10,6 +10,7 @@ import {
   Image,
 } from "@chakra-ui/react";
 import { AiOutlinePicture } from "react-icons/ai";
+import { registerPost } from "../api/PostAPI";
 
 interface PostCreateFormProps {
   onClose: () => void;
@@ -32,13 +33,8 @@ const PostCreateForm: React.FC<PostCreateFormProps> = ({ onClose }) => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("post_detail", postDetail);
-    if (postImg) {
-      formData.append("post_img", postImg);
-    }
+    registerPost(postImg, { post_detail: postDetail });
 
-    // 서버로 데이터 전송 로직
     toast({
       title: "게시물이 등록되었습니다.",
       status: "success",
@@ -50,7 +46,6 @@ const PostCreateForm: React.FC<PostCreateFormProps> = ({ onClose }) => {
     setPostImg(null);
     setImgPreview(null);
 
-    // Close the modal
     onClose();
   };
 

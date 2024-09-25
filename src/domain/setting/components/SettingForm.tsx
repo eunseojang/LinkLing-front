@@ -12,8 +12,11 @@ import {
 import { useProfileSettings } from "../hook/useProfileSettings";
 import SelectionButton from "../../../common/components/SelectedButton";
 import { useTranslation } from "react-i18next";
+import axios from "axios";
+import { useToastMessage } from "../../../common/components/useToastMessage";
 
 const SettingForm = () => {
+  const { showToast } = useToastMessage();
   const { t } = useTranslation();
   const {
     profile,
@@ -26,6 +29,9 @@ const SettingForm = () => {
 
   const [newID, setNewID] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [existPassword, setExistPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const [gender, setGender] = useState("");
   const [nation, setNation] = useState("");
 
@@ -46,21 +52,39 @@ const SettingForm = () => {
     }
   };
 
-  const handlePasswordChange = () => {
-    if (profile) {
-      changePassword(profile.user_id, newPassword);
+  const handlePasswordChange = async () => {
+    if (profile && newPassword === confirmPassword) {
+      try {
+        await changePassword(profile.user_id, existPassword, newPassword);
+        showToast(`password.success`, `password.successDes`, "success");
+        setNewPassword("");
+        setExistPassword("");
+        setConfirmPassword("");
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          if (error.response?.data?.code === 4005932) {
+            showToast(
+              `password.currentfail`,
+              `password.currentfailDes`,
+              "error"
+            );
+          } else if (error.response?.data?.code === 4000007) {
+            showToast(`password.fail`, `password.failDes`, "error");
+          } else if (error.response?.data?.code === 4004132) {
+            showToast(
+              `password.duplication`,
+              `password.duplicationDes`,
+              "error"
+            );
+          }
+        }
+      }
     }
   };
 
   const handleProfileUpdate = () => {
     if (profile) {
-      updateProfile(
-        profile.user_profile,
-        profile.user_name,
-        profile.user_info,
-        gender,
-        nation
-      );
+      updateProfile(profile.user_name, profile.user_info, gender, nation);
     }
   };
 
@@ -101,8 +125,8 @@ const SettingForm = () => {
             <FormLabel>{t("settings.newPassword", "New Password")}</FormLabel>
             <Input
               type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
+              value={existPassword}
+              onChange={(e) => setExistPassword(e.target.value)}
               placeholder={t(
                 "settings.passwordPlaceholder",
                 "Enter new password"
@@ -121,8 +145,8 @@ const SettingForm = () => {
             <Input
               mt={2}
               type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder={t(
                 "settings.passwordPlaceholder",
                 "Enter new password"

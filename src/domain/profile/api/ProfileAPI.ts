@@ -12,23 +12,31 @@ export const getProfile = async (id: string) => {
 
 export const putProfile = async (
   id: string,
-  user_profile: string,
-  user_name: string,
-  user_info: string,
-  user_gender: string,
-  user_nation: string
-) => {
+  file: File | null,
+  profileData: {
+    user_name: string;
+    user_info: string;
+    user_gender: string;
+    user_nation: string;
+  }
+): Promise<any> => {
+  const formData = new FormData();
+  if (file) {
+    formData.append("file", file);
+  }
+
+  formData.append("profileData", JSON.stringify(profileData));
+
   try {
-    const response = await axiosInstance.put(`/profile/${id}`, {
-      user_profile,
-      user_name,
-      user_info,
-      user_gender,
-      user_nation,
+    const response = await axiosInstance.put(`/profile/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
+
     return response.data;
   } catch (error) {
-    console.error("Failed to fetch comments:", error);
+    console.error("Error sending post request:", error);
     throw error;
   }
 };

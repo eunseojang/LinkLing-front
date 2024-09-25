@@ -9,6 +9,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import {
   FaUserCircle,
@@ -28,6 +29,7 @@ const AppBar: React.FC = () => {
   const { isAuthenticated, logout } = useAuthStore();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   const menuItems = [
     { label: `menu.linkchat`, icon: FaCommentAlt, path: "/linkchat" },
@@ -52,7 +54,7 @@ const AppBar: React.FC = () => {
       bg="white"
       zIndex="1000"
       alignItems="center"
-      px="20px"
+      px={isMobile ? "10px" : "20px"}
     >
       <Flex
         align="center"
@@ -64,15 +66,15 @@ const AppBar: React.FC = () => {
         <Image
           src="/greenLogo.png"
           alt="linkling"
-          boxSize="40px"
+          boxSize={isMobile ? "30px" : "40px"}
           objectFit="contain"
         />
         <Text
-          fontSize="2xl"
+          fontSize={isMobile ? "xl" : "2xl"}
           fontWeight="extrabold"
           align="center"
           color="#73DA95"
-          ml="10px"
+          ml={isMobile ? undefined : "8px"}
         >
           LinkLing
         </Text>
@@ -92,22 +94,25 @@ const AppBar: React.FC = () => {
         </Flex>
       ) : (
         <Flex justifyContent="space-between" align="center">
-          <Flex mr={"10px"}>
-            {menuItems.map((item, index) => (
-              <Button
-                key={index}
-                leftIcon={<Icon as={item.icon} />}
-                variant="ghost"
-                fontSize="lg"
-                color="#333333"
-                _hover={{ color: "#73DA95" }}
-                transition="color 0.3s ease-in-out"
-                onClick={() => navigate(item.path)}
-              >
-                {t(item.label)}
-              </Button>
-            ))}
-          </Flex>
+          {/* 모바일일 때는 MenuList로, 그렇지 않을 때는 기존 버튼 배열 */}
+          {!isMobile && (
+            <Flex mr={"10px"}>
+              {menuItems.map((item, index) => (
+                <Button
+                  key={index}
+                  leftIcon={<Icon as={item.icon} />}
+                  variant="ghost"
+                  fontSize="lg"
+                  color="#333333"
+                  _hover={{ color: "#73DA95" }}
+                  transition="color 0.3s ease-in-out"
+                  onClick={() => navigate(item.path)}
+                >
+                  {t(item.label)}
+                </Button>
+              ))}
+            </Flex>
+          )}
 
           <Menu>
             <MenuButton
@@ -121,6 +126,16 @@ const AppBar: React.FC = () => {
               @{getNicknameToken()}
             </MenuButton>
             <MenuList>
+              {isMobile &&
+                menuItems.map((item, index) => (
+                  <MenuItem
+                    key={index}
+                    icon={<Icon as={item.icon} />}
+                    onClick={() => navigate(item.path)}
+                  >
+                    {t(item.label)}
+                  </MenuItem>
+                ))}
               <MenuItem icon={<FaCog />} onClick={() => navigate("/setting")}>
                 {t("menu.setting")}
               </MenuItem>

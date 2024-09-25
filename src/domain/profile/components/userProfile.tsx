@@ -17,6 +17,8 @@ import { default_img } from "../../../common/utils/img";
 import { getFlagClass, UserProfile } from "../utils/ProfileUtils";
 import { useParams } from "react-router-dom";
 import ProfileEditModal from "./ProfileEditModal";
+import { requestFriend } from "../api/FreindAPI";
+import { useToastMessage } from "../../../common/components/useToastMessage";
 
 const UserProfileComponent: FC = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -24,8 +26,9 @@ const UserProfileComponent: FC = () => {
   const [error, setError] = useState<string | null>(null);
   const { nickName: id } = useParams<{ nickName: string }>();
   const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const { showToast } = useToastMessage();
   const fetchProfile = async () => {
+
     try {
       const response = await getProfile(id!);
       setProfile({ ...response });
@@ -67,14 +70,14 @@ const UserProfileComponent: FC = () => {
     <Box
       bg="white"
       p={6}
-      borderRadius="md"
-      w={{ base: "90%", sm: "80%", md: "50%" }}
+      borderRadius="3xl"
+      w={"800px"}
       margin="auto"
       borderWidth="1px"
       borderColor="gray.200"
       boxShadow="md"
     >
-      <Flex align="center" mb={6} w={"80%"} margin={"0 auto"}>
+      <Flex align="center" mb={6} w={"700px"} margin={"0 auto"}>
         <Image
           borderRadius="full"
           boxSize="120px"
@@ -86,7 +89,14 @@ const UserProfileComponent: FC = () => {
             <Text fontSize="xl" fontWeight="bold">
               {profile.user_name}
             </Text>
-            <Text fontSize="xs" color="gray.600">
+            <Text
+              fontSize="xs"
+              color="gray.600"
+              ml={2}
+              border={"1px solid"}
+              borderColor={"gray.200"}
+              shadow={"md"}
+            >
               {profile.user_nation && (
                 <span
                   className={getFlagClass(profile.user_nation)}
@@ -128,16 +138,33 @@ const UserProfileComponent: FC = () => {
             </Button>
           )}
           {profile.profile_info === "NOTFRIEND" && (
-            <Button colorScheme="linkling" onClick={() => alert("Add friend!")}>
+            <Button
+              colorScheme="linkling"
+              onClick={async () => {
+                try {
+                  await requestFriend(profile.user_id);
+                  showToast("친구 요청 성공", "ㄴㅇ", "success");
+                } catch (error) {
+                  showToast("친구 요청 실패", "ㄴㅇ", "error");
+                }
+              }}
+            >
               친구 추가
             </Button>
           )}
         </HStack>
       </Flex>
       {profile.user_info && (
-        <Box bg="#D8FAE6" p={3} borderRadius="md" w={"60%"} ml={"200px"}>
+        <Box
+          bg="#D8FAE6"
+          p={3}
+          borderRadius="md"
+          w={"600px"}
+          mt={"13px"}
+          ml={"130px"}
+        >
           <Text>{profile.user_info}</Text>
-        </Box> 
+        </Box>
       )}
       <Flex justify="center" mt={6}>
         <Text mr={4}>
