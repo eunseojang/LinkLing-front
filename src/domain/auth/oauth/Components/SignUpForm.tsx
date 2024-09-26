@@ -16,7 +16,6 @@ import SelectionButton from "../../../../common/components/SelectedButton";
 import { useParams } from "react-router-dom";
 const OauthSignUpForm = () => {
   const { email } = useParams<{ email: string }>();
-  console.log(email);
   const { t } = useTranslation();
   const {
     id,

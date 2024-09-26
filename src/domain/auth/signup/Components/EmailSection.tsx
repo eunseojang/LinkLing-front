@@ -82,10 +82,9 @@ const EmailSection: React.FC<EmailSectionProps> = ({
   };
 
   const sendVerificationCode = async () => {
-    let response;
     try {
       setLoading(true);
-      response = await checkEmail(email);
+      await checkEmail(email);
       onOpen();
       setIsCodeSent(true);
     } catch (error) {
