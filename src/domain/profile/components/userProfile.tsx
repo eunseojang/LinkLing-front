@@ -11,7 +11,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { FC } from "react";
-import "flag-icons/css/flag-icons.min.css"; // Import CSS file
+import "flag-icons/css/flag-icons.min.css";
 import { getProfile } from "../api/ProfileAPI";
 import { default_img } from "../../../common/utils/img";
 import { getFlagClass, UserProfile } from "../utils/ProfileUtils";
@@ -19,6 +19,7 @@ import { useParams } from "react-router-dom";
 import ProfileEditModal from "./ProfileEditModal";
 import { requestFriend } from "../api/FreindAPI";
 import { useToastMessage } from "../../../common/components/useToastMessage";
+import { fetcheImage } from "../../../common/utils/fetchImage";
 
 const UserProfileComponent: FC = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -27,8 +28,9 @@ const UserProfileComponent: FC = () => {
   const { nickName: id } = useParams<{ nickName: string }>();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { showToast } = useToastMessage();
-  const fetchProfile = async () => {
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
 
+  const fetchProfile = async () => {
     try {
       const response = await getProfile(id!);
       setProfile({ ...response });
@@ -38,9 +40,23 @@ const UserProfileComponent: FC = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchProfile();
   }, [id]);
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      if (profile?.user_profile) {
+        const img = await fetcheImage(profile.user_profile);
+        setImageSrc(img);
+      } else {
+        setImageSrc(null);
+      }
+    };
+
+    fetchImage();
+  }, [profile]);
 
   if (loading) {
     return (
@@ -81,7 +97,7 @@ const UserProfileComponent: FC = () => {
         <Image
           borderRadius="full"
           boxSize="120px"
-          src={profile?.user_profile || default_img}
+          src={imageSrc || default_img}
           alt={profile?.user_name || "Profile Image"}
         />
         <Box ml={5} flex={1}>
@@ -176,7 +192,10 @@ const UserProfileComponent: FC = () => {
       </Flex>
       <ProfileEditModal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={() => {
+          onClose();
+          fetchProfile();
+        }}
         editedProfile={profile}
         handleCancelClick={async () => {
           onClose();

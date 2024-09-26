@@ -32,8 +32,8 @@ const SettingForm = () => {
   const [existPassword, setExistPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [gender, setGender] = useState("");
-  const [nation, setNation] = useState("");
+  const [gender, setGender] = useState<string | null>(null);
+  const [nation, setNation] = useState<string | null>(null);
 
   useEffect(() => {
     fetchProfile();
@@ -82,9 +82,10 @@ const SettingForm = () => {
     }
   };
 
-  const handleProfileUpdate = () => {
+  const handleProfileUpdate = async () => {
     if (profile) {
-      updateProfile(profile.user_name, profile.user_info, gender, nation);
+      await updateProfile(profile.user_name, profile.user_info, gender!, nation!);
+      await fetchProfile(); // 프로필 업데이트 후 새로 가져오기
     }
   };
 
@@ -98,131 +99,129 @@ const SettingForm = () => {
 
   return (
     <Box p={4} maxW="3xl" borderRadius="lg" margin="0 auto" bg="white">
-      <>
-        <Stack spacing={4}>
-          <FormControl>
-            <FormLabel>{t("settings.id", "ID")}</FormLabel>
-            <Input
-              value={newID}
-              onChange={(e) => setNewID(e.target.value)}
-              placeholder={
-                profile
-                  ? profile.user_id
-                  : t("settings.idPlaceholder", "Enter new ID")
-              }
-            />
-            <Button
-              onClick={handleIDChange}
-              mt={2}
-              colorScheme="linkling"
-              w="full"
-            >
-              {t("settings.changeID", "Change ID")}
-            </Button>
-          </FormControl>
+      <Stack spacing={4}>
+        <FormControl>
+          <FormLabel>{t("settings.id", "ID")}</FormLabel>
+          <Input
+            value={newID}
+            onChange={(e) => setNewID(e.target.value)}
+            placeholder={
+              profile
+                ? profile.user_id
+                : t("settings.idPlaceholder", "Enter new ID")
+            }
+          />
+          <Button
+            onClick={handleIDChange}
+            mt={2}
+            colorScheme="linkling"
+            w="full"
+          >
+            {t("settings.changeID", "Change ID")}
+          </Button>
+        </FormControl>
 
-          <FormControl>
-            <FormLabel>{t("settings.newPassword", "New Password")}</FormLabel>
-            <Input
-              type="password"
-              value={existPassword}
-              onChange={(e) => setExistPassword(e.target.value)}
-              placeholder={t(
-                "settings.passwordPlaceholder",
-                "Enter new password"
-              )}
-            />
-            <Input
-              mt={2}
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder={t(
-                "settings.passwordPlaceholder",
-                "Enter new password"
-              )}
-            />
-            <Input
-              mt={2}
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder={t(
-                "settings.passwordPlaceholder",
-                "Enter new password"
-              )}
-            />
-            <Button
-              onClick={handlePasswordChange}
-              mt={2}
-              colorScheme="linkling"
-              w="full"
-            >
-              {t("settings.changePassword", "Change Password")}
-            </Button>
-          </FormControl>
+        <FormControl>
+          <FormLabel>{t("settings.newPassword", "New Password")}</FormLabel>
+          <Input
+            type="password"
+            value={existPassword}
+            onChange={(e) => setExistPassword(e.target.value)}
+            placeholder={t(
+              "settings.passwordPlaceholder",
+              "Enter new password"
+            )}
+          />
+          <Input
+            mt={2}
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            placeholder={t(
+              "settings.passwordPlaceholder",
+              "Enter new password"
+            )}
+          />
+          <Input
+            mt={2}
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder={t(
+              "settings.passwordPlaceholder",
+              "Enter new password"
+            )}
+          />
+          <Button
+            onClick={handlePasswordChange}
+            mt={2}
+            colorScheme="linkling"
+            w="full"
+          >
+            {t("settings.changePassword", "Change Password")}
+          </Button>
+        </FormControl>
 
-          <FormControl>
-            <Flex mb={2} mt={10} wrap="wrap" gap={2} align="center">
-              <FormLabel w="50px">{t("signup.gender", "Gender")}</FormLabel>
+        <FormControl>
+          <Flex mb={2} mt={10} wrap="wrap" gap={2} align="center">
+            <FormLabel w="50px">{t("signup.gender", "Gender")}</FormLabel>
+            <SelectionButton
+              onClick={() => setGender("male")}
+              isSelected={gender === "male"}
+              label={t("signup.male", "Male")}
+            />
+            <SelectionButton
+              onClick={() => setGender("female")}
+              isSelected={gender === "female"}
+              label={t("signup.female", "Female")}
+            />
+            <SelectionButton
+              onClick={() => setGender("other")}
+              isSelected={gender === "other"}
+              label={t("signup.other", "Other")}
+            />
+          </Flex>
+        </FormControl>
+
+        <FormControl>
+          <Flex align="center">
+            <FormLabel w="50px" mb={0}>
+              {t("signup.nationality", "Nationality")}
+            </FormLabel>
+            <Flex wrap="wrap" ml={2} gap={2} flex="1">
               <SelectionButton
-                onClick={() => setGender("male")}
-                isSelected={gender === "male"}
-                label={t("signup.male", "Male")}
+                onClick={() => setNation("KR")}
+                isSelected={nation === "KR"}
+                label={t("signup.korea", "Korea")}
               />
               <SelectionButton
-                onClick={() => setGender("female")}
-                isSelected={gender === "female"}
-                label={t("signup.female", "Female")}
+                onClick={() => setNation("US")}
+                isSelected={nation === "US"}
+                label={t("signup.usa", "USA")}
               />
               <SelectionButton
-                onClick={() => setGender("other")}
-                isSelected={gender === "other"}
+                onClick={() => setNation("JP")}
+                isSelected={nation === "JP"}
+                label={t("signup.japan", "Japan")}
+              />
+              <SelectionButton
+                onClick={() => setNation("CN")}
+                isSelected={nation === "CN"}
+                label={t("signup.china", "China")}
+              />
+              <SelectionButton
+                onClick={() => setNation("GT")}
+                isSelected={nation === "GT"}
                 label={t("signup.other", "Other")}
               />
             </Flex>
-          </FormControl>
+          </Flex>
+        </FormControl>
 
-          <FormControl>
-            <Flex align="center">
-              <FormLabel w="50px" mb={0}>
-                {t("signup.nationality", "Nationality")}
-              </FormLabel>
-              <Flex wrap="wrap" ml={2} gap={2} flex="1">
-                <SelectionButton
-                  onClick={() => setNation("KR")}
-                  isSelected={nation === "KR"}
-                  label={t("signup.korea", "Korea")}
-                />
-                <SelectionButton
-                  onClick={() => setNation("US")}
-                  isSelected={nation === "US"}
-                  label={t("signup.usa", "USA")}
-                />
-                <SelectionButton
-                  onClick={() => setNation("JP")}
-                  isSelected={nation === "JP"}
-                  label={t("signup.japan", "Japan")}
-                />
-                <SelectionButton
-                  onClick={() => setNation("CN")}
-                  isSelected={nation === "CN"}
-                  label={t("signup.china", "China")}
-                />
-                <SelectionButton
-                  onClick={() => setNation("GT")}
-                  isSelected={nation === "GT"}
-                  label={t("signup.other", "Other")}
-                />
-              </Flex>
-            </Flex>
-          </FormControl>
-
-          <Button onClick={handleProfileUpdate} colorScheme="linkling" w="full">
-            {t("settings.updateProfile", "Update Profile")}
-          </Button>
-        </Stack>
-      </>
+        <Button onClick={handleProfileUpdate} colorScheme="linkling" w="full">
+          {t("settings.updateProfile", "Update Profile")}
+        </Button>
+      </Stack>
     </Box>
   );
 };

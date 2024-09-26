@@ -1,4 +1,4 @@
-import React, { useState, useEffect, MouseEvent, useRef } from "react";
+import React, { useState, useEffect, useRef, MouseEvent } from "react";
 import {
   Box,
   Image,
@@ -19,6 +19,7 @@ import { translateText } from "../../../common/utils/translate";
 import { useTranslation } from "react-i18next";
 import PopoverMenu from "./PopoverMenu";
 import { useTextSelection } from "../hooks/useTextSelection";
+import { fetcheImage } from "../../../common/utils/fetchImage";
 
 const FeedItem: React.FC<PostData> = ({
   post_img,
@@ -29,6 +30,9 @@ const FeedItem: React.FC<PostData> = ({
   user_img,
   post_comment,
 }) => {
+  const [loadedPostImg, setLoadedPostImg] = useState<string | null>(null); // 포스트 이미지 상태
+  const [loadedUserImg, setLoadedUserImg] = useState<string | null>(null); // 유저 이미지 상태
+
   const [showComments, setShowComments] = useState(false);
   const [textToSpeak, setTextToSpeak] = useState<string | null>(null);
   const [comments, setComments] = useState(commentsData);
@@ -46,6 +50,23 @@ const FeedItem: React.FC<PostData> = ({
     setIsClicked(true);
     setTimeout(() => setIsClicked(false), 300);
   };
+
+  useEffect(() => {
+    const loadImages = async () => {
+      if (post_img) {
+        const fetchedPostImg = await fetcheImage(post_img);
+        setLoadedPostImg(fetchedPostImg);
+      }
+      if (user_img) {
+        const fetchedUserImg = await fetcheImage(user_img);
+        setLoadedUserImg(fetchedUserImg || default_img);
+      } else {
+        setLoadedUserImg(default_img);
+      }
+    };
+
+    loadImages();
+  }, [post_img, user_img]);
 
   useEffect(() => {
     if (textToSpeak) {
@@ -102,7 +123,7 @@ const FeedItem: React.FC<PostData> = ({
     >
       <HStack padding="10px" spacing="8px">
         <Avatar
-          src={user_img || default_img}
+          src={loadedUserImg || default_img} // 로드된 유저 이미지 사용
           cursor={"pointer"}
           onClick={() => navigate(`/${post_owner}`)}
         />
@@ -120,9 +141,9 @@ const FeedItem: React.FC<PostData> = ({
         </VStack>
       </HStack>
 
-      {post_img && (
+      {loadedPostImg && ( // 로드된 포스트 이미지 사용
         <Box>
-          <Image src={post_img} objectFit="cover" w="100%" />
+          <Image src={loadedPostImg} objectFit="cover" w="100%" />
         </Box>
       )}
 

@@ -42,6 +42,7 @@ const ProfilePage = () => {
           margin={"auto"}
           p={6}
           w={"800px"}
+          h={"280px"}
           bg="#F9FAFB"
           borderRadius="md"
           boxShadow="sm"
