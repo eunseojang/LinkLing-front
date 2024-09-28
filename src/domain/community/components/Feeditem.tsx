@@ -41,10 +41,10 @@ const FeedItem: React.FC<PostData> = ({
   const { i18n } = useTranslation();
 
   const [isClicked, setIsClicked] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  // const containerRef = useRef<HTMLDivElement>(null);
 
-  const { selectedText, setMenuPosition, menuPosition, handleTextSelection } =
-    useTextSelection(containerRef);
+  // const { selectedText, setMenuPosition, menuPosition, handleTextSelection } =
+  //   useTextSelection(containerRef);
 
   const handleClick = () => {
     setIsClicked(true);
@@ -77,23 +77,23 @@ const FeedItem: React.FC<PostData> = ({
     }
   }, [textToSpeak]);
 
-  const handleTranslateClick = async () => {
-    if (selectedText) {
-      const translatedText = await translateText(selectedText, i18n.language);
-      setTranslatedText(translatedText);
-    }
-  };
+  // const handleTranslateClick = async () => {
+  //   if (selectedText) {
+  //     const translatedText = await translateText(selectedText, i18n.language);
+  //     setTranslatedText(translatedText);
+  //   }
+  // };
 
-  const handleSpeakClick = () => {
-    if (selectedText) {
-      setTextToSpeak(selectedText);
-    }
-  };
+  // const handleSpeakClick = () => {
+  //   if (selectedText) {
+  //     setTextToSpeak(selectedText);
+  //   }
+  // };
 
-  const handleContextMenu = (e: MouseEvent) => {
-    e.preventDefault();
-    handleTextSelection();
-  };
+  // const handleContextMenu = (e: MouseEvent) => {
+  //   e.preventDefault();
+  //   handleTextSelection();
+  // };
 
   const handleCommentSubmit = (newComment: string) => {
     setComments([
@@ -115,10 +115,10 @@ const FeedItem: React.FC<PostData> = ({
       backgroundColor="white"
       boxShadow="0 4px 12px rgba(0, 0, 0, 0.1)"
       overflow="hidden"
-      onMouseUp={handleTextSelection}
-      onContextMenu={handleContextMenu}
+      // onMouseUp={handleTextSelection}
+      // onContextMenu={handleContextMenu}
       position="relative"
-      ref={containerRef}
+      // ref={containerRef}
       zIndex="1"
     >
       <HStack padding="10px" spacing="8px">
@@ -198,14 +198,14 @@ const FeedItem: React.FC<PostData> = ({
           <CommentInput onCommentSubmit={handleCommentSubmit} />
         </Box>
       )}
-
+      {/* 
       <PopoverMenu
         menuPosition={menuPosition}
         translatedText={translatedText}
         handleTranslateClick={handleTranslateClick}
         handleSpeakClick={handleSpeakClick}
         closeMenu={() => setMenuPosition(null)}
-      />
+      /> */}
     </Box>
   );
 };
