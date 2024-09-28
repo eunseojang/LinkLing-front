@@ -187,7 +187,7 @@ const UserProfileComponent: FC = () => {
           친구: <strong>{profile.follower}</strong>
         </Text>
         <Text>
-          게시물: <strong>{23}</strong>
+          게시물: <strong>{profile.post_count}</strong>
         </Text>
       </Flex>
       <ProfileEditModal

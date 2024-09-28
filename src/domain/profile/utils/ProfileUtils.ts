@@ -8,6 +8,7 @@ export interface UserProfile {
   user_nation: "KR" | "JP" | "CN" | "US" | "GT";
   user_info: string;
   profile_info: "HOST" | "FRIEND" | "PENDING" | "ACCEPT" | "NOTFRIEND";
+  post_count: number;
 }
 
 export const getFlagClass = (nation: string) => {

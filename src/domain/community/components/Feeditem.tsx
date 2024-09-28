@@ -14,11 +14,6 @@ import { default_img } from "../../../common/utils/img";
 import CommentItem from "./CommentItem";
 import CommentInput from "./CommentInput";
 import { useNavigate } from "react-router-dom";
-import { detectDominantLanguage } from "../../../common/utils/language";
-import { translateText } from "../../../common/utils/translate";
-import { useTranslation } from "react-i18next";
-import PopoverMenu from "./PopoverMenu";
-import { useTextSelection } from "../hooks/useTextSelection";
 import { fetcheImage } from "../../../common/utils/fetchImage";
 
 const FeedItem: React.FC<PostData> = ({
@@ -34,17 +29,10 @@ const FeedItem: React.FC<PostData> = ({
   const [loadedUserImg, setLoadedUserImg] = useState<string | null>(null); // 유저 이미지 상태
 
   const [showComments, setShowComments] = useState(false);
-  const [textToSpeak, setTextToSpeak] = useState<string | null>(null);
   const [comments, setComments] = useState(commentsData);
-  const [translatedText, setTranslatedText] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
 
   const [isClicked, setIsClicked] = useState(false);
-  // const containerRef = useRef<HTMLDivElement>(null);
-
-  // const { selectedText, setMenuPosition, menuPosition, handleTextSelection } =
-  //   useTextSelection(containerRef);
 
   const handleClick = () => {
     setIsClicked(true);
@@ -68,33 +56,6 @@ const FeedItem: React.FC<PostData> = ({
     loadImages();
   }, [post_img, user_img]);
 
-  useEffect(() => {
-    if (textToSpeak) {
-      const langCode = detectDominantLanguage(textToSpeak);
-      const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      utterance.lang = langCode;
-      speechSynthesis.speak(utterance);
-    }
-  }, [textToSpeak]);
-
-  // const handleTranslateClick = async () => {
-  //   if (selectedText) {
-  //     const translatedText = await translateText(selectedText, i18n.language);
-  //     setTranslatedText(translatedText);
-  //   }
-  // };
-
-  // const handleSpeakClick = () => {
-  //   if (selectedText) {
-  //     setTextToSpeak(selectedText);
-  //   }
-  // };
-
-  // const handleContextMenu = (e: MouseEvent) => {
-  //   e.preventDefault();
-  //   handleTextSelection();
-  // };
-
   const handleCommentSubmit = (newComment: string) => {
     setComments([
       ...comments,
@@ -115,15 +76,12 @@ const FeedItem: React.FC<PostData> = ({
       backgroundColor="white"
       boxShadow="0 4px 12px rgba(0, 0, 0, 0.1)"
       overflow="hidden"
-      // onMouseUp={handleTextSelection}
-      // onContextMenu={handleContextMenu}
       position="relative"
-      // ref={containerRef}
       zIndex="1"
     >
       <HStack padding="10px" spacing="8px">
         <Avatar
-          src={loadedUserImg || default_img} // 로드된 유저 이미지 사용
+          src={loadedUserImg || default_img}
           cursor={"pointer"}
           onClick={() => navigate(`/${post_owner}`)}
         />
@@ -141,7 +99,7 @@ const FeedItem: React.FC<PostData> = ({
         </VStack>
       </HStack>
 
-      {loadedPostImg && ( // 로드된 포스트 이미지 사용
+      {loadedPostImg && (
         <Box>
           <Image src={loadedPostImg} objectFit="cover" w="100%" />
         </Box>
@@ -198,14 +156,6 @@ const FeedItem: React.FC<PostData> = ({
           <CommentInput onCommentSubmit={handleCommentSubmit} />
         </Box>
       )}
-      {/* 
-      <PopoverMenu
-        menuPosition={menuPosition}
-        translatedText={translatedText}
-        handleTranslateClick={handleTranslateClick}
-        handleSpeakClick={handleSpeakClick}
-        closeMenu={() => setMenuPosition(null)}
-      /> */}
     </Box>
   );
 };
