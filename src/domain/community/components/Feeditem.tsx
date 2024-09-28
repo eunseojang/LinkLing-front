@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, MouseEvent } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Image,
