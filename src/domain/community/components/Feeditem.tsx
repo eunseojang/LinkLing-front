@@ -276,7 +276,7 @@ const FeedItem: React.FC<PostData> = ({
         {showComments && (
           <Box
             paddingX={2}
-            paddingTop="10px"
+            paddingTop={commentCount ? "5px" : "2px"}
             paddingBottom="10px"
             borderTop="1px solid #E2E8F0"
           >
@@ -288,11 +288,6 @@ const FeedItem: React.FC<PostData> = ({
                 onCommentChange={handleCommentChange}
               />
             ))}
-            {hasMoreComments && !isLoadingComments && (
-              <Text align="center" mt={4}>
-                스크롤하여 더 많은 댓글을 확인하세요...
-              </Text>
-            )}
             <CommentInput onCommentSubmit={handleCommentSubmit} />
           </Box>
         )}
