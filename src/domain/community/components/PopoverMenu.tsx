@@ -40,7 +40,7 @@ const PopoverMenu: React.FC<PopoverMenuProps> = ({
         top={`${menuPosition.top}px`}
         left={`${menuPosition.left}px`}
         zIndex="popover"
-        maxWidth="300px"
+        maxWidth="280px"
         overflow="auto"
       >
         <PopoverArrow />

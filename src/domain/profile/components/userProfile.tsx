@@ -86,12 +86,12 @@ const UserProfileComponent: FC = () => {
     <Box
       bg="white"
       p={6}
-      borderRadius="3xl"
+      borderRadius="xl"
       w={"800px"}
       margin="auto"
       borderWidth="1px"
       borderColor="gray.200"
-      boxShadow="md"
+      boxShadow="xs"
     >
       <Flex align="center" mb={6} w={"700px"} margin={"0 auto"}>
         <Image

@@ -14,9 +14,13 @@ import { registerPost } from "../api/PostAPI";
 
 interface PostCreateFormProps {
   onClose: () => void;
+  onPostSubmit: () => void; // 게시물 등록 후 호출될 콜백
 }
 
-const PostCreateForm: React.FC<PostCreateFormProps> = ({ onClose }) => {
+const PostCreateForm: React.FC<PostCreateFormProps> = ({
+  onClose,
+  onPostSubmit,
+}) => {
   const [postDetail, setPostDetail] = useState("");
   const [postImg, setPostImg] = useState<File | null>(null);
   const [imgPreview, setImgPreview] = useState<string | null>(null);
@@ -46,7 +50,8 @@ const PostCreateForm: React.FC<PostCreateFormProps> = ({ onClose }) => {
     setPostImg(null);
     setImgPreview(null);
 
-    onClose();
+    onPostSubmit(); // 게시물이 등록된 후 피드 리셋
+    onClose(); // 모달 닫기
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

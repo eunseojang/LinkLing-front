@@ -1,38 +1,30 @@
 import React, { useEffect, useState, useCallback } from "react";
-import {
-  Box,
-  VStack,
-  Button,
-  Icon,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Box, VStack, Button, Icon, useDisclosure } from "@chakra-ui/react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { PostData } from "../utils/FeedUtils";
-import PostCreateForm from "./PostCreateForm";
 import FeedItem from "./Feeditem";
 import { getPost } from "../api/PostAPI";
+import PostModal from "./PostModal";
 
 const Feed: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [data, setData] = useState<PostData[]>([]); // 게시물 데이터 상태
-  const [page, setPage] = useState(0); // 페이지 상태
-  const [loading, setLoading] = useState(false); // 로딩 상태
-  const [error, setError] = useState<string | null>(null); // 에러 상태
-  const [hasMore, setHasMore] = useState(true); // 더 많은 데이터가 있는지 여부
+  const [data, setData] = useState<PostData[]>([]);
+  const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(true);
 
-  // 게시물 데이터 가져오기 함수
   const fetchPost = useCallback(async (pageNumber: number) => {
     setLoading(true);
     try {
       const result = await getPost(pageNumber);
-      setData((prevData) => [...prevData, ...result]); // 기존 데이터에 추가
-      if (result.length === 0) setHasMore(false); // 더 이상 데이터가 없으면 hasMore를 false로 설정
+      if (pageNumber === 0) {
+        setData(result);
+        console.log(result);
+      } else {
+        setData((prevData) => [...prevData, ...result]);
+      }
+      if (result.length === 0) setHasMore(false);
     } catch (error) {
       setError("Failed to fetch posts");
       console.error("Failed to fetch posts:", error);
@@ -41,7 +33,6 @@ const Feed: React.FC = () => {
     }
   }, []);
 
-  // 스크롤이 하단에 도달했는지 확인하는 함수
   const handleScroll = useCallback(() => {
     if (
       window.innerHeight + document.documentElement.scrollTop >=
@@ -49,29 +40,35 @@ const Feed: React.FC = () => {
       hasMore &&
       !loading
     ) {
-      setPage((prevPage) => prevPage + 1); // 페이지 증가
+      setPage((prevPage) => prevPage + 1);
     }
   }, [hasMore, loading]);
 
   useEffect(() => {
-    fetchPost(page); // 페이지가 변경될 때마다 호출
+    fetchPost(page);
   }, [page, fetchPost]);
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll); // 스크롤 이벤트 리스너 추가
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll); // 컴포넌트 언마운트 시 리스너 제거
+      window.removeEventListener("scroll", handleScroll);
     };
   }, [handleScroll]);
 
+  const resetFeed = () => {
+    setPage(0);
+    setData([]);
+    fetchPost(0);
+  };
+
   return (
     <Box width="100%" padding="20px" position="relative">
-      <VStack width="100%" spacing="20px">
+      <VStack width="600px" spacing="10px" margin={"auto"}>
         {data.map((post) => (
           <FeedItem key={post.post_id} {...post} />
         ))}
-        {loading && <p>Loading more posts...</p>} {/* 로딩 상태 표시 */}
-        {error && <p>{error}</p>} {/* 에러 메시지 표시 */}
+        {loading && <p>Loading more posts...</p>}
+        {error && <p>{error}</p>}
       </VStack>
 
       <Button
@@ -90,16 +87,7 @@ const Feed: React.FC = () => {
         <Icon as={AiOutlinePlus} boxSize="6" />
       </Button>
 
-      <Modal isOpen={isOpen} onClose={onClose} size={"xl"} isCentered>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>게시물 작성</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <PostCreateForm onClose={onClose} />
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      <PostModal isOpen={isOpen} onClose={onClose} onPostSubmit={resetFeed} />
     </Box>
   );
 };

@@ -70,6 +70,7 @@ const ProfileEditModal = ({
           isClosable: true,
         });
         onClose();
+        window.location.reload();
       } catch (error) {
         toast({
           title: "Update failed.",
