@@ -40,7 +40,7 @@ const PopoverMenu: React.FC<PopoverMenuProps> = ({
         top={`${menuPosition.top}px`}
         left={`${menuPosition.left}px`}
         zIndex="popover"
-        maxWidth="280px"
+        maxWidth="250px"
         overflow="auto"
       >
         <PopoverArrow />
@@ -51,12 +51,18 @@ const PopoverMenu: React.FC<PopoverMenuProps> = ({
           ) : (
             <>
               <Button
+                size={"sm"}
                 onClick={handleTranslateClick}
                 leftIcon={<AiOutlineGlobal />}
+                mr={1}
               >
                 번역
               </Button>
-              <Button onClick={handleSpeakClick} leftIcon={<AiOutlineSound />}>
+              <Button
+                size={"sm"}
+                onClick={handleSpeakClick}
+                leftIcon={<AiOutlineSound />}
+              >
                 소리내어 읽기
               </Button>
             </>

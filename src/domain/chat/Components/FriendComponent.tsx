@@ -13,6 +13,7 @@ import {
   TabPanels,
   TabPanel,
   Divider,
+  Flex,
 } from "@chakra-ui/react";
 import { FC, useState } from "react";
 import { default_img } from "../../../common/utils/img";
@@ -45,15 +46,14 @@ const FriendComponent: FC = () => {
   });
 
   return (
-    <HStack spacing={8} align="start" padding={10}>
-      {/* Search Box */}
+    <VStack spacing={5}>
       <Box
-        w="350px"
+        w="600px"
         p={6}
         borderWidth="1px"
         borderRadius="lg"
         bg="white"
-        boxShadow="lg"
+        boxShadow="md"
       >
         <Text mb={4} fontWeight="bold" fontSize="lg" color="gray.700">
           사람 검색
@@ -75,12 +75,13 @@ const FriendComponent: FC = () => {
       {/* bg={"#73DA95"} */}
       {/* Friends List */}
       <Box
-        w="400px"
+        w="600px"
         p={6}
         borderWidth="1px"
         borderRadius="lg"
         bg="white"
-        boxShadow="lg"
+        boxShadow="md"
+        h={"395px"}
       >
         <Text mb={4} fontWeight="bold" fontSize="lg" color="gray.700">
           사람 목록
@@ -92,7 +93,7 @@ const FriendComponent: FC = () => {
         >
           <TabList mb={4} justifyContent="center">
             <Tab>모든 친구</Tab>
-            <Tab>온라인</Tab>
+            <Tab>요청 목록</Tab>
           </TabList>
           <Divider mb={4} />
           <TabPanels>
@@ -123,9 +124,19 @@ const FriendComponent: FC = () => {
                         </HStack>
                       </VStack>
                     </HStack>
-                    <Button size="sm" colorScheme="linkling" variant="outline">
-                      채팅
-                    </Button>
+                    <Flex>
+                      <Button
+                        size="sm"
+                        mr={2}
+                        colorScheme="linkling"
+                        variant="outline"
+                      >
+                        채팅 보내기
+                      </Button>
+                      <Button size="sm" colorScheme="red" variant="outline">
+                        삭제
+                      </Button>
+                    </Flex>
                   </HStack>
                 ))}
               </VStack>
@@ -133,7 +144,7 @@ const FriendComponent: FC = () => {
           </TabPanels>
         </Tabs>
       </Box>
-    </HStack>
+    </VStack>
   );
 };
 

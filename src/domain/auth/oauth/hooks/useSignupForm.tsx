@@ -168,10 +168,10 @@ export const useOauthSignUpForm = (email: string) => {
     try {
       if (response) {
         navigate(`/login`, { replace: true });
-        showToast("singup.success", "singup.successDescription", "success");
+        showToast("signup.success", "signup.successDescription", "success");
       }
     } catch {
-      showToast("singup.fail", "singup.failDescription", "error");
+      showToast("signup.fail", "signup.failDescription", "error");
     }
   };
 

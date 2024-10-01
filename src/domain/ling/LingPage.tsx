@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import AppBar from "../../common/components/AppBar/AppBar";
-import FriendComponent from "./components/FriendComponent";
+import FriendComponent from "../chat/Components/FriendComponent";
 import MatchingComponent from "./components/MatchingComponent";
 
 const LingPage = () => {
