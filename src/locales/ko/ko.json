@@ -123,5 +123,71 @@
     "successDes": "비밀번호가 성공적으로 변경되었습니다",
     "duplication": "비밀번호 중복",
     "duplicationDes": "기존 비밀번호와 현재 비밀번호가 동일합니다"
+  },
+  "time": {
+    "second": "초 전",
+    "minute": "분 전",
+    "time": "시간 전",
+    "day": "일 전",
+    "week": "주 전",
+    "month": "달 전",
+    "year": "년전"
+  },
+  "translate": {
+    "mode": "번역모드"
+  },
+  "friend": {
+    "deleteFriend": "친구 삭제",
+    "all": "모든 친구",
+    "matching": "랜덤 매칭",
+    "search": "검색",
+    "humanSearch": "사람 검색",
+    "list": "사람 목록",
+    "requestList": "요청 목록",
+    "online": "온라인",
+    "offline": "오프라인",
+    "sendChat": "채팅 보내기",
+    "delete": "삭제",
+    "idNicknameSearch": "아이디 또는 닉네임으로 검색"
+  },
+  "matching": {
+    "selectNation": "국적을 선택하세요",
+    "seclectLevel": "레벨을 선택하세요",
+    "upper": "나보다 높은 사람",
+    "same": "비슷한 사람",
+    "lower": "나보다 낮은 사람",
+    "start": "매칭 시작",
+    "re": "다시 매칭하기",
+    "loading": "친구를 찾는 중입니다",
+    "waiting": "잠시만 기다려 주세요",
+    "success": "매칭 완료",
+    "selectedNation": "선택한 국적",
+    "selectedLevel": "선택한 레벨",
+    "opponent": "매칭된 상대"
+  },
+  "country": {
+    "kr": "대한민국",
+    "us": "미국",
+    "jp": "일본",
+    "cn": "중국"
+  },
+  "chat": {
+    "messageInputPla": "메시지를 입력하세요"
+  },
+  "comment": {
+    "placeHolder": "댓글을 입력하세요",
+    "send": "댓글 달기",
+    "modify": "수정",
+    "delete": "삭제",
+    "cancel": "취소",
+    "commentModify": "댓글 수정",
+    "commentDelete": "댓글 삭제",
+    "deleteCheck": "정말로 이 댓글을 삭제하시겠습니까?",
+    "see": "개 댓글 보기",
+    "write": "댓글 작성하기"
+  },
+  "post": {
+    "postDelete": "게시물 삭제",
+    "deleteCheck": "정말로 이 게시물을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
   }
 }

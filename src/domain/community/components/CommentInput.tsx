@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { HStack, Input, Button } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 
 interface CommentInputProps {
   onCommentSubmit: (comment: string) => void;
 }
 
 const CommentInput: React.FC<CommentInputProps> = ({ onCommentSubmit }) => {
+  const { t } = useTranslation();
+
   const [comment, setComment] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,7 +27,7 @@ const CommentInput: React.FC<CommentInputProps> = ({ onCommentSubmit }) => {
       <Input
         height={"30px"}
         fontSize={"12px"}
-        placeholder="댓글을 입력하세요..."
+        placeholder={t(`comment.placeHolder`) + "..."}
         value={comment}
         onChange={handleInputChange}
         flex="1"
@@ -35,7 +38,7 @@ const CommentInput: React.FC<CommentInputProps> = ({ onCommentSubmit }) => {
         h={"30px"}
         onClick={handleSubmit}
       >
-        댓글 달기
+        {t(`comment.send`)}
       </Button>
     </HStack>
   );

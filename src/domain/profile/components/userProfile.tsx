@@ -159,6 +159,7 @@ const UserProfileComponent: FC = () => {
               onClick={async () => {
                 try {
                   await requestFriend(profile.user_id);
+                  window.location.reload();
                   showToast("친구 요청 성공", "ㄴㅇ", "success");
                 } catch (error) {
                   showToast("친구 요청 실패", "ㄴㅇ", "error");

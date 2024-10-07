@@ -26,7 +26,7 @@ import {
   AlertDialogOverlay,
   useDisclosure,
 } from "@chakra-ui/react";
-import { BsThreeDotsVertical } from "react-icons/bs"; // 점 3개 아이콘
+import { BsThreeDotsVertical } from "react-icons/bs";
 import { default_img } from "../../../common/utils/img";
 import { useNavigate } from "react-router-dom";
 import { fetcheImage } from "../../../common/utils/fetchImage";
@@ -34,24 +34,28 @@ import { getNicknameToken } from "../../../common/utils/nickname";
 import { getRelativeTime } from "../../../common/utils/getRelatevieTime";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { putComment, deleteComment } from "../api/CommetAPI";
+import { useTranslation } from "react-i18next";
 
 interface CommentProps {
   comment_id: number;
   comment_detail: string;
-  comment_owner: string;
+  comment_owner_id: string;
+  comment_owner_name: string;
   owner_img: string | undefined;
   comment_time: string;
-  onCommentChange: (type: string) => void; // New prop for re-fetching comments
+  onCommentChange: (type: string) => void;
 }
 
 const CommentItem: React.FC<CommentProps> = ({
   comment_id,
   comment_detail,
-  comment_owner,
+  comment_owner_id,
+  comment_owner_name,
   owner_img,
   comment_time,
   onCommentChange,
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [loadedOwnerImg, setLoadedOwnerImg] = useState<string | null>(null);
   const [editedComment, setEditedComment] = useState(comment_detail);
@@ -82,18 +86,16 @@ const CommentItem: React.FC<CommentProps> = ({
     loadOwnerImg();
   }, [owner_img]);
 
-  // 수정 로직
   const handleEdit = async () => {
     try {
       await putComment(comment_id, editedComment);
-      onEditModalClose(); // 모달 닫기
-      onCommentChange("put"); // Notify parent to refresh comments
+      onEditModalClose();
+      onCommentChange("put");
     } catch (error) {
       console.error("Failed to edit comment:", error);
     }
   };
 
-  // 삭제 로직
   const handleDelete = async () => {
     try {
       await deleteComment(comment_id);
@@ -106,7 +108,6 @@ const CommentItem: React.FC<CommentProps> = ({
 
   return (
     <>
-      {/* 댓글 아이템 */}
       <HStack spacing="2" align="start" mt={2}>
         <Avatar
           ml={2}
@@ -114,26 +115,32 @@ const CommentItem: React.FC<CommentProps> = ({
           src={loadedOwnerImg || default_img}
           cursor={"pointer"}
           onClick={() => {
-            navigate(`/${comment_owner}`);
+            navigate(`/${comment_owner_id}`);
           }}
         />
         <Flex flexDirection={"column"} align="start" w="full">
           <Flex w="full" justifyContent="space-between" alignItems={"center"}>
-            <Text
-              fontSize="sm"
-              fontWeight="bold"
-              cursor={"pointer"}
-              onClick={() => {
-                navigate(`/${comment_owner}`);
-              }}
-            >
-              {comment_owner}
-            </Text>
-            <Flex alignItems="center">
-              <Text fontSize="xs" color="gray.500" mr={2}>
-                {getRelativeTime(comment_time)}
+            <Flex alignItems={"center"}>
+              <Text
+                fontSize="sm"
+                fontWeight="bold"
+                cursor={"pointer"}
+                onClick={() => {
+                  navigate(`/${comment_owner_id}`);
+                }}
+              >
+                {comment_owner_name}
               </Text>
-              {comment_owner === nickname && (
+              <Text
+                ml={0.5}
+                fontSize={"14px"}
+                color={"gray"}
+                cursor={"pointer"}
+                onClick={() => navigate(`/${comment_owner_id}`)}
+              >
+                @{comment_owner_id}
+              </Text>
+              {comment_owner_id === nickname && (
                 <Menu>
                   <MenuButton
                     as={IconButton}
@@ -144,14 +151,19 @@ const CommentItem: React.FC<CommentProps> = ({
                   />
                   <MenuList fontSize={"md"}>
                     <MenuItem icon={<EditIcon />} onClick={onEditModalOpen}>
-                      수정
+                      {t(`comment.modify`)}
                     </MenuItem>
                     <MenuItem icon={<DeleteIcon />} onClick={onDeleteAlertOpen}>
-                      삭제
+                      {t(`comment.delete`)}
                     </MenuItem>
                   </MenuList>
                 </Menu>
               )}
+            </Flex>
+            <Flex alignItems="center">
+              <Text fontSize="xs" color="gray.500" mr={2}>
+                {getRelativeTime(comment_time)}
+              </Text>
             </Flex>
           </Flex>
           <Text fontSize="xs">{comment_detail}</Text>
@@ -162,7 +174,7 @@ const CommentItem: React.FC<CommentProps> = ({
       <Modal isOpen={isEditModalOpen} onClose={onEditModalClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>댓글 수정</ModalHeader>
+          <ModalHeader> {t(`comment.commentModify`)}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Input
@@ -172,10 +184,10 @@ const CommentItem: React.FC<CommentProps> = ({
           </ModalBody>
           <ModalFooter>
             <Button variant="ghost" onClick={onEditModalClose}>
-              취소
+              {t(`comment.cancel`)}
             </Button>
             <Button colorScheme="blue" onClick={handleEdit} ml={3}>
-              수정
+              {t(`comment.modify`)}
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -190,19 +202,17 @@ const CommentItem: React.FC<CommentProps> = ({
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              댓글 삭제
+              {t(`comment.commentDelete`)}
             </AlertDialogHeader>
 
-            <AlertDialogBody>
-              정말로 이 댓글을 삭제하시겠습니까?
-            </AlertDialogBody>
+            <AlertDialogBody>{t(`comment.deleteCheck`)} </AlertDialogBody>
 
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={onDeleteAlertClose}>
-                취소
+                {t(`comment.cancel`)}
               </Button>
               <Button colorScheme="red" onClick={handleDelete} ml={3}>
-                삭제
+                {t(`comment.delete`)}
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>

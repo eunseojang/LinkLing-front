@@ -1,149 +1,81 @@
+import { VStack } from "@chakra-ui/react";
+import { FC, useEffect, useState } from "react";
 import {
-  Box,
-  Input,
-  Button,
-  Text,
-  HStack,
-  VStack,
-  Avatar,
-  Badge,
-  Tab,
-  TabList,
-  Tabs,
-  TabPanels,
-  TabPanel,
-  Divider,
-  Flex,
-} from "@chakra-ui/react";
-import { FC, useState } from "react";
-import { default_img } from "../../../common/utils/img";
-
-interface Friend {
-  id: string;
-  name: string;
-  online: boolean;
-  avatarUrl?: string;
-}
-
-const friendsList: Friend[] = [
-  { id: "1", name: "김철수", online: true },
-  { id: "2", name: "이영희", online: false },
-  // Add more friends as needed
-];
+  FriendList as fetchFriendList,
+  FriendListRequest,
+  confirmFriend,
+  deleteFriend,
+  searchUser,
+  requestFriend,
+} from "../api/FriendAPI";
+import FriendSearch from "./FriendSearch";
+import SearchResults from "./SearchResults";
+import { Friend } from "../Utils/FriendUtils";
+import FriendList from "./FriendList";
+import FriendListContainer from "./FreindListContainer";
 
 const FriendComponent: FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<"all" | "online">("all");
+  const [friends, setFriends] = useState<Friend[]>([]);
+  const [friendRequests, setFriendRequests] = useState<Friend[]>([]);
+  const [searchResults, setSearchResults] = useState<Friend[]>([]);
 
+  // 친구 목록과 요청 목록 불러오기
+  useEffect(() => {
+    fetchFriendList().then(setFriends);
+    FriendListRequest().then(setFriendRequests);
+  }, []);
+
+  // 검색 필드 변경
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
 
-  const filteredFriends = friendsList.filter((friend) => {
-    const isMatchingName = friend.name.includes(searchTerm);
-    const isOnline = filter === "online" ? friend.online : true;
-    return isMatchingName && isOnline;
-  });
+  // 사용자 검색
+  const handleSearch = async () => {
+    const results = await searchUser(searchTerm);
+    setSearchResults(results);
+  };
+
+  // 친구 요청 보내기
+  const handleRequestFriend = async (id: string) => {
+    await requestFriend(id);
+    window.location.reload();
+  };
+
+  // 친구 요청 수락 및 거절
+  const handleConfirmRequest = async (id: string, confirm: boolean) => {
+    await confirmFriend(id, confirm);
+    window.location.reload();
+  };
+
+  // 친구 삭제
+  const handleDeleteFriend = async (id: string) => {
+    await deleteFriend(id);
+    window.location.reload();
+  };
 
   return (
-    <VStack spacing={5}>
-      <Box
-        w="600px"
-        p={6}
-        borderWidth="1px"
-        borderRadius="lg"
-        bg="white"
-        boxShadow="md"
-      >
-        <Text mb={4} fontWeight="bold" fontSize="lg" color="gray.700">
-          사람 검색
-        </Text>
-        <HStack>
-          <Input
-            value={searchTerm}
-            onChange={handleSearchChange}
-            placeholder="아이디 또는 닉네임으로 검색"
-            variant="outline"
-            focusBorderColor="green.400"
-            size="md"
-          />
-          <Button colorScheme="linkling" size="md">
-            검색
-          </Button>
-        </HStack>
-      </Box>
-      {/* bg={"#73DA95"} */}
-      {/* Friends List */}
-      <Box
-        w="600px"
-        p={6}
-        borderWidth="1px"
-        borderRadius="lg"
-        bg="white"
-        boxShadow="md"
-        h={"395px"}
-      >
-        <Text mb={4} fontWeight="bold" fontSize="lg" color="gray.700">
-          사람 목록
-        </Text>
-        <Tabs
-          variant="solid-rounded"
-          colorScheme="customGreen"
-          onChange={(index) => setFilter(index === 0 ? "all" : "online")}
-        >
-          <TabList mb={4} justifyContent="center">
-            <Tab>모든 친구</Tab>
-            <Tab>요청 목록</Tab>
-          </TabList>
-          <Divider mb={4} />
-          <TabPanels>
-            <TabPanel p={0}>
-              <VStack spacing={4} align="stretch">
-                {filteredFriends.map((friend) => (
-                  <HStack
-                    key={friend.id}
-                    justify="space-between"
-                    p={2}
-                    _hover={{ bg: "gray.50" }}
-                    borderRadius="md"
-                  >
-                    <HStack>
-                      <Avatar size="md" src={friend.avatarUrl || default_img} />
-                      <VStack spacing={0} align="start">
-                        <Text fontWeight="bold" color="gray.800">
-                          {friend.name}
-                        </Text>
-                        <HStack spacing={1}>
-                          <Badge
-                            colorScheme={friend.online ? "green" : "gray"}
-                            variant="subtle"
-                            fontSize="sm"
-                          >
-                            {friend.online ? "온라인" : "오프라인"}
-                          </Badge>
-                        </HStack>
-                      </VStack>
-                    </HStack>
-                    <Flex>
-                      <Button
-                        size="sm"
-                        mr={2}
-                        colorScheme="linkling"
-                        variant="outline"
-                      >
-                        채팅 보내기
-                      </Button>
-                      <Button size="sm" colorScheme="red" variant="outline">
-                        삭제
-                      </Button>
-                    </Flex>
-                  </HStack>
-                ))}
-              </VStack>
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-      </Box>
+    <VStack spacing={4}>
+      {/* 검색 컴포넌트 */}
+      <FriendSearch
+        searchTerm={searchTerm}
+        handleSearchChange={handleSearchChange}
+        handleSearch={handleSearch}
+      />
+      {/* 검색 결과 컴포넌트 */}
+      <SearchResults
+        searchResults={searchResults}
+        handleRequestFriend={handleRequestFriend}
+      />
+      {/* 친구 목록 및 요청 컴포넌트 */}
+      <FriendListContainer
+        friends={friends}
+        friendRequests={friendRequests}
+        handleConfirmRequest={handleConfirmRequest}
+        deleteFriend={handleDeleteFriend}
+      />
     </VStack>
   );
 };

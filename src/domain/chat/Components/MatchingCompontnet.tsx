@@ -10,8 +10,10 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { default_img } from "../../../common/utils/img";
+import { useTranslation } from "react-i18next";
 
 const MatchingComponent = () => {
+  const { t } = useTranslation();
   const [isMatched, setIsMatched] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedLevel, setSelectedLevel] = useState("");
@@ -55,12 +57,12 @@ const MatchingComponent = () => {
             />
           </Center>
           <Text fontSize="2xl" fontWeight="extrabold">
-            랜덤 매칭
+            {t(`friend.matching`)}
           </Text>
           {!isMatched && !isLoading ? (
             <>
               <Select
-                placeholder="🌍 국적을 선택하세요"
+                placeholder={"🌍" + t(`matching.selectNation`)}
                 value={selectedCountry}
                 onChange={(e) => setSelectedCountry(e.target.value)}
                 borderColor="green.500"
@@ -71,14 +73,14 @@ const MatchingComponent = () => {
                 color="gray.700"
                 mt={3}
               >
-                <option value="KR">🇰🇷 대한민국</option>
-                <option value="US">🇺🇸 미국</option>
-                <option value="JP">🇯🇵 일본</option>
-                <option value="CN">🇨🇳 중국</option>
+                <option value="KR">🇰🇷 {t(`country.kr`)}</option>
+                <option value="US">🇺🇸 {t(`country.us`)}</option>
+                <option value="JP">🇯🇵 {t(`country.jp`)}</option>
+                <option value="CN">🇨🇳 {t(`country.cn`)}</option>
               </Select>
 
               <Select
-                placeholder="⚖️ 레벨을 선택하세요"
+                placeholder={"⚖️" + t(`matching.seclectLevel`)}
                 value={selectedLevel}
                 onChange={(e) => setSelectedLevel(e.target.value)}
                 borderColor="green.500"
@@ -89,9 +91,9 @@ const MatchingComponent = () => {
                 color="gray.700"
                 mt={4}
               >
-                <option value="low">⬇️ 나보다 낮은 사람</option>
-                <option value="similar">➡️ 비슷한 사람</option>
-                <option value="high">⬆️ 나보다 높은 사람</option>
+                <option value="low">{"⬇️" + t(`matching.lower`)}</option>
+                <option value="similar">{"➡️" + t(`matching.same`)}</option>
+                <option value="high">={"⬆️" + t(`matching.upper`)}</option>
               </Select>
 
               <Button
@@ -106,14 +108,13 @@ const MatchingComponent = () => {
                   bgGradient: "linear(to-r,  #73DA95, green.600)",
                 }}
               >
-                매칭 시작
+                {t(`matching.start`)}
               </Button>
             </>
           ) : isLoading ? (
-            // 매칭 중일 때 대기 화면
             <>
               <Text fontSize="lg" color="gray.600">
-                친구를 찾는 중입니다... 🔍
+                {t(`matching.loading`)}... 🔍
               </Text>
               <Spinner
                 thickness="4px"
@@ -123,35 +124,34 @@ const MatchingComponent = () => {
                 size="xl"
               />
               <Text fontSize="md" color="gray.500" mt={4}>
-                잠시만 기다려 주세요... ⏳
+                {t(`matching.waiting`)}... ⏳
               </Text>
             </>
           ) : (
-            // 매칭 완료 화면
             <>
               <Text fontSize="lg" color="blue.700" fontWeight="bold">
-                매칭 완료! 🎉
+                {t(`matching.success`)}! 🎉
               </Text>
               <Text fontSize="md" color="gray.600">
-                선택한 국적:{" "}
+                {t(`matching.selectedNation`)}:{" "}
                 {selectedCountry === "KR"
-                  ? "🇰🇷 대한민국"
+                  ? "🇰🇷 " + t(`country.kr`)
                   : selectedCountry === "US"
-                  ? "🇺🇸 미국"
+                  ? "🇺🇸 " + t(`country.us`)
                   : selectedCountry === "JP"
-                  ? "🇯🇵 일본"
-                  : "🇨🇳 중국"}
+                  ? "🇯🇵 " + t(`country.jp`)
+                  : "🇨🇳 " + t(`country.cn`)}
               </Text>
               <Text fontSize="md" color="gray.600">
-                선택한 레벨:{" "}
+                {t(`matching.selectedLevel`)}:{" "}
                 {selectedLevel === "low"
-                  ? "나보다 낮은 사람 ⬇️"
+                  ? t(`matching.lower`) + "⬇️"
                   : selectedLevel === "similar"
-                  ? "➡️ 비슷한 사람"
-                  : "나보다 높은 사람 ⬆️"}
+                  ? t(`matching.same`) + "➡️"
+                  : t(`matching.upper`) + "⬆️"}
               </Text>
               <Text fontSize="md" color="gray.600">
-                매칭된 상대: John Doe
+                {t(`matching.opponent`)}: John Doe
               </Text>
               <Button
                 colorScheme="teal"
@@ -165,7 +165,7 @@ const MatchingComponent = () => {
                   bgGradient: "linear(to-r,  #73DA95, green.600)",
                 }}
               >
-                다시 매칭하기
+                {t(`matching.re`)}
               </Button>
             </>
           )}

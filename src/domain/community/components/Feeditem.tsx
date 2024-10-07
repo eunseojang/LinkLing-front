@@ -21,6 +21,7 @@ import {
   AlertDialogOverlay,
   Button,
   useDisclosure,
+  Flex,
 } from "@chakra-ui/react";
 import { AiOutlineHeart, AiOutlineMessage } from "react-icons/ai";
 import { BsThreeDotsVertical } from "react-icons/bs"; // 점 3개 아이콘
@@ -37,17 +38,20 @@ import { getNicknameToken } from "../../../common/utils/nickname"; // nickname �
 import { getComment, postComment } from "../api/CommetAPI";
 import { deletePost } from "../api/PostAPI"; // API for deleting the post
 import PostEditForm from "./PostEditForm"; // Import the PostEditForm for editing
+import { useTranslation } from "react-i18next";
 
 const FeedItem: React.FC<PostData> = ({
   post_id,
   post_img,
   post_detail,
-  post_owner,
+  post_owner_id,
+  post_owner_name,
   post_time,
   post_like,
   user_img,
   post_comment,
 }) => {
+  const { t } = useTranslation();
   const [loadedPostImg, setLoadedPostImg] = useState<string | null>(null);
   const [loadedUserImg, setLoadedUserImg] = useState<string | null>(null);
   const [showComments, setShowComments] = useState(false);
@@ -63,7 +67,7 @@ const FeedItem: React.FC<PostData> = ({
     isOpen: isDeleteAlertOpen,
     onOpen: onDeleteAlertOpen,
     onClose: onDeleteAlertClose,
-  } = useDisclosure(); // Delete alert state
+  } = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement>(null); // Ref for the delete confirmation
   const navigate = useNavigate();
   const nickname = getNicknameToken(); // nickname 토큰 가져오기
@@ -191,21 +195,32 @@ const FeedItem: React.FC<PostData> = ({
           <Avatar
             src={loadedUserImg || default_img}
             cursor={"pointer"}
-            onClick={() => navigate(`/${post_owner}`)}
+            onClick={() => navigate(`/${post_owner_id}`)}
           />
           <VStack align="start" spacing="0" flex="1">
-            <Text
-              fontWeight="bold"
-              cursor={"pointer"}
-              onClick={() => navigate(`/${post_owner}`)}
-            >
-              {post_owner}
-            </Text>
+            <Flex alignItems={"end"}>
+              <Text
+                fontWeight="bold"
+                cursor={"pointer"}
+                onClick={() => navigate(`/${post_owner_id}`)}
+              >
+                {post_owner_name}
+              </Text>
+              <Text
+                ml={0.5}
+                fontSize={"14px"}
+                color={"gray"}
+                cursor={"pointer"}
+                onClick={() => navigate(`/${post_owner_id}`)}
+              >
+                @{post_owner_id}
+              </Text>
+            </Flex>
             <Text fontSize="sm" color="gray.500">
               {getRelativeTime(post_time)}
             </Text>
           </VStack>
-          {post_owner === nickname && (
+          {post_owner_id === nickname && (
             <Menu>
               <MenuButton
                 as={IconButton}
@@ -219,10 +234,10 @@ const FeedItem: React.FC<PostData> = ({
                   icon={<EditIcon />}
                   onClick={() => setIsEditModalOpen(true)}
                 >
-                  수정
+                  {t(`comment.modify`)}
                 </MenuItem>
                 <MenuItem icon={<DeleteIcon />} onClick={onDeleteAlertOpen}>
-                  삭제
+                  {t(`comment.delete`)}
                 </MenuItem>
               </MenuList>
             </Menu>
@@ -267,7 +282,9 @@ const FeedItem: React.FC<PostData> = ({
             >
               <Icon as={AiOutlineMessage} boxSize="6" />
               <Text variant="link" _groupHover={{ color: "linkling.400" }}>
-                {commentCount ? `${commentCount}개 댓글 보기` : `댓글 작성하기`}
+                {commentCount
+                  ? `${commentCount}` + t(`comment.see`)
+                  : t(`comment.write`)}
               </Text>
             </HStack>
           </HStack>
@@ -312,17 +329,15 @@ const FeedItem: React.FC<PostData> = ({
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              게시물 삭제
+              {t(`post.postDelete`)}
             </AlertDialogHeader>
-            <AlertDialogBody>
-              정말로 이 게시물을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
-            </AlertDialogBody>
+            <AlertDialogBody>{t(`post.deleteCheck`)}</AlertDialogBody>
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={onDeleteAlertClose}>
-                취소
+                {t(`comment.cancel`)}
               </Button>
               <Button colorScheme="red" onClick={handleDeletePost} ml={3}>
-                삭제
+                {t(`comment.delete`)}
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>

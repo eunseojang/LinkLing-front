@@ -20,7 +20,6 @@ const Feed: React.FC = () => {
       const result = await getPost(pageNumber);
       if (pageNumber === 0) {
         setData(result);
-        console.log(result);
       } else {
         setData((prevData) => [...prevData, ...result]);
       }

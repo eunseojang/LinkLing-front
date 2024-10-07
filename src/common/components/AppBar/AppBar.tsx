@@ -13,7 +13,6 @@ import {
 } from "@chakra-ui/react";
 import {
   FaUserCircle,
-  FaLink,
   FaUsers,
   FaCommentAlt,
   FaCog,
@@ -34,7 +33,6 @@ const AppBar: React.FC = () => {
   const menuItems = [
     { label: `menu.linkchat`, icon: FaCommentAlt, path: "/linkchat" },
     { label: `menu.community`, icon: FaUsers, path: "/community" },
-    { label: `menu.ling`, icon: FaLink, path: "/ling" },
     {
       label: `menu.profile`,
       icon: FaUserCircle,
@@ -94,7 +92,6 @@ const AppBar: React.FC = () => {
         </Flex>
       ) : (
         <Flex justifyContent="space-between" align="center">
-          {/* 모바일일 때는 MenuList로, 그렇지 않을 때는 기존 버튼 배열 */}
           {!isMobile && (
             <Flex mr={"10px"}>
               {menuItems.map((item, index) => (

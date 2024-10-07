@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { User } from "../Utils/ChatUtils";
 import { FiMoreVertical } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 
 interface ChatAppBarProps {
   selectedUser: User;
@@ -24,6 +25,8 @@ function ChatAppBar({
   translateMode,
   setTranslateMode,
 }: ChatAppBarProps) {
+  const { t } = useTranslation();
+
   const handleRemoveFriend = (user: User) => {
     console.log(`Removing ${user.name} from friends list.`);
   };
@@ -54,7 +57,7 @@ function ChatAppBar({
       <Flex>
         <HStack>
           <Text fontSize="md" fontWeight="semibold">
-            번역 모드
+            {t(`translate.mode`)}
           </Text>
           <Switch
             isChecked={translateMode}
@@ -74,7 +77,7 @@ function ChatAppBar({
           />
           <MenuList>
             <MenuItem onClick={() => handleRemoveFriend(selectedUser)}>
-              친구 삭제
+              {t(`friend.deleteFriend`)}
             </MenuItem>
           </MenuList>
         </Menu>

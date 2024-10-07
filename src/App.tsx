@@ -14,7 +14,6 @@ import FindPasswordPage from "./domain/auth/findPassword/FindPasswordPage";
 import SettingPage from "./domain/setting/SettingPage";
 import SpeechPage from "./domain/chat/speech";
 import SpeechToText from "./domain/chat/stt";
-import LingPage from "./domain/ling/LingPage";
 import TestPage from "./common/TestPage";
 import { useTextSelection } from "./domain/community/hooks/useTextSelection";
 import { translateText } from "./common/utils/translate";
@@ -82,10 +81,6 @@ function App() {
           <Route
             path="/community"
             element={<PrivateRoute element={<CommunityPage />} />}
-          />
-          <Route
-            path="/ling"
-            element={<PrivateRoute element={<LingPage />} />}
           />
           <Route
             path="/linkchat"

@@ -2,12 +2,13 @@ export interface PostData {
   post_id: number;
   post_img: string | undefined;
   post_detail: string;
-  post_owner: string;
   post_time: string;
   post_like: number;
   user_img: string | undefined;
   user_nation: string;
   post_comment: number;
+  post_owner_id: string;
+  post_owner_name: string;
 }
 
 export const commentsData = [
@@ -24,44 +25,5 @@ export const commentsData = [
     comment_owner: "eunseo",
     owner_img: undefined,
     comment_time: "2024-08-26",
-  },
-];
-
-export const feedData: PostData[] = [
-  {
-    post_id: 1,
-    post_img: undefined,
-    post_detail:
-      "Popover에 번역된 텍스트를 표시하려면 번역 버튼을 클릭했을 때, Popover의 내용을 업데이트해서 번역된 텍스트를 보여주면 됩니다. 다음 코드는 PopoverBody 내에 번역된 텍스트를 출력하는 방식으로 수정한 것입니다.",
-    post_owner: "eunseo",
-    post_time: "2024-08-25",
-    post_like: 9999,
-    user_img: undefined,
-    user_nation: "KR",
-    post_comment: 3,
-  },
-  {
-    post_id: 2,
-    post_img:
-      "https://health.chosun.com/site/data/img_dir/2023/01/10/2023011001501_0.jpg",
-    post_detail: "This is the second post",
-    post_owner: "id3",
-    post_time: "2024-08-25",
-    post_like: 9999999,
-    user_img:
-      "https://health.chosun.com/site/data/img_dir/2023/01/10/2023011001501_0.jpg",
-    user_nation: "KR",
-    post_comment: 5,
-  },
-  {
-    post_id: 3,
-    post_img: "https://img.siksinhot.com/place/1467510439034092.jpg",
-    post_detail: "こんにちは。今日は金曜日です。",
-    post_owner: "id3",
-    post_time: "2024-08-25",
-    post_like: 500,
-    user_img: undefined,
-    user_nation: "KR",
-    post_comment: 5,
   },
 ];

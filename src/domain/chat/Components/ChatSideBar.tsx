@@ -8,6 +8,7 @@ import {
   Badge,
 } from "@chakra-ui/react";
 import { User } from "../Utils/ChatUtils";
+import { useTranslation } from "react-i18next";
 
 interface ChatSideBarProps {
   selectedUser: User | null;
@@ -15,6 +16,8 @@ interface ChatSideBarProps {
 }
 
 function ChatSideBar({ selectedUser, setSelectedUser }: ChatSideBarProps) {
+  const { t } = useTranslation();
+
   const users: User[] = [
     { id: "id1", name: "Amma", avatar: "", unreadMessages: 2 },
     { id: "id2", name: "henry Kim", avatar: "", unreadMessages: 0 },
@@ -40,7 +43,7 @@ function ChatSideBar({ selectedUser, setSelectedUser }: ChatSideBarProps) {
         _hover={{ bg: "linkling.300" }}
         onClick={() => setSelectedUser(null)}
       >
-        랜덤 매칭
+        {t(`friend.matching`)}
       </Button>
       <VStack align="stretch" spacing={3}>
         <Button
@@ -50,7 +53,7 @@ function ChatSideBar({ selectedUser, setSelectedUser }: ChatSideBarProps) {
           borderRadius="lg"
           _hover={{ bg: "customGreen.100" }}
         >
-          모든 친구
+          {t(`friend.all`)}
         </Button>
         {users.map((user) => (
           <Button
