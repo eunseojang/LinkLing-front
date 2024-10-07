@@ -11,12 +11,10 @@ import {
 import FriendSearch from "./FriendSearch";
 import SearchResults from "./SearchResults";
 import { Friend } from "../Utils/FriendUtils";
-import FriendList from "./FriendList";
 import FriendListContainer from "./FreindListContainer";
 
 const FriendComponent: FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState<"all" | "online">("all");
   const [friends, setFriends] = useState<Friend[]>([]);
   const [friendRequests, setFriendRequests] = useState<Friend[]>([]);
   const [searchResults, setSearchResults] = useState<Friend[]>([]);
