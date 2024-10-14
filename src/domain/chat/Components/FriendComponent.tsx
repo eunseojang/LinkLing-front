@@ -19,7 +19,6 @@ const FriendComponent: FC = () => {
   const [friendRequests, setFriendRequests] = useState<Friend[]>([]);
   const [searchResults, setSearchResults] = useState<Friend[]>([]);
 
-  // 친구 목록과 요청 목록 불러오기
   useEffect(() => {
     fetchFriendList().then(setFriends);
     FriendListRequest().then(setFriendRequests);

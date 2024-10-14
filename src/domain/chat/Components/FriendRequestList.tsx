@@ -22,7 +22,6 @@ const FriendRequestList: FC<FriendRequestListProps> = ({
   useEffect(() => {
     const loadImages = async () => {
       const imagePromises = friendRequests.map(async (request) => {
-        // 이미지가 null이거나 비어있으면 기본 이미지를 사용
         const image = request.userImg
           ? await fetcheImage(request.userImg)
           : default_img;
@@ -33,7 +32,6 @@ const FriendRequestList: FC<FriendRequestListProps> = ({
       const imageMap = images.reduce((acc, cur) => {
         const userId = cur.userId; // userId를 추출
         if (userId) {
-          // userId가 null이 아닐 때만 추가
           acc[userId] = cur.image || default_img;
         }
         return acc;

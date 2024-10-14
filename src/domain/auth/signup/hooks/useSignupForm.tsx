@@ -74,7 +74,7 @@ export const useSignUpForm = () => {
 
   const validateId = () => {
     const { id } = values;
-    const idRegex = /^(?=.*[a-zA-Z])[a-zA-Z0-9.]{5,}$/;
+    const idRegex = /^(?=.*[a-zA-Z])[a-zA-Z0-9._]{5,}$/;
 
     if (!idRegex.test(id)) {
       setErrors((prev) => ({
