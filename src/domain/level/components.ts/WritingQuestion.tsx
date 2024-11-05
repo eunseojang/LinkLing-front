@@ -12,6 +12,9 @@ const WritingQuestion: React.FC<WritingQuestionProps> = ({
   handleAnswer,
 }) => (
   <VStack spacing={4}>
+    <Text color={"red"} mb={3}>
+      주어진 질문에 대해서 답변하세요.
+    </Text>
     {questions.map((question, index) => (
       <VStack
         key={index}
