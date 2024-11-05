@@ -196,7 +196,7 @@ function QuestionTest({ langInfo, setSelectedLang }: QuestionTestProps) {
       // 최종 true 개수 합산
       const total = trueCountWriting + totalTrueCount;
       setTotal(total);
-      if (total >= 0) {
+      if (total >= 18) {
         updateUserLevel(langInfo.user_lang);
       }
       console.log("총 true 개수:", total);
@@ -212,6 +212,7 @@ function QuestionTest({ langInfo, setSelectedLang }: QuestionTestProps) {
   const restart = () => {
     setSelectedLang(null);
     setShowResults(false);
+    window.location.reload();
   };
   if (loading) return <Text>Loading questions...</Text>;
 
