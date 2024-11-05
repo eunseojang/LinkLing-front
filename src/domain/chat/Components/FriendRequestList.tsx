@@ -1,7 +1,6 @@
 import { VStack, HStack, Avatar, Button, Text } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Friend } from "../Utils/FriendUtils";
 import { fetcheImage } from "../../../common/utils/fetchImage"; // 이미지 fetching 함수 import
 import { default_img } from "../../../common/utils/img"; // 기본 이미지 import
 
