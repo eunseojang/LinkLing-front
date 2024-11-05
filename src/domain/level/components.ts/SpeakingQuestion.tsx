@@ -147,7 +147,6 @@ const SpeakingQuestion: React.FC<SpeakingQuestionProps> = ({
       const isCorrect = similarity >= 70;
 
       handleAnswer(index, isCorrect);
-
     };
 
     recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
@@ -184,7 +183,7 @@ const SpeakingQuestion: React.FC<SpeakingQuestionProps> = ({
       }
     } catch (error) {
       console.error("Toggle listening error:", error);
-   
+
       cleanupRecognition(index);
     }
   };
@@ -201,7 +200,7 @@ const SpeakingQuestion: React.FC<SpeakingQuestionProps> = ({
 
   return (
     <VStack spacing={4}>
-      {questions.map((question, index) => (
+      {questions.map((_, index) => (
         <VStack key={index} spacing={4} align="stretch" width="100%">
           <Text fontSize="xl" fontWeight="bold">
             말하기 문제 {index + 1}번
