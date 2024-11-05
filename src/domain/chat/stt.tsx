@@ -10,33 +10,33 @@ import {
   FormControl,
   FormLabel,
 } from "@chakra-ui/react";
-interface SpeechRecognitionEvent extends Event {
+export interface SpeechRecognitionEvent extends Event {
   results: SpeechRecognitionResultList;
   resultIndex: number;
 }
 
-interface SpeechRecognitionResultList {
+export interface SpeechRecognitionResultList {
   [index: number]: SpeechRecognitionResult;
   length: number;
 }
 
-interface SpeechRecognitionResult {
+export interface SpeechRecognitionResult {
   [index: number]: SpeechRecognitionAlternative;
   isFinal: boolean;
   length: number;
 }
 
-interface SpeechRecognitionAlternative {
+export interface SpeechRecognitionAlternative {
   transcript: string;
   confidence: number;
 }
 
-interface SpeechRecognitionErrorEvent extends Event {
+export interface SpeechRecognitionErrorEvent extends Event {
   error: string;
   message: string;
 }
 
-interface SpeechRecognition extends EventTarget {
+export interface SpeechRecognition extends EventTarget {
   continuous: boolean;
   interimResults: boolean;
   lang: string;
@@ -47,7 +47,7 @@ interface SpeechRecognition extends EventTarget {
   stop: () => void;
 }
 
-type SpeechRecognitionConstructor = new () => SpeechRecognition;
+export type SpeechRecognitionConstructor = new () => SpeechRecognition;
 
 declare global {
   interface Window {

@@ -1,7 +1,7 @@
 export function detectDominantLanguage(text: string): string {
   const koreanRange = /[\uAC00-\uD7A3]/g;
   const englishRange = /[A-Za-z]/g;
-  const japaneseRange = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FBF]/g;
+  const japaneseRange = /[\u3040-\u309F\u30A0-\u30FF]/g; // 히라가나와 가타카나만 포함
   const chineseRange = /[\u4E00-\u9FFF]/g;
 
   const koreanCount = (text.match(koreanRange) || []).length;

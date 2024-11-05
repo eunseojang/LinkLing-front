@@ -7,6 +7,7 @@ import {
   TabPanels,
   TabPanel,
   Divider,
+  Badge,
 } from "@chakra-ui/react";
 import { FC, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -52,7 +53,14 @@ const FriendListContainer: FC<FriendListContainerProps> = ({
       >
         <TabList mb={4} justifyContent="center">
           <Tab>{t(`friend.all`)}</Tab>
-          <Tab>{t(`friend.requestList`)}</Tab>
+          <Tab>
+            {t(`friend.requestList`)}
+            {friendRequests.length > 0 && (
+              <Badge ml={2} colorScheme="red" borderRadius="full">
+                {friendRequests.length}
+              </Badge>
+            )}
+          </Tab>
         </TabList>
         <Divider mb={4} />
         <TabPanels>

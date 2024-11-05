@@ -1,4 +1,12 @@
-import { VStack, HStack, Avatar, Badge, Button, Text } from "@chakra-ui/react";
+import {
+  VStack,
+  HStack,
+  Avatar,
+  Badge,
+  Button,
+  Text,
+  Flex,
+} from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Friend } from "../Utils/FriendUtils";
@@ -57,7 +65,7 @@ const FriendList: FC<FriendListProps> = ({
           _hover={{ bg: "gray.50" }}
           borderRadius="md"
           onClick={() => {
-            navigate(friend.userId);
+            navigate(`/${friend.userId}`);
           }}
         >
           <HStack>
@@ -66,9 +74,20 @@ const FriendList: FC<FriendListProps> = ({
               src={loadedImages[friend.userId] ?? default_img} // 이미지가 없을 경우 기본 이미지 사용
             />
             <VStack spacing={0} align="start">
-              <Text fontWeight="bold" color="gray.800">
-                {friend.userName}
-              </Text>
+              <Flex>
+                <Text fontWeight="bold" color="gray.800">
+                  {friend.userName}
+                </Text>
+                <Text
+                  fontSize={"10px"}
+                  fontWeight="bold"
+                  ml={1}
+                  mt={1}
+                  color="gray.500"
+                >
+                  @{friend.userId}
+                </Text>
+              </Flex>
               <Badge
                 colorScheme={friend.online ? "green" : "gray"}
                 variant="subtle"
@@ -83,7 +102,7 @@ const FriendList: FC<FriendListProps> = ({
             colorScheme="red"
             variant="outline"
             onClick={(e) => {
-              e.stopPropagation(); // 버튼 클릭 시 HStack의 onClick이 호출되지 않도록 방지
+              e.stopPropagation();
               deleteFriend(friend.userId);
             }}
           >

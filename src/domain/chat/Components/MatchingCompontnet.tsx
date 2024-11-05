@@ -92,8 +92,8 @@ const MatchingComponent = () => {
                 mt={4}
               >
                 <option value="low">{"⬇️" + t(`matching.lower`)}</option>
-                <option value="similar">{"➡️" + t(`matching.same`)}</option>
-                <option value="high">={"⬆️" + t(`matching.upper`)}</option>
+                <option value="ignore">{t(`matching.ignore`)}</option>
+                <option value="high">{"⬆️" + t(`matching.upper`)}</option>
               </Select>
 
               <Button
@@ -146,8 +146,8 @@ const MatchingComponent = () => {
                 {t(`matching.selectedLevel`)}:{" "}
                 {selectedLevel === "low"
                   ? t(`matching.lower`) + "⬇️"
-                  : selectedLevel === "similar"
-                  ? t(`matching.same`) + "➡️"
+                  : selectedLevel === "ignore"
+                  ? t(`matching.ignore`)
                   : t(`matching.upper`) + "⬆️"}
               </Text>
               <Text fontSize="md" color="gray.600">

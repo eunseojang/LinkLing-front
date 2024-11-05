@@ -17,8 +17,8 @@ import MatchingCard2 from "./MatingCard2";
 const slides = [
   {
     title: "🌐 글로벌 커뮤니티",
-    description: "다양한 문화와 언어를 가진 사람들과 함께 배우세요.",
-    image: "/home1.jpg",
+    description: "다양한 문화와 언어를 가진 사람들과 함께 배우고 소통하세요.",
+    image: "/home1.png",
     buttonText: "커뮤니티 참여",
   },
   {
@@ -28,7 +28,7 @@ const slides = [
     buttonText: "지금 시작하기",
   },
   {
-    title: "🎙️ 발음 측정 테스트",
+    title: "🎙️ 레벨 측정 테스트",
     description:
       "당신의 발음을 들어보고 상대방에게 제대로 전달될 수 있는 레벨인지 확인합니다.",
     image: "/home2.png",
@@ -253,7 +253,7 @@ export default function HomeForm() {
             color="customBlack"
             lineHeight="tall"
           >
-            LinkLing과 함께라면 언어학습의 한계는 없습니다.
+            LinkLing과 함께 언어능력의 상승을 이루세요.
           </Text>
         </Box>
       </VStack>
@@ -262,7 +262,7 @@ export default function HomeForm() {
       <Box as="footer" padding="20px" backgroundColor="#333333">
         <Box textAlign="center">
           <Text color={"#111111"}>
-            © 2024 LinkLing. 010-1111-2222. (주) 링크링 <br />
+            © 2024 LinkLing. (주) 링크링 <br />
             창의융합프로젝트1 금오공과대학교 컴퓨터웨어소프트웨어공학과
           </Text>
         </Box>

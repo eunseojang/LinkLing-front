@@ -14,24 +14,24 @@ import FindPasswordPage from "./domain/auth/findPassword/FindPasswordPage";
 import SettingPage from "./domain/setting/SettingPage";
 import SpeechPage from "./domain/chat/speech";
 import SpeechToText from "./domain/chat/stt";
-import TestPage from "./common/TestPage";
 import { useTextSelection } from "./domain/community/hooks/useTextSelection";
 import { translateText } from "./common/utils/translate";
 import { useTranslation } from "react-i18next";
 import { Box } from "@chakra-ui/react";
 import PopoverMenu from "./domain/community/components/PopoverMenu";
 import { detectDominantLanguage } from "./common/utils/language";
+import LevelTestPage from "./domain/level/LevelTestPage";
 
 function App() {
   const { checkAuth, isAuthenticated } = useAuthStore();
   const [initialized, setInitialized] = useState(false);
-
   const [translatedText, setTranslatedText] = useState<string | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { selectedText, setMenuPosition, menuPosition, handleTextSelection } =
     useTextSelection(containerRef);
   const { i18n } = useTranslation();
+  const socketRef = useRef<WebSocket | null>(null); // WebSocket 인스턴스를 저장할 ref
 
   useEffect(() => {
     const authenticate = () => {
@@ -41,6 +41,50 @@ function App() {
 
     authenticate();
   }, [checkAuth]);
+
+  useEffect(() => {
+    if (
+      !socketRef.current ||
+      socketRef.current.readyState === WebSocket.CLOSED
+    ) {
+      const socket = new WebSocket(
+        `wss://unbiased-evenly-worm.ngrok-free.app/ping`
+      );
+      socketRef.current = socket;
+
+      socket.onopen = function () {
+        console.log("WebSocket connection established");
+        setInterval(() => {
+          if (socket.readyState === WebSocket.OPEN) {
+            socket.send("ping:" + localStorage.getItem("accessToken"));
+            console.log("ping");
+          }
+        }, 60000);
+      };
+
+      socket.onmessage = function (event) {
+        console.log("Message from server: ", event.data);
+      };
+
+      socket.onclose = function (event) {
+        console.log("WebSocket connection closed", event);
+        socketRef.current = null;
+      };
+
+      socket.onerror = function (event) {
+        console.error("WebSocket error observed: ", event);
+      };
+    }
+
+    return () => {
+      if (
+        socketRef.current &&
+        socketRef.current.readyState !== WebSocket.CLOSED
+      ) {
+        socketRef.current.close();
+      }
+    };
+  }, []);
 
   if (!initialized) {
     return null;
@@ -58,6 +102,10 @@ function App() {
       const langCode = detectDominantLanguage(selectedText);
       const utterance = new SpeechSynthesisUtterance(selectedText);
       utterance.lang = langCode;
+
+      utterance.onend = () => console.log("발음이 완료되었습니다.");
+
+      speechSynthesis.cancel();
       speechSynthesis.speak(utterance);
     }
   };
@@ -71,8 +119,6 @@ function App() {
     <Box onMouseUp={handleTextSelectionWrapper} ref={containerRef}>
       <BrowserRouter>
         <Routes>
-          <Route path="/test" element={<TestPage />} />
-
           <Route path="/" element={<HomePage />} />
           <Route
             path="/:nickName"
@@ -81,6 +127,10 @@ function App() {
           <Route
             path="/community"
             element={<PrivateRoute element={<CommunityPage />} />}
+          />
+          <Route
+            path="/leveltest"
+            element={<PrivateRoute element={<LevelTestPage />} />}
           />
           <Route
             path="/linkchat"

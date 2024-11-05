@@ -3,8 +3,10 @@ import axiosInstance from "../../../common/api/axiosInstance";
 //유저검색
 export const searchUser = async (target: string) => {
   try {
-    const response = await axiosInstance.get(`/search-user?target=${target}`);
-    return response.data;
+    const response = await axiosInstance.get(
+      `/profile/search-user?target=${target}`
+    );
+    return response.data.data.results;
   } catch (error) {
     console.error(error);
     throw error;

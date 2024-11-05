@@ -1,8 +1,8 @@
 const languageMap: Record<string, string> = {
-  "ko": "KO",
-  "en": "EN",
-  "ja": "JA",
-  "zh": "ZH",
+  ko: "KO",
+  en: "EN",
+  ja: "JA",
+  zh: "ZH",
 };
 
 const getDeepLLanguageCode = (userLangCode: string): string => {
@@ -12,6 +12,10 @@ const getDeepLLanguageCode = (userLangCode: string): string => {
 export const translateText = async (text: string, targetLang: string) => {
   const apiKey = "47b17ad1-29bd-4bdc-bb61-30309307aaf9:fx";
   const url = `https://api-free.deepl.com/v2/translate`;
+
+  if (targetLang === "CN") {
+    targetLang = "zh";
+  }
 
   const deepLLangCode = getDeepLLanguageCode(targetLang);
 

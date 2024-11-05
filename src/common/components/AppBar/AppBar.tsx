@@ -16,6 +16,7 @@ import {
   FaUsers,
   FaCommentAlt,
   FaCog,
+  FaGraduationCap,
 } from "react-icons/fa";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
@@ -133,6 +134,12 @@ const AppBar: React.FC = () => {
                     {t(item.label)}
                   </MenuItem>
                 ))}
+              <MenuItem
+                icon={<FaGraduationCap />}
+                onClick={() => navigate("/leveltest")}
+              >
+                {t("menu.leveltest")}
+              </MenuItem>
               <MenuItem icon={<FaCog />} onClick={() => navigate("/setting")}>
                 {t("menu.setting")}
               </MenuItem>

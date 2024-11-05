@@ -9,45 +9,53 @@ import {
   requestFriend,
 } from "../api/FriendAPI";
 import FriendSearch from "./FriendSearch";
-import SearchResults from "./SearchResults";
 import { Friend } from "../Utils/FriendUtils";
 import FriendListContainer from "./FreindListContainer";
+import { useToastMessage } from "../../../common/components/useToastMessage";
 
 const FriendComponent: FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [friends, setFriends] = useState<Friend[]>([]);
   const [friendRequests, setFriendRequests] = useState<Friend[]>([]);
   const [searchResults, setSearchResults] = useState<Friend[]>([]);
-
+  const { showToast } = useToastMessage();
   useEffect(() => {
     fetchFriendList().then(setFriends);
     FriendListRequest().then(setFriendRequests);
   }, []);
 
-  // 검색 필드 변경
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
 
-  // 사용자 검색
   const handleSearch = async () => {
     const results = await searchUser(searchTerm);
+    console.log(results);
     setSearchResults(results);
   };
 
-  // 친구 요청 보내기
   const handleRequestFriend = async (id: string) => {
-    await requestFriend(id);
-    window.location.reload();
+    try {
+      await requestFriend(id);
+      showToast(
+        "친구 요청 성공",
+        "친구 요청을 성공적으로 보냈습니다.",
+        "success"
+      );
+    } catch (error) {
+      showToast(
+        "친구 요청 실패",
+        "이미 친구입니다",
+        "error"
+      );
+    }
   };
 
-  // 친구 요청 수락 및 거절
   const handleConfirmRequest = async (id: string, confirm: boolean) => {
     await confirmFriend(id, confirm);
     window.location.reload();
   };
 
-  // 친구 삭제
   const handleDeleteFriend = async (id: string) => {
     await deleteFriend(id);
     window.location.reload();
@@ -55,18 +63,13 @@ const FriendComponent: FC = () => {
 
   return (
     <VStack spacing={4}>
-      {/* 검색 컴포넌트 */}
       <FriendSearch
+        handleRequestFriend={handleRequestFriend}
+        searchResults={searchResults}
         searchTerm={searchTerm}
         handleSearchChange={handleSearchChange}
         handleSearch={handleSearch}
       />
-      {/* 검색 결과 컴포넌트 */}
-      <SearchResults
-        searchResults={searchResults}
-        handleRequestFriend={handleRequestFriend}
-      />
-      {/* 친구 목록 및 요청 컴포넌트 */}
       <FriendListContainer
         friends={friends}
         friendRequests={friendRequests}

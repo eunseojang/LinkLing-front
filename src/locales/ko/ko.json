@@ -98,6 +98,7 @@
     "duplicationDes": "이미 존재하는 이메일 입니다."
   },
   "menu": {
+    "leveltest": "레벨 테스트",
     "linkchat": "링크챗",
     "community": "커뮤니티",
     "ling": "링",
@@ -151,10 +152,10 @@
     "idNicknameSearch": "아이디 또는 닉네임으로 검색"
   },
   "matching": {
-    "selectNation": "국적을 선택하세요",
+    "selectNation": "언어을 선택하세요",
     "seclectLevel": "레벨을 선택하세요",
     "upper": "나보다 높은 사람",
-    "same": "비슷한 사람",
+    "ignore": "상관없음",
     "lower": "나보다 낮은 사람",
     "start": "매칭 시작",
     "re": "다시 매칭하기",
