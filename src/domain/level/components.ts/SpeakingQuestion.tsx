@@ -149,9 +149,9 @@ const SpeakingQuestion: React.FC<SpeakingQuestionProps> = ({
 
       const similarity = calculateSimilarity(
         transcript,
-        questions[index].q_content
+        translatedQuestions[index]
       );
-      console.log(transcript, questions[index].q_content);
+      console.log(transcript, translatedQuestions[index], similarity);
 
       const isCorrect = similarity >= 70;
 
