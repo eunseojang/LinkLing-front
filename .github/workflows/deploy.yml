@@ -16,13 +16,18 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "18" # Node.js 버전을 18로 설정
+          node-version: "18" # Node.js 버전 설정
 
       - name: Install pnpm
-        run: npm install -g pnpm # pnpm을 전역으로 설치
+        run: npm install -g pnpm # pnpm 설치
 
       - name: Install dependencies
-        run: pnpm install # pnpm을 사용하여 의존성 설치
+        run: pnpm install # 의존성 설치
+
+      - name: Create .env file # .env 파일 생성
+        run: |
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> .env
+          echo "VITE_OPENAI_API_KEY=${{ secrets.VITE_OPENAI_API_KEY }}" >> .env
 
       - name: Run development server
         run: pnpm run dev # 개발 서버 실행

@@ -37,7 +37,7 @@ function QuestionTest({ langInfo }: QuestionTestProps) {
   });
   const [loading, setLoading] = useState(true);
   const [showResults, setShowResults] = useState(false);
-  const OPENAI_API_KEY = import.meta.env.OPENAI_API_KEY;
+  const  OPENAI_API_KEY = import.meta.env. VITE_OPENAI_API_KEY;
 
   useEffect(() => {
     const fetchQuestions = async () => {
