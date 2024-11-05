@@ -123,24 +123,28 @@ function QuestionTest({ langInfo }: QuestionTestProps) {
             messages: [
               {
                 role: "system",
-                content: `You are evaluating student responses. Respond only with 'true' or 'false'.
-                Return 'true' if:
-                - The answer shows understanding of the main topic, even if some details are missing or partially incorrect
-                - The response is relevant and logically related to the question
-                - Grammar or spelling mistakes do not affect the overall meaning
-                - The answer is close enough to the main idea, even if it doesn't fully match
-      
-                Return 'false' only if:
-                - The answer is off-topic and unrelated to the question
-                - The response lacks understanding of the main concept or is entirely wrong
-      
-                Only respond with 'true' or 'false', no other text.`,
+                content: `You are evaluating student responses. First, detect the language of the question.
+              
+              Evaluate the answer based on these criteria:
+              Return true if:
+              - The answer shows understanding of the concept
+              - The main idea is correct even if details vary
+              - The response is logically sound
+              - Grammar or spelling mistakes don't matter if meaning is clear
+              
+              Return false if:
+              - The answer is completely wrong
+              - The response shows no understanding
+              - The answer is off-topic
+              - The answer is in a different language than the question
+              
+              IMPORTANT: Always respond with ONLY 'true' or 'false' regardless of the question's language.
+              Do not use language-specific responses like '정답', '正确', or '正解'.
+              Only 'true' or 'false' are acceptable responses.`,
               },
               {
                 role: "user",
-                content: `Question: ${question.q_content}\nStudent's Answer: ${
-                  userAnswers[question.q_content] || ""
-                }`,
+                content: `Question: ${question.question}\nStudent's Answer: ${question.q_answer}`,
               },
             ],
             temperature: 0.3,
@@ -154,7 +158,8 @@ function QuestionTest({ langInfo }: QuestionTestProps) {
 
       const data = await response.json();
       const result = data.choices[0].message.content.trim().toLowerCase();
-      console.log(result);
+
+      // 오직 'true' 또는 'false' 문자열만 처리
       return result === "true";
     } catch (error) {
       console.error("Error grading question:", error);
