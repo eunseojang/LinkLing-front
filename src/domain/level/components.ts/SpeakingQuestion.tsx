@@ -151,6 +151,7 @@ const SpeakingQuestion: React.FC<SpeakingQuestionProps> = ({
         transcript,
         questions[index].q_content
       );
+      console.log(transcript, questions[index].q_content);
 
       const isCorrect = similarity >= 70;
 

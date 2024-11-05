@@ -8,7 +8,9 @@ export const getQuestion = async (
 ) => {
   try {
     const response = await axiosInstance.get(
-      `question/get?type=${type}&language=${language}&level=${level + 1}`
+      `question/get?type=${type}&language=${language}&level=${
+        Number(level) + 1
+      }`
     );
     return response.data.data.questions;
   } catch (error) {
@@ -17,12 +19,10 @@ export const getQuestion = async (
   }
 };
 
-export const getQuestionSpeaking = async (
-  level: number
-) => {
+export const getQuestionSpeaking = async (level: number) => {
   try {
     const response = await axiosInstance.get(
-      `question/get-speaking?level=${level + 1}`
+      `question/get-speaking?level=${Number(level) + 1}`
     );
     return response.data.data.questions;
   } catch (error) {

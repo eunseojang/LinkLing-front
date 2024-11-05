@@ -84,7 +84,7 @@ function LevelTest() {
               onMouseEnter={(e) =>
                 (e.currentTarget.innerText = `${
                   languages[langInfo.user_lang]
-                } ${langInfo.lang_level + 1}레벨 테스트 보러가기`)
+                } ${Number(langInfo.lang_level) + 1}레벨 테스트 보러가기`)
               }
               onMouseLeave={(e) =>
                 (e.currentTarget.innerText = `${

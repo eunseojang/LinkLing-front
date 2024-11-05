@@ -40,7 +40,7 @@ export const updateUserLevel = async (language: Language) => {
     const userLevel = levels.find((level) => level.user_lang === language);
 
     if (userLevel) {
-      let level: number = userLevel.lang_level + 1;
+      let level: number = Number(userLevel.lang_level) + 1;
       userLevel.lang_level = level;
     } else {
       // 언어 레벨이 없으면 새로운 레벨로 추가

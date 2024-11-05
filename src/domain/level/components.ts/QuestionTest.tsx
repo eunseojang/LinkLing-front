@@ -212,6 +212,7 @@ function QuestionTest({ langInfo, setSelectedLang }: QuestionTestProps) {
   const restart = () => {
     setSelectedLang(null);
     setShowResults(false);
+    window.location.reload();
   };
   if (loading) return <Text>Loading questions...</Text>;
 
