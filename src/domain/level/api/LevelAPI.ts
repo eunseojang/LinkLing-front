@@ -7,7 +7,7 @@ export const getLevel = async (): Promise<UserLanguage[] | null> => {
   try {
     const nickName = getNicknameToken();
     const response = await axiosInstance.get(`lang/${nickName}`);
-    return response.data.data;
+    return response.data;
   } catch (error) {
     console.error("Failed to fetch level:", error);
     return null; // 레벨이 없을 경우 null 반환
@@ -18,7 +18,7 @@ export const getLevel = async (): Promise<UserLanguage[] | null> => {
 export const postLevel = async (data: UserLanguage[]) => {
   try {
     const nickName = getNicknameToken();
-    const response = await axiosInstance.put(`lang/${nickName}`, data); // PUT 요청으로 변경
+    const response = await axiosInstance.post(`lang/${nickName}`, data); // PUT 요청으로 변경
     return response.data.data;
   } catch (error) {
     console.error("Failed to update level:", error);
