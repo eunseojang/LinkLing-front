@@ -20,8 +20,10 @@ import ProfileEditModal from "./ProfileEditModal";
 import { requestFriend } from "../api/FreindAPI";
 import { useToastMessage } from "../../../common/components/useToastMessage";
 import { fetcheImage } from "../../../common/utils/fetchImage";
+import { useTranslation } from "react-i18next"; // useTranslation import 추가
 
 const UserProfileComponent: FC = () => {
+  const { t } = useTranslation(); // useTranslation 훅 사용
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +37,7 @@ const UserProfileComponent: FC = () => {
       const response = await getProfile(id!);
       setProfile({ ...response });
     } catch (err) {
-      setError("존재하지 않는 사용자입니다.");
+      setError(t("profile.user_not_found")); // 번역 파일 사용
     } finally {
       setLoading(false);
     }
@@ -77,7 +79,7 @@ const UserProfileComponent: FC = () => {
   if (!profile) {
     return (
       <Flex justify="center" align="center" height="100vh">
-        <Text>No profile data available.</Text>
+        <Text>{t("profile.no_profile_data")}</Text> {/* 번역 파일 사용 */}
       </Flex>
     );
   }
@@ -135,22 +137,22 @@ const UserProfileComponent: FC = () => {
         <HStack spacing={4} justify="center">
           {profile.profile_info === "HOST" && (
             <Button colorScheme="pink" onClick={onOpen}>
-              프로필 수정하기
+              {t("profile.edit_profile")} {/* 번역 파일 사용 */}
             </Button>
           )}
           {profile.profile_info === "FRIEND" && (
             <Button colorScheme="gray" onClick={() => alert("Message sent!")}>
-              메세지 보내기
+              {t("profile.send_message")} {/* 번역 파일 사용 */}
             </Button>
           )}
           {profile.profile_info === "PENDING" && (
             <Button colorScheme="gray" onClick={() => alert("Pending...")}>
-              대기중
+              {t("profile.pending")} {/* 번역 파일 사용 */}
             </Button>
           )}
           {profile.profile_info === "ACCEPT" && (
             <Button colorScheme="green" onClick={() => alert("Accept friend!")}>
-              수락하기
+              {t("profile.accept_friend")} {/* 번역 파일 사용 */}
             </Button>
           )}
           {profile.profile_info === "NOTFRIEND" && (
@@ -160,13 +162,21 @@ const UserProfileComponent: FC = () => {
                 try {
                   await requestFriend(profile.user_id);
                   window.location.reload();
-                  showToast("친구 요청 성공", "ㄴㅇ", "success");
+                  showToast(
+                    t("profile.friend_request_success"),
+                    "ㄴㅇ",
+                    "success"
+                  ); // 번역 파일 사용
                 } catch (error) {
-                  showToast("친구 요청 실패", "ㄴㅇ", "error");
+                  showToast(
+                    t("profile.friend_request_failure"),
+                    "ㄴㅇ",
+                    "error"
+                  ); // 번역 파일 사용
                 }
               }}
             >
-              친구 추가
+              {t("profile.add_friend")} {/* 번역 파일 사용 */}
             </Button>
           )}
         </HStack>
@@ -185,10 +195,12 @@ const UserProfileComponent: FC = () => {
       )}
       <Flex justify="center" mt={6}>
         <Text mr={4}>
-          친구: <strong>{profile.follower}</strong>
+          {t("profile.friends")}: <strong>{profile.follower}</strong>{" "}
+          {/* 번역 파일 사용 */}
         </Text>
         <Text>
-          게시물: <strong>{profile.post_count}</strong>
+          {t("profile.posts")}: <strong>{profile.post_count}</strong>{" "}
+          {/* 번역 파일 사용 */}
         </Text>
       </Flex>
       <ProfileEditModal
