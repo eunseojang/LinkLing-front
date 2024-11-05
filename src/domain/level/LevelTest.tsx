@@ -20,7 +20,7 @@ function LevelTest() {
     const fetchUserLevels = async () => {
       try {
         const levelsData: UserLanguage[] | null = await getLevel();
-
+        console.log(levelsData);
         const levelsMap: { [key: string]: number } = {
           KR: 0,
           JP: 0,

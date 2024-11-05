@@ -196,7 +196,7 @@ function QuestionTest({ langInfo, setSelectedLang }: QuestionTestProps) {
       // 최종 true 개수 합산
       const total = trueCountWriting + totalTrueCount;
       setTotal(total);
-      if (total >= 0) {
+      if (total >= 15) {
         updateUserLevel(langInfo.user_lang);
       }
       console.log("총 true 개수:", total);
