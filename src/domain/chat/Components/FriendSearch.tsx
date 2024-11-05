@@ -12,12 +12,10 @@ import {
   PopoverArrow,
   VStack,
   Avatar,
-  Badge,
   Flex,
 } from "@chakra-ui/react";
 import { FC, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Friend } from "../Utils/FriendUtils";
 import { fetcheImage } from "../../../common/utils/fetchImage";
 import { default_img } from "../../../common/utils/img";
 import { useNavigate } from "react-router-dom";
