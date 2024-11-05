@@ -29,5 +29,8 @@ jobs:
           echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> .env
           echo "VITE_OPENAI_API_KEY=${{ secrets.VITE_OPENAI_API_KEY }}" >> .env
 
-      - name: Run development server
-        run: pnpm run dev # 개발 서버 실행
+      - name: Build the project
+        run: pnpm run build # 애플리케이션 빌드
+
+
+      # 추가적으로 배포 단계를 추가할 수 있습니다.
