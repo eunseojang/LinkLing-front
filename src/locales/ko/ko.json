@@ -155,7 +155,9 @@
     "offline": "오프라인",
     "sendChat": "채팅 보내기",
     "delete": "삭제",
-    "idNicknameSearch": "아이디 또는 닉네임으로 검색"
+    "idNicknameSearch": "아이디 또는 닉네임으로 검색",
+    "approve": "수락",
+    "reject": "거절"
   },
   "matching": {
     "selectNation": "언어을 선택하세요",
@@ -196,5 +198,18 @@
   "post": {
     "postDelete": "게시물 삭제",
     "deleteCheck": "정말로 이 게시물을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+  },
+  "profile": {
+    "user_not_found": "존재하지 않는 사용자입니다.",
+    "no_profile_data": "프로필 데이터가 없습니다.",
+    "edit_profile": "프로필 수정하기",
+    "send_message": "메세지 보내기",
+    "pending": "대기중",
+    "accept_friend": "수락하기",
+    "add_friend": "친구 추가",
+    "friend_request_success": "친구 요청 성공",
+    "friend_request_failure": "친구 요청 실패",
+    "friends": "친구",
+    "posts": "게시물"
   }
 }
