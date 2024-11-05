@@ -157,7 +157,8 @@
     "delete": "削除",
     "idNicknameSearch": "IDまたはニックネームで検索",
     "approve": "承認",
-    "reject": "拒否"
+    "reject": "拒否",
+    "request": "友達リクエストを送信"
   },
   "matching": {
     "selectNation": "言語を選択してください",
@@ -211,5 +212,66 @@
     "friend_request_failure": "友達リクエストに失敗しました。",
     "friends": "友達",
     "posts": "投稿"
+  },
+  "home": {
+    "carousel": {
+      "global": {
+        "title": "🌐 グローバルコミュニティ",
+        "description": "さまざまな文化や言語を持つ人々と共に学び、コミュニケーションを取ろう。",
+        "buttonText": "コミュニティに参加"
+      },
+      "translation": {
+        "title": "🌍 リアルタイム翻訳",
+        "description": "リアルタイム翻訳を通じて、言語の壁を越えて世界中の人々と交流しよう。",
+        "buttonText": "今すぐ始める"
+      },
+      "level": {
+        "title": "🎙️ レベル測定テスト",
+        "description": "あなたの発音を聞いて、相手に正しく伝えられるレベルかを確認します。",
+        "buttonText": "テストを始める"
+      }
+    },
+    "features": {
+      "customLearning": {
+        "heading": "カスタマイズされた会話学習",
+        "description": "あなたの言語レベルに合わせた相手のマッチングを通じて、より効率的な学習環境を提供します。"
+      },
+      "randomMatching": {
+        "heading": "ランダムマッチング",
+        "description": "世界中のユーザーとランダムマッチングして、新しい友達を作り、言語を学びましょう。"
+      },
+      "culturalExchange": {
+        "heading": "文化交流",
+        "description": "新しい人々との出会いを通じて、多様な文化を体験してください。"
+      }
+    },
+    "additionalFeatures": {
+      "pronunciationTest": {
+        "heading": "発音測定テスト",
+        "description": "LinkLingの発音測定テストであなたの言語能力をさらに向上させましょう。"
+      },
+      "realTimeTranslation": {
+        "heading": "リアルタイム翻訳と発音確認",
+        "description": "LinkLingのリアルタイムAPIを活用した翻訳機能で、言語の壁を取り払いましょう。"
+      },
+      "unityChat": {
+        "heading": "ユニティ環境チャット",
+        "description": "LinkLingのユニティベースの仮想環境で、没入感のあるチャット体験を楽しみましょう。"
+      }
+    },
+    "about": {
+      "features": {
+        "title": "LinkLingの特徴",
+        "description": "LinkLingは、ユニティベースの環境で、ユーザーがさまざまな国籍の人々とリアルタイムでコミュニケーションを取りながら言語を学ぶことができるプラットフォームです。"
+      },
+      "future": {
+        "title": "言語学習の未来",
+        "description": "LinkLingと共に言語能力の向上を実現しましょう。"
+      }
+    },
+    "footer": {
+      "copyright": "© 2024 LinkLing. (株)リンクリング",
+      "department": "創造的融合プロジェクト1 金大工科大学 コンピュータウェアソフトウェア工学科"
+    }
   }
 }
