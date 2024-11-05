@@ -18,12 +18,11 @@ export const getQuestion = async (
 };
 
 export const getQuestionSpeaking = async (
-  language: Language,
   level: number
 ) => {
   try {
     const response = await axiosInstance.get(
-      `question/get?language=${language}&level=${level + 1}`
+      `question/get-speaking?level=${level + 1}`
     );
     return response.data.data.questions;
   } catch (error) {

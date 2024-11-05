@@ -29,8 +29,8 @@ const ReadingQuestion: React.FC<ReadingQuestionProps> = ({
           <Text fontSize="xl" fontWeight="bold">
             읽기 문제 {index + 1}번
           </Text>
-          <Text>{question.q_script}</Text>
-          <Text>{question.q_content}</Text>
+          <Text maxWidth={"400px"}>{question.q_script}</Text>
+          <Text maxWidth={"400px"}>{question.q_content}</Text>
           {[
             question.q_choice1,
             question.q_choice2,

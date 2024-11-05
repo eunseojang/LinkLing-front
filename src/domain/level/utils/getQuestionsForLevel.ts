@@ -13,7 +13,7 @@ export async function getQuestionsForLevel(
     questions["L"] = listeningQuestions;
 
     // Speaking (S) 문제 가져오기 - 주관식
-    const speakingQuestions = await getQuestionSpeaking(language, level);
+    const speakingQuestions = await getQuestionSpeaking(level);
     questions["S"] = speakingQuestions;
 
     // Reading (R) 문제 가져오기
