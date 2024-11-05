@@ -16,13 +16,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "18" # Node.js 버전을 18로 변경
+          node-version: "18" # Node.js 버전을 18로 설정
 
       - name: Install pnpm
-        run: npm install -g pnpm
+        run: npm install -g pnpm # pnpm을 전역으로 설치
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install # pnpm을 사용하여 의존성 설치
 
       - name: Run development server
-        run: pnpm run dev
+        run: pnpm run dev # 개발 서버 실행
