@@ -27,8 +27,7 @@ function QuestionTest({ langInfo }: QuestionTestProps) {
   const [questions, setQuestions] = useState<{ [key: string]: QuestionType[] }>(
     {}
   );
-
-  const [userAnswers, setUserAnswers] = useState<{ [key: string]: any }>({});
+  const [userAnswers, setUserAnswers] = useState<{ [key: string]: string }>({});
   const [answers, setAnswers] = useState<{ [key: string]: boolean[] }>({
     L: [],
     S: [],
@@ -37,7 +36,7 @@ function QuestionTest({ langInfo }: QuestionTestProps) {
   });
   const [loading, setLoading] = useState(true);
   const [showResults, setShowResults] = useState(false);
-  const  OPENAI_API_KEY = import.meta.env. VITE_OPENAI_API_KEY;
+  const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -72,17 +71,17 @@ function QuestionTest({ langInfo }: QuestionTestProps) {
         selectedAnswer === currentQuestion.q_answer;
 
       setAnswers((prev) => {
-        const updatedAnswers = { ...prev };
-        updatedAnswers[currentType][questionIndex] = isCorrect;
-        return updatedAnswers;
+        const updatedAnswers = [...prev[currentType]];
+        updatedAnswers[questionIndex] = isCorrect;
+        return { ...prev, [currentType]: updatedAnswers };
       });
     }
 
     if (currentQuestion.q_answer === 0) {
-      setUserAnswers({
-        ...userAnswers,
-        [currentQuestion.q_content]: selectedAnswer,
-      });
+      setUserAnswers((prev) => ({
+        ...prev,
+        [currentType + questionIndex]: selectedAnswer, // key를 변경하여 질문의 고유성을 보장
+      }));
     }
   };
 
@@ -91,9 +90,9 @@ function QuestionTest({ langInfo }: QuestionTestProps) {
     selectedAnswer: boolean
   ) => {
     setAnswers((prev) => {
-      const updatedAnswers = { ...prev };
-      updatedAnswers[currentType][questionIndex] = selectedAnswer;
-      return updatedAnswers;
+      const updatedAnswers = [...prev[currentType]];
+      updatedAnswers[questionIndex] = selectedAnswer;
+      return { ...prev, [currentType]: updatedAnswers };
     });
   };
 
@@ -108,7 +107,7 @@ function QuestionTest({ langInfo }: QuestionTestProps) {
     }
   };
 
-  const gradeQuestion = async (question: any) => {
+  const gradeQuestion = async (question: string, userAnswer: string) => {
     try {
       const response = await fetch(
         "https://api.openai.com/v1/chat/completions",
@@ -124,27 +123,27 @@ function QuestionTest({ langInfo }: QuestionTestProps) {
               {
                 role: "system",
                 content: `You are evaluating student responses. First, detect the language of the question.
-              
-              Evaluate the answer based on these criteria:
-              Return true if:
-              - The answer shows understanding of the concept
-              - The main idea is correct even if details vary
-              - The response is logically sound
-              - Grammar or spelling mistakes don't matter if meaning is clear
-              
-              Return false if:
-              - The answer is completely wrong
-              - The response shows no understanding
-              - The answer is off-topic
-              - The answer is in a different language than the question
-              
-              IMPORTANT: Always respond with ONLY 'true' or 'false' regardless of the question's language.
-              Do not use language-specific responses like '정답', '正确', or '正解'.
-              Only 'true' or 'false' are acceptable responses.`,
+
+                Evaluate the answer based on these criteria:
+                Return true if:
+                - The answer shows understanding of the concept
+                - The main idea is correct even if details vary
+                - The response is logically sound
+                - Grammar or spelling mistakes don't matter if meaning is clear
+
+                Return false if:
+                - The answer is completely wrong
+                - The response shows no understanding
+                - The answer is off-topic
+                - The answer is in a different language than the question
+
+                IMPORTANT: Always respond with ONLY 'true' or 'false' regardless of the question's language.
+                Do not use language-specific responses like '정답', '正确', or '正解'.
+                Only 'true' or 'false' are acceptable responses.`,
               },
               {
                 role: "user",
-                content: `Question: ${question.question}\nStudent's Answer: ${question.q_answer}`,
+                content: `Question: ${question}\nStudent's Answer: ${userAnswer}`,
               },
             ],
             temperature: 0.3,
@@ -171,8 +170,8 @@ function QuestionTest({ langInfo }: QuestionTestProps) {
     setLoading(true);
 
     try {
-      const gradingPromises = questions["W"].map((question) =>
-        gradeQuestion(question)
+      const gradingPromises = questions["W"].map((question, index) =>
+        gradeQuestion(question.q_content, userAnswers[currentType + index])
       );
       const results = await Promise.all(gradingPromises);
 
@@ -180,6 +179,9 @@ function QuestionTest({ langInfo }: QuestionTestProps) {
         ...prev,
         W: results,
       }));
+
+      const trueCount = results.filter((result) => result === true).length;
+      console.log("총 true 개수:", trueCount);
     } catch (error) {
       console.error("Grading failed:", error);
       alert("채점 중 오류가 발생했습니다.");
@@ -219,10 +221,10 @@ function QuestionTest({ langInfo }: QuestionTestProps) {
             <WritingQuestion
               questions={questions["W"]}
               handleAnswer={(index, answer) =>
-                setUserAnswers({
-                  ...userAnswers,
-                  [questions["W"][index].q_content]: answer,
-                })
+                setUserAnswers((prev) => ({
+                  ...prev,
+                  [currentType + index]: answer,
+                }))
               }
             />
           )}
