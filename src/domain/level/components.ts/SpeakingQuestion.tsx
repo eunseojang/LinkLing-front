@@ -209,6 +209,9 @@ const SpeakingQuestion: React.FC<SpeakingQuestionProps> = ({
 
   return (
     <VStack spacing={4}>
+      <Text color={"red"} mb={3}>
+        주어진 문장을 그대로 따라 읽으세요
+      </Text>
       {questions.map((_, index) => (
         <VStack key={index} spacing={4} align="stretch" width="100%">
           <Text fontSize="xl" fontWeight="bold">
