@@ -9,12 +9,11 @@ import {
 } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Friend } from "../Utils/FriendUtils";
 import { fetcheImage } from "../../../common/utils/fetchImage"; // 이미지 fetching 함수 import
 import { default_img } from "../../../common/utils/img"; // 기본 이미지 import
 
 interface FriendListProps {
-  friends: Friend[];
+  friends: any[];
   deleteFriend: (id: string) => void;
   navigate: (userId: string) => void;
 }
@@ -33,15 +32,15 @@ const FriendList: FC<FriendListProps> = ({
     const loadImages = async () => {
       const imagePromises = friends.map(async (friend) => {
         // 이미지가 null이거나 비어있으면 기본 이미지를 사용
-        const image = friend.userImg
-          ? await fetcheImage(friend.userImg)
+        const image = friend.user_img
+          ? await fetcheImage(friend.user_img)
           : default_img;
-        return { userId: friend.userId, image };
+        return { user_id: friend.user_id, image };
       });
 
       const images = await Promise.all(imagePromises);
       const imageMap = images.reduce((acc, cur) => {
-        const userId = cur.userId; // userId를 추출
+        const userId = cur.user_id; // userId를 추출
         if (userId) {
           // userId가 null이 아닐 때만 추가
           acc[userId] = cur.image || default_img;
@@ -59,24 +58,24 @@ const FriendList: FC<FriendListProps> = ({
     <VStack spacing={4} align="stretch">
       {friends.map((friend) => (
         <HStack
-          key={friend.userId || "unknown"} // userId가 없으면 fallback 키 사용
+          key={friend.user_id || "unknown"} // userId가 없으면 fallback 키 사용
           justify="space-between"
           p={2}
           _hover={{ bg: "gray.50" }}
           borderRadius="md"
           onClick={() => {
-            navigate(`/${friend.userId}`);
+            navigate(`/${friend.user_id}`);
           }}
         >
           <HStack>
             <Avatar
               size="md"
-              src={loadedImages[friend.userId] ?? default_img} // 이미지가 없을 경우 기본 이미지 사용
+              src={loadedImages[friend.user_id] ?? default_img} // 이미지가 없을 경우 기본 이미지 사용
             />
             <VStack spacing={0} align="start">
               <Flex>
                 <Text fontWeight="bold" color="gray.800">
-                  {friend.userName}
+                  {friend.user_name}
                 </Text>
                 <Text
                   fontSize={"10px"}
@@ -85,7 +84,7 @@ const FriendList: FC<FriendListProps> = ({
                   mt={1}
                   color="gray.500"
                 >
-                  @{friend.userId}
+                  @{friend.user_id}
                 </Text>
               </Flex>
               <Badge
@@ -103,7 +102,7 @@ const FriendList: FC<FriendListProps> = ({
             variant="outline"
             onClick={(e) => {
               e.stopPropagation();
-              deleteFriend(friend.userId);
+              deleteFriend(friend.user_id);
             }}
           >
             {t(`friend.delete`)}
