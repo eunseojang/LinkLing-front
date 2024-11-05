@@ -93,6 +93,7 @@ function App() {
   const handleTranslateClick = async () => {
     if (selectedText) {
       const translatedText = await translateText(selectedText, i18n.language);
+      console.log(i18n.language);
       setTranslatedText(translatedText);
     }
   };

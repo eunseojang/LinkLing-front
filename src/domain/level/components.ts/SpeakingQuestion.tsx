@@ -35,18 +35,26 @@ const SpeakingQuestion: React.FC<SpeakingQuestionProps> = ({
   );
 
   const languageMap: { [key: string]: string } = {
-    KO: "ko-KR",
+    KR: "ko-KR",
     EN: "en-US",
-    JA: "ja-JP",
+    JP: "ja-JP",
     CN: "zh-CN",
+  };
+
+  const languageMapd: { [key: string]: string } = {
+    KR: "ko",
+    EN: "en",
+    JP: "ja",
+    CN: "zh",
   };
 
   useEffect(() => {
     const translateAllQuestions = async () => {
       const translated = await Promise.all(
-        questions.map((q) => translateText(q.q_content, language))
+        questions.map((q) => translateText(q.q_content, languageMapd[language]))
       );
       setTranslatedQuestions(translated);
+      console.log(languageMapd[language], language);
     };
     translateAllQuestions();
   }, [questions, language]);
