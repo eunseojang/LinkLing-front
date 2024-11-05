@@ -157,7 +157,8 @@
     "delete": "Delete",
     "idNicknameSearch": "Search by ID or Nickname",
     "approve": "Approve",
-    "reject": "Reject"
+    "reject": "Reject",
+    "request": "Friend Request"
   },
   "matching": {
     "selectNation": "Please select a language",
@@ -211,5 +212,66 @@
     "friend_request_failure": "Friend request failed.",
     "friends": "Friends",
     "posts": "Posts"
+  },
+  "home": {
+    "carousel": {
+      "global": {
+        "title": "🌐 Global Community",
+        "description": "Learn and communicate with people from diverse cultures and languages.",
+        "buttonText": "Join Community"
+      },
+      "translation": {
+        "title": "🌍 Real-time Translation",
+        "description": "Communicate with people worldwide without language barriers through real-time translation.",
+        "buttonText": "Start Now"
+      },
+      "level": {
+        "title": "🎙️ Level Assessment Test",
+        "description": "Check if your pronunciation level is appropriate for effective communication with others.",
+        "buttonText": "Start Test"
+      }
+    },
+    "features": {
+      "customLearning": {
+        "heading": "Customized Conversation Learning",
+        "description": "We provide an efficient learning environment through matching partners based on your language level."
+      },
+      "randomMatching": {
+        "heading": "Random Matching",
+        "description": "Meet new friends and learn languages through random matching with users worldwide."
+      },
+      "culturalExchange": {
+        "heading": "Cultural Exchange",
+        "description": "Experience diverse cultures through meeting new people."
+      }
+    },
+    "additionalFeatures": {
+      "pronunciationTest": {
+        "heading": "Pronunciation Assessment Test",
+        "description": "Enhance your language skills with LinkLing's pronunciation assessment test."
+      },
+      "realTimeTranslation": {
+        "heading": "Real-time Translation & Pronunciation Check",
+        "description": "Break down language barriers with LinkLing's real-time translation API."
+      },
+      "unityChat": {
+        "heading": "Unity Environment Link (Chat)",
+        "description": "Enjoy an immersive chat experience in LinkLing's Unity-based virtual environment."
+      }
+    },
+    "about": {
+      "features": {
+        "title": "LinkLing Features",
+        "description": "LinkLing is a platform where users can learn languages by communicating in real-time with people of various nationalities in a Unity-based environment."
+      },
+      "future": {
+        "title": "The Future of Language Learning",
+        "description": "Achieve language proficiency improvement with LinkLing."
+      }
+    },
+    "footer": {
+      "copyright": "© 2024 LinkLing. LinkLing Co., Ltd.",
+      "department": "Creative Convergence Project 1, Department of Computer Software Engineering, Kumoh National Institute of Technology"
+    }
   }
 }

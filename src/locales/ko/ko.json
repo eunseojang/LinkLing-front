@@ -157,7 +157,8 @@
     "delete": "삭제",
     "idNicknameSearch": "아이디 또는 닉네임으로 검색",
     "approve": "수락",
-    "reject": "거절"
+    "reject": "거절",
+    "request": "친구 요청하기"
   },
   "matching": {
     "selectNation": "언어을 선택하세요",
@@ -211,5 +212,66 @@
     "friend_request_failure": "친구 요청 실패",
     "friends": "친구",
     "posts": "게시물"
+  },
+  "home": {
+    "carousel": {
+      "global": {
+        "title": "🌐 글로벌 커뮤니티",
+        "description": "다양한 문화와 언어를 가진 사람들과 함께 배우고 소통하세요.",
+        "buttonText": "커뮤니티 참여"
+      },
+      "translation": {
+        "title": "🌍 실시간 번역",
+        "description": "실시간 번역으로 언어 장벽 없이 전 세계 사람들과 소통하세요.",
+        "buttonText": "지금 시작하기"
+      },
+      "level": {
+        "title": "🎙️ 레벨 측정 테스트",
+        "description": "당신의 발음을 들어보고 상대방에게 제대로 전달될 수 있는 레벨인지 확인합니다.",
+        "buttonText": "테스트 시작"
+      }
+    },
+    "features": {
+      "customLearning": {
+        "heading": "맞춤형 대화학습",
+        "description": "당신의 언어 레벨에 맞춘 상대방 매칭을 통해 더 효율적인 학습 환경을 제공해드립니다."
+      },
+      "randomMatching": {
+        "heading": "랜덤 매칭",
+        "description": "전 세계 사용자들과 랜덤 매칭을 통해 새로운 친구를 만나고, 언어를 배우세요."
+      },
+      "culturalExchange": {
+        "heading": "문화 교류",
+        "description": "새로운 사람들과의 만남을 통해 다양한 문화를 경험하세요."
+      }
+    },
+    "additionalFeatures": {
+      "pronunciationTest": {
+        "heading": "발음 측정 테스트",
+        "description": "LinkLing의 발음 측정 테스트로 여러분의 언어 실력을 한 단계 더 높여보세요."
+      },
+      "realTimeTranslation": {
+        "heading": "실시간 번역 및 발음 확인",
+        "description": "LinkLing의 실시간 Api를 활용한 번역 기능으로 언어의 장벽을 허물어보세요."
+      },
+      "unityChat": {
+        "heading": "유니티 환경 링(채팅)",
+        "description": "LinkLing의 유니티 기반 가상 환경에서 몰입감 있는 채팅 경험을 즐겨보세요."
+      }
+    },
+    "about": {
+      "features": {
+        "title": "LinkLing의 특징",
+        "description": "LinkLing은 유니티 기반 환경에서 사용자들이 다양한 국적의 사람들과 실시간으로 소통하며 언어를 학습할 수 있는 플랫폼입니다."
+      },
+      "future": {
+        "title": "언어 학습의 미래",
+        "description": "LinkLing과 함께 언어능력의 상승을 이루세요."
+      }
+    },
+    "footer": {
+      "copyright": "© 2024 LinkLing. (주) 링크링",
+      "department": "창의융합프로젝트1 금오공과대학교 컴퓨터웨어소프트웨어공학과"
+    }
   }
 }

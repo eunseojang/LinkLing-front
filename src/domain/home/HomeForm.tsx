@@ -11,34 +11,35 @@ import {
 } from "@chakra-ui/react";
 import { ArrowForwardIcon, ArrowBackIcon } from "@chakra-ui/icons";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import MatchingCard from "./MatingCard";
 import MatchingCard2 from "./MatingCard2";
 
-const slides = [
-  {
-    title: "🌐 글로벌 커뮤니티",
-    description: "다양한 문화와 언어를 가진 사람들과 함께 배우고 소통하세요.",
-    image: "/home1.png",
-    buttonText: "커뮤니티 참여",
-  },
-  {
-    title: "🌍 실시간 번역",
-    description: "실시간 번역으로 언어 장벽 없이 전 세계 사람들과 소통하세요.",
-    image: "/home3.png",
-    buttonText: "지금 시작하기",
-  },
-  {
-    title: "🎙️ 레벨 측정 테스트",
-    description:
-      "당신의 발음을 들어보고 상대방에게 제대로 전달될 수 있는 레벨인지 확인합니다.",
-    image: "/home2.png",
-    buttonText: "테스트 시작",
-  },
-];
-
 export default function HomeForm() {
+  const { t } = useTranslation();
   const [slideIndex, setSlideIndex] = useState(0);
   const isMobile = useBreakpointValue({ base: true, md: false });
+
+  const slides = [
+    {
+      title: t("home.carousel.global.title"),
+      description: t("home.carousel.global.description"),
+      image: "/home1.png",
+      buttonText: t("home.carousel.global.buttonText"),
+    },
+    {
+      title: t("home.carousel.translation.title"),
+      description: t("home.carousel.translation.description"),
+      image: "/home3.png",
+      buttonText: t("home.carousel.translation.buttonText"),
+    },
+    {
+      title: t("home.carousel.level.title"),
+      description: t("home.carousel.level.description"),
+      image: "/home2.png",
+      buttonText: t("home.carousel.level.buttonText"),
+    },
+  ];
 
   const handlePrev = () => {
     setSlideIndex((prevIndex) =>
@@ -137,18 +138,18 @@ export default function HomeForm() {
         >
           <MatchingCard
             icon="📚"
-            heading="맞춤형 대화학습"
-            description="당신의 언어 레벨에 맞춘 상대방 매칭을 통해 더 효율적인 학습 환경을 제공해드립니다."
+            heading={t("home.features.customLearning.heading")}
+            description={t("home.features.customLearning.description")}
           />
           <MatchingCard
             icon="🔀"
-            heading="랜덤 매칭"
-            description="전 세계 사용자들과 랜덤 매칭을 통해 새로운 친구를 만나고, 언어를 배우세요."
+            heading={t("home.features.randomMatching.heading")}
+            description={t("home.features.randomMatching.description")}
           />
           <MatchingCard
             icon="🌏"
-            heading="문화 교류"
-            description="새로운 사람들과의 만남을 통해 다양한 문화를 경험하세요."
+            heading={t("home.features.culturalExchange.heading")}
+            description={t("home.features.culturalExchange.description")}
           />
         </Flex>
       </VStack>
@@ -163,23 +164,26 @@ export default function HomeForm() {
         >
           <MatchingCard2
             icon="🎙️"
-            heading="발음 측정 테스트"
-            description="LinkLing의 발음 측정 테스트로 여러분의 언어 실력을 한 단계 더 높여보세요."
+            heading={t("home.additionalFeatures.pronunciationTest.heading")}
+            description={t(
+              "home.additionalFeatures.pronunciationTest.description"
+            )}
           />
           <MatchingCard2
             icon="💬"
-            heading="실시간 번역 및 발음 확인"
-            description="LinkLing의 실시간 Api를 활용한 번역 기능으로 언어의 장벽을 허물어보세요."
+            heading={t("home.additionalFeatures.realTimeTranslation.heading")}
+            description={t(
+              "home.additionalFeatures.realTimeTranslation.description"
+            )}
           />
           <MatchingCard2
             icon="🎮"
-            heading="유니티 환경 링(채팅)"
-            description="LinkLing의 유니티 기반 가상 환경에서 몰입감 있는 채팅 경험을 즐겨보세요."
+            heading={t("home.additionalFeatures.unityChat.heading")}
+            description={t("home.additionalFeatures.unityChat.description")}
           />
         </Flex>
       </VStack>
 
-      {/* Details Section */}
       <VStack
         spacing={isMobile ? "30px" : "60px"}
         padding={"10px"}
@@ -210,15 +214,14 @@ export default function HomeForm() {
             mb="20px"
             color="#73DA95"
           >
-            LinkLing의 특징
+            {t("home.about.features.title")}
           </Heading>
           <Text
             fontSize={{ base: "md", md: "lg" }}
             color="customBlack"
             lineHeight="tall"
           >
-            LinkLing은 유니티 기반 환경에서 사용자들이 다양한 국적의 사람들과
-            실시간으로 소통하며 언어를 학습할 수 있는 플랫폼입니다.
+            {t("home.about.features.description")}
           </Text>
         </Box>
         <Box
@@ -236,7 +239,7 @@ export default function HomeForm() {
             height: "5px",
             background: "linear-gradient(90deg, #73DA95, #C6F6D5)",
             bottom: "-15px",
-            left: "50%",
+            left: "50%", // ... (이전 코드에 이어서)
             transform: "translateX(-50%)",
             borderRadius: "2px",
           }}
@@ -246,14 +249,14 @@ export default function HomeForm() {
             mb="20px"
             color="#73DA95"
           >
-            언어 학습의 미래
+            {t("home.about.future.title")}
           </Heading>
           <Text
             fontSize={{ base: "md", md: "lg" }}
             color="customBlack"
             lineHeight="tall"
           >
-            LinkLing과 함께 언어능력의 상승을 이루세요.
+            {t("home.about.future.description")}
           </Text>
         </Box>
       </VStack>
@@ -262,8 +265,8 @@ export default function HomeForm() {
       <Box as="footer" padding="20px" backgroundColor="#333333">
         <Box textAlign="center">
           <Text color={"#111111"}>
-            © 2024 LinkLing. (주) 링크링 <br />
-            창의융합프로젝트1 금오공과대학교 컴퓨터웨어소프트웨어공학과
+            {t("home.footer.copyright")} <br />
+            {t("home.footer.department")}
           </Text>
         </Box>
       </Box>
