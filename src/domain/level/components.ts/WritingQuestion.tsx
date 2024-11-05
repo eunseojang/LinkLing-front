@@ -13,11 +13,17 @@ const WritingQuestion: React.FC<WritingQuestionProps> = ({
 }) => (
   <VStack spacing={4}>
     {questions.map((question, index) => (
-      <VStack key={index} spacing={4} align="stretch" width="100%">
+      <VStack
+        key={index}
+        spacing={4}
+        align="stretch"
+        width="100%"
+        justifyContent={"center"}
+      >
         <Text fontSize="xl" fontWeight="bold">
           쓰기 문제 {index + 1}번
         </Text>
-        <Text>{question.q_content}</Text>
+        <Text maxWidth={"400px"}>{question.q_content}</Text>
         <Textarea
           width={"500px"}
           placeholder="답변을 입력하세요"

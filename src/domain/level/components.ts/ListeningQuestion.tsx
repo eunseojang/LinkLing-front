@@ -36,8 +36,8 @@ const ListeningQuestion: React.FC<ListeningQuestionProps> = ({
   };
 
   const playQuestionAudio = (question: QuestionType) => {
-    if (question.q_script) speakText(question.q_script);
-    speakText(question.q_content);
+    if (question.q_script) speakText(question.q_script + question.q_content);
+    else speakText(question.q_content);
   };
 
   const handleButtonClick = (questionIndex: number, choiceIndex: number) => {
