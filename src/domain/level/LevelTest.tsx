@@ -60,7 +60,14 @@ function LevelTest() {
   }
 
   return (
-    <VStack spacing={4} align="stretch" width={"500px"} margin={"0 auto"}>
+    <VStack
+      spacing={4}
+      align="stretch"
+      width={"500px"}
+      margin={"0 auto"}
+      draggable={false} // 드래그 비활성화
+      style={{ userSelect: "none" }} // 텍스트 선택 비활성화
+    >
       {userLangs.length === 0 ? (
         <Text>시험을 볼 언어가 없습니다.</Text>
       ) : (

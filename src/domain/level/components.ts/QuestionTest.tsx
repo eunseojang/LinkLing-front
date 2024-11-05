@@ -196,7 +196,7 @@ function QuestionTest({ langInfo, setSelectedLang }: QuestionTestProps) {
       // 최종 true 개수 합산
       const total = trueCountWriting + totalTrueCount;
       setTotal(total);
-      if (total >= 15) {
+      if (total >= 18) {
         updateUserLevel(langInfo.user_lang);
       }
       console.log("총 true 개수:", total);
@@ -216,7 +216,11 @@ function QuestionTest({ langInfo, setSelectedLang }: QuestionTestProps) {
   if (loading) return <Text>Loading questions...</Text>;
 
   return (
-    <VStack spacing={4}>
+    <VStack
+      spacing={4}
+      draggable={false} // 드래그 비활성화
+      style={{ userSelect: "none" }}
+    >
       {!showResults && (
         <>
           {currentType === "L" && questions["L"] && (
@@ -295,11 +299,15 @@ function QuestionTest({ langInfo, setSelectedLang }: QuestionTestProps) {
           </HStack>
           <Text>{total}/20</Text>
           <Text>
-            {total >= 15
+            {total >= 18
               ? "축하합니다. 레벨업했습니다."
-              : "15점 이하로 레벨업에 실패했습니다."}
+              : "18점 이하로 레벨업에 실패했습니다."}
           </Text>
-          <Button onClick={restart}>다시 레벨테스트 보러가기</Button>
+          <Button onClick={restart}>
+            {total >= 18
+              ? "다음 레벨 레벨테스트 보러가기"
+              : "다시 레벨테스트 보러가기"}
+          </Button>
         </>
       )}
     </VStack>
