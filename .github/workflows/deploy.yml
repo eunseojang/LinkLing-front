@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "16" # 원하는 Node.js 버전으로 변경하세요.
+          node-version: "18" # Node.js 버전을 18로 변경
 
       - name: Install pnpm
         run: npm install -g pnpm
