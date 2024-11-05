@@ -109,9 +109,15 @@
   },
   "settings": {
     "id": "아이디",
+    "idsuccess": "아이디 변경 성공",
+    "currentfail": "아이디 변경 실패",
+    "idsuccessdes": "ID가 성공적으로 변경되었습니다.",
+    "currentfaildes": "ID가 성공적으로 변경되었습니다.",
     "idPlaceHolder": "변경할 아이디를 입력해주세요",
     "changeID": "아이디 변경하기",
+    "existpasswordPlaceholder": "기존 비밀번호를 입력해주세요",
     "passwordPlaceholder": "변경할 비밀번호를 입력해주세요",
+    "passwordPlaceholder1": "변경할 비밀번호를 다시 입력해주세요",
     "newPassword": "새 비밀번호",
     "changePassword": "비밀번호 변경하기"
   },

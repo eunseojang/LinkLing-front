@@ -17,12 +17,14 @@ import ReadingQuestion from "./ReadingQuestion";
 import WritingQuestion from "./WritingQuestion";
 import { getQuestionsForLevel } from "../utils/getQuestionsForLevel";
 import { UserLanguage, ProblemType, QuestionType } from "../utils/LevelUtils";
+import { updateUserLevel } from "../api/LevelAPI";
 
 interface QuestionTestProps {
   langInfo: UserLanguage;
+  setSelectedLang: any;
 }
 
-function QuestionTest({ langInfo }: QuestionTestProps) {
+function QuestionTest({ langInfo, setSelectedLang }: QuestionTestProps) {
   const [currentType, setCurrentType] = useState<ProblemType>("L");
   const [questions, setQuestions] = useState<{ [key: string]: QuestionType[] }>(
     {}
@@ -36,6 +38,8 @@ function QuestionTest({ langInfo }: QuestionTestProps) {
   });
   const [loading, setLoading] = useState(true);
   const [showResults, setShowResults] = useState(false);
+  const [total, setTotal] = useState<number>(0);
+
   const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
 
   useEffect(() => {
@@ -180,8 +184,22 @@ function QuestionTest({ langInfo }: QuestionTestProps) {
         W: results,
       }));
 
-      const trueCount = results.filter((result) => result === true).length;
-      console.log("총 true 개수:", trueCount);
+      const trueCountWriting = results.filter(
+        (result) => result === true
+      ).length;
+
+      // 각 타입의 정답(true) 개수를 세는 부분 추가
+      const totalTrueCount = Object.keys(answers).reduce((count, type) => {
+        return count + answers[type].filter((result) => result === true).length;
+      }, 0);
+
+      // 최종 true 개수 합산
+      const total = trueCountWriting + totalTrueCount;
+      setTotal(total);
+      if (total >= 0) {
+        updateUserLevel(langInfo.user_lang);
+      }
+      console.log("총 true 개수:", total);
     } catch (error) {
       console.error("Grading failed:", error);
       alert("채점 중 오류가 발생했습니다.");
@@ -191,6 +209,10 @@ function QuestionTest({ langInfo }: QuestionTestProps) {
     }
   };
 
+  const restart = () => {
+    setSelectedLang(null);
+    setShowResults(false);
+  };
   if (loading) return <Text>Loading questions...</Text>;
 
   return (
@@ -239,37 +261,46 @@ function QuestionTest({ langInfo }: QuestionTestProps) {
       )}
 
       {showResults && (
-        <HStack spacing={8}>
-          {Object.keys(questions).map((type) => (
-            <VStack key={type} spacing={2} align="stretch" width="100%">
-              <Text fontSize="lg" fontWeight="bold" ml={6}>
-                {type === "L"
-                  ? "Listening"
-                  : type === "S"
-                  ? "Speaking"
-                  : type === "R"
-                  ? "Reading"
-                  : "Writing"}
-              </Text>
-              <Table variant="simple">
-                <Thead>
-                  <Tr>
-                    <Th>Question</Th>
-                    <Th>Result</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {answers[type].slice(0, 5).map((isCorrect, index) => (
-                    <Tr key={`${type}-${index}`}>
-                      <Td>{index + 1}</Td>
-                      <Td>{isCorrect ? "O" : "X"}</Td>
+        <>
+          <HStack spacing={8}>
+            {Object.keys(questions).map((type) => (
+              <VStack key={type} spacing={2} align="stretch" width="100%">
+                <Text fontSize="lg" fontWeight="bold" ml={6}>
+                  {type === "L"
+                    ? "Listening"
+                    : type === "S"
+                    ? "Speaking"
+                    : type === "R"
+                    ? "Reading"
+                    : "Writing"}
+                </Text>
+                <Table variant="simple">
+                  <Thead>
+                    <Tr>
+                      <Th>Question</Th>
+                      <Th>Result</Th>
                     </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            </VStack>
-          ))}
-        </HStack>
+                  </Thead>
+                  <Tbody>
+                    {answers[type].slice(0, 5).map((isCorrect, index) => (
+                      <Tr key={`${type}-${index}`}>
+                        <Td>{index + 1}</Td>
+                        <Td>{isCorrect ? "O" : "X"}</Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              </VStack>
+            ))}
+          </HStack>
+          <Text>{total}/20</Text>
+          <Text>
+            {total >= 15
+              ? "축하합니다. 레벨업했습니다."
+              : "15점 이하로 레벨업에 실패했습니다."}
+          </Text>
+          <Button onClick={restart}>다시 레벨테스트 보러가기</Button>
+        </>
       )}
     </VStack>
   );

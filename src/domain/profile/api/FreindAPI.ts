@@ -12,14 +12,16 @@ export const requestFriend = async (target_id: string) => {
   }
 };
 
-export const confirmFriend = async (confirm: boolean) => {
+//친추 승인 거절
+export const confirmFriend = async (target_id: string, confirm: boolean) => {
   try {
     const response = await axiosInstance.post(`/confirm-friend`, {
+      target_id,
       confirm,
     });
-    return response.data.data;
+    return response.data;
   } catch (error) {
-    console.error("Failed to fetch comments:", error);
+    console.error(error);
     throw error;
   }
 };

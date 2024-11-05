@@ -6,7 +6,7 @@ import { fetcheImage } from "../../../common/utils/fetchImage"; // 이미지 fet
 import { default_img } from "../../../common/utils/img"; // 기본 이미지 import
 
 interface FriendRequestListProps {
-  friendRequests: Friend[];
+  friendRequests: any[];
   handleConfirmRequest: (id: string, confirm: boolean) => void;
 }
 
@@ -22,15 +22,15 @@ const FriendRequestList: FC<FriendRequestListProps> = ({
   useEffect(() => {
     const loadImages = async () => {
       const imagePromises = friendRequests.map(async (request) => {
-        const image = request.userImg
-          ? await fetcheImage(request.userImg)
+        const image = request.user_img
+          ? await fetcheImage(request.user_img)
           : default_img;
-        return { userId: request.userId, image };
+        return { user_id: request.user_id, image };
       });
 
       const images = await Promise.all(imagePromises);
       const imageMap = images.reduce((acc, cur) => {
-        const userId = cur.userId; // userId를 추출
+        const userId = cur.user_id; // userId를 추출
         if (userId) {
           acc[userId] = cur.image || default_img;
         }
@@ -47,7 +47,7 @@ const FriendRequestList: FC<FriendRequestListProps> = ({
     <VStack spacing={4} align="stretch">
       {friendRequests.map((request) => (
         <HStack
-          key={request.userId || "unknown"} // userId가 없으면 fallback 키 사용
+          key={request.user_id || "unknown"} // userId가 없으면 fallback 키 사용
           justify="space-between"
           p={2}
           _hover={{ bg: "gray.50" }}
@@ -56,14 +56,14 @@ const FriendRequestList: FC<FriendRequestListProps> = ({
           <HStack>
             <Avatar
               size="md"
-              src={loadedImages[request.userId!] ?? default_img} // userId가 null이 아닌 경우만 사용
+              src={loadedImages[request.user_id!] ?? default_img} // userId가 null이 아닌 경우만 사용
             />
             <HStack spacing={0} align="end">
               <Text fontWeight="bold" color="gray.800">
-                {request.userName}
+                {request.user_name}
               </Text>
               <Text color="gray" fontSize={"13px"} ml={0.5}>
-                @{request.userId}
+                @{request.user_id}
               </Text>
             </HStack>
           </HStack>
@@ -72,14 +72,14 @@ const FriendRequestList: FC<FriendRequestListProps> = ({
               size="sm"
               mr={2}
               colorScheme="green"
-              onClick={() => handleConfirmRequest(request.userId!, true)} // userId가 null이 아니라고 가정
+              onClick={() => handleConfirmRequest(request.user_id!, true)} // userId가 null이 아니라고 가정
             >
               {t(`friend.approve`)}
             </Button>
             <Button
               size="sm"
               colorScheme="red"
-              onClick={() => handleConfirmRequest(request.userId!, false)} // userId가 null이 아니라고 가정
+              onClick={() => handleConfirmRequest(request.user_id!, false)} // userId가 null이 아니라고 가정
             >
               {t(`friend.reject`)}
             </Button>
