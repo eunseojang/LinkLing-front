@@ -1,4 +1,4 @@
-name: Linkling
+name: Deploy
 
 on:
   push:
@@ -10,21 +10,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Check out code
         uses: actions/checkout@v2
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "16"
+          node-version: "16" # 원하는 Node.js 버전으로 변경하세요.
+
+      - name: Install pnpm
+        run: npm install -g pnpm
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
 
-      - name: Build
-        run: npm run build
-        env:
-          VITE_API_KEY: ${{ secrets.VITE_API_KEY }} # 환경 변수를 사용합니다.
-
-      - name: Deploy
-        run: pnpm run dev # 배포 명령어를 실행합니다.
+      - name: Run development server
+        run: pnpm run dev
