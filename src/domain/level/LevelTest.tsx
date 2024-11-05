@@ -54,7 +54,9 @@ function LevelTest() {
 
   if (selectedLang) {
     // 선택한 언어에 맞는 레벨 테스트 화면으로 전환
-    return <QuestionTest langInfo={selectedLang} />;
+    return (
+      <QuestionTest langInfo={selectedLang} setSelectedLang={setSelectedLang} />
+    );
   }
 
   return (

@@ -40,15 +40,36 @@ const SettingForm = () => {
   }, []);
 
   useEffect(() => {
+    const toastStatus = localStorage.getItem("showToast");
+    if (toastStatus) {
+      showToast(
+        "idChange.success",
+        "ID가 성공적으로 변경되었습니다.",
+        "success"
+      );
+      localStorage.removeItem("showToast"); // 표시 후 상태 초기화
+    }
+  }, []);
+
+  useEffect(() => {
     if (profile) {
       setGender(profile.user_gender);
       setNation(profile.user_nation);
     }
   }, [profile]);
 
-  const handleIDChange = () => {
+  const handleIDChange = async () => {
     if (profile) {
-      changeID(profile.user_id, newID);
+      try {
+        await changeID(profile.user_id, newID);
+        localStorage.setItem("showToast", "true"); // 새로고침 전에 toast 상태 저장
+
+        window.location.reload();
+
+        setNewID(""); // 성공 시 입력 초기화
+      } catch (error) {
+        showToast("settrings.currentfail", "settrings.currentfaildes", "error");
+      }
     }
   };
 
@@ -84,7 +105,12 @@ const SettingForm = () => {
 
   const handleProfileUpdate = async () => {
     if (profile) {
-      await updateProfile(profile.user_name, profile.user_info, gender!, nation!);
+      await updateProfile(
+        profile.user_name,
+        profile.user_info,
+        gender!,
+        nation!
+      );
       await fetchProfile(); // 프로필 업데이트 후 새로 가져오기
     }
   };
@@ -128,7 +154,7 @@ const SettingForm = () => {
             value={existPassword}
             onChange={(e) => setExistPassword(e.target.value)}
             placeholder={t(
-              "settings.passwordPlaceholder",
+              "settings.existpasswordPlaceholder",
               "Enter new password"
             )}
           />
@@ -148,7 +174,7 @@ const SettingForm = () => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder={t(
-              "settings.passwordPlaceholder",
+              "settings.passwordPlaceholder1",
               "Enter new password"
             )}
           />

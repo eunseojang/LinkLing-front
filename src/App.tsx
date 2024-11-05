@@ -34,8 +34,6 @@ function App() {
   const socketRef = useRef<WebSocket | null>(null); // WebSocket 인스턴스를 저장할 ref
 
   useEffect(() => {
-    console.log("test~~~~~~~~~~~~~~~");
-    console.log(import.meta.env.VITE_API_URL);
     const authenticate = () => {
       checkAuth();
       setInitialized(true);

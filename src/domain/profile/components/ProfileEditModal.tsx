@@ -53,6 +53,19 @@ const ProfileEditModal = ({
     }
   }, [newImage]);
 
+  useEffect(() => {
+    const toastStatus = localStorage.getItem("showToast");
+    if (toastStatus) {
+      toast({
+        title: "Profile updated.",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+      localStorage.removeItem("showToast"); // 표시 후 상태 초기화
+    }
+  }, []);
+
   const handleSaveClick = async () => {
     if (profile) {
       try {
@@ -62,15 +75,11 @@ const ProfileEditModal = ({
           user_gender: profile?.user_gender,
           user_nation: profile?.user_nation,
         });
+        localStorage.setItem("showToast", "true"); // 새로고침 전에 toast 상태 저장
 
-        toast({
-          title: "Profile updated.",
-          status: "success",
-          duration: 2000,
-          isClosable: true,
-        });
-        onClose();
         window.location.reload();
+
+        onClose();
       } catch (error) {
         toast({
           title: "Update failed.",

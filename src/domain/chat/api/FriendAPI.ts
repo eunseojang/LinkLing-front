@@ -51,10 +51,11 @@ export const FriendListRequest = async () => {
 //친추 승인 거절
 export const confirmFriend = async (target_id: string, confirm: boolean) => {
   try {
-    const response = await axiosInstance.post(
-      `/confirm-friend?target_id=${target_id}`,
-      { confirm }
-    );
+    console.log(target_id);
+    const response = await axiosInstance.post(`/confirm-friend`, {
+      target_id,
+      confirm,
+    });
     return response.data;
   } catch (error) {
     console.error(error);
