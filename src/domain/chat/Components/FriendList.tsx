@@ -6,11 +6,13 @@ import {
   Button,
   Text,
   Flex,
+  Box,
 } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { fetcheImage } from "../../../common/utils/fetchImage"; // 이미지 fetching 함수 import
 import { default_img } from "../../../common/utils/img"; // 기본 이미지 import
+import { getChatRoomID } from "../api/ChatAPI";
 
 interface FriendListProps {
   friends: any[];
@@ -96,17 +98,36 @@ const FriendList: FC<FriendListProps> = ({
               </Badge>
             </VStack>
           </HStack>
-          <Button
-            size="sm"
-            colorScheme="red"
-            variant="outline"
-            onClick={(e) => {
-              e.stopPropagation();
-              deleteFriend(friend.user_id);
-            }}
-          >
-            {t(`friend.delete`)}
-          </Button>
+          <Box>
+            <Button
+              mr={2}
+              size="sm"
+              colorScheme="green"
+              variant="outline"
+              onClick={async (e) => {
+                e.stopPropagation();
+                try {
+                  const id = await getChatRoomID(friend.user_id);
+                  console.log(id);
+                } catch (error) {
+                  console.error("Failed to get chat room ID", error);
+                }
+              }}
+            >
+              {"메세지 보내기"}
+            </Button>
+            <Button
+              size="sm"
+              colorScheme="red"
+              variant="outline"
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteFriend(friend.user_id);
+              }}
+            >
+              {t(`friend.delete`)}
+            </Button>
+          </Box>
         </HStack>
       ))}
     </VStack>
