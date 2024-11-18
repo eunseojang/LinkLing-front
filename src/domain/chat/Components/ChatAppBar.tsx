@@ -28,7 +28,7 @@ function ChatAppBar({
   const { t } = useTranslation();
 
   const handleRemoveFriend = (user: User) => {
-    console.log(`Removing ${user.name} from friends list.`);
+    console.log(`Removing ${user.user_nickname} from friends list.`);
   };
 
   return (
@@ -43,13 +43,17 @@ function ChatAppBar({
       shadow="md"
     >
       <HStack>
-        <Avatar size="md" name={selectedUser.name} src={selectedUser.avatar} />
+        <Avatar
+          size="md"
+          name={selectedUser.user_nickname}
+          src={selectedUser.user_profile}
+        />
         <Flex flexDirection={"column"}>
           <Text fontSize="xl" fontWeight="bold">
-            {selectedUser.name}
+            {selectedUser.user_nickname}
           </Text>
           <Text fontSize="xs" color={"gray.100"} mt={-1}>
-            {"@selectedUserid"}
+            {"@" + selectedUser.user_id}
           </Text>
         </Flex>
       </HStack>

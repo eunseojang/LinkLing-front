@@ -1,6 +1,21 @@
-import { VStack, Text } from "@chakra-ui/react";
+import { VStack, Box, Text } from "@chakra-ui/react";
 
-function ChatRoom() {
+interface Message {
+  cr_id: number;
+  sender_id: string;
+  receiver_id: string;
+  message_content: string;
+  sent_at: string;
+  read: boolean;
+  message_type: string;
+}
+
+interface ChatRoomProps {
+  messages: Message[]; // 받아온 메시지 목록
+  userId: string; // 현재 사용자 ID
+}
+
+function ChatRoom({ messages, userId }: ChatRoomProps) {
   return (
     <VStack
       align="stretch"
@@ -10,35 +25,21 @@ function ChatRoom() {
       bg={"gray.50"}
       p={3}
     >
-      <>
-        <Text
-          alignSelf="flex-start"
-          bg="linkling.100"
-          p={4}
-          borderRadius="lg"
-          shadow="md"
+      {messages.map((msg, index) => (
+        <Box
+          key={index}
+          alignSelf={msg.sender_id === userId ? "flex-end" : "flex-start"}
+          bg={msg.sender_id === userId ? "blue.100" : "gray.200"}
+          p={3}
+          borderRadius="md"
+          shadow="base"
+          maxWidth="70%"
         >
-          안녕하세요, 무엇을 도와드릴까요?
-        </Text>
-        <Text
-          alignSelf="flex-end"
-          bg="linkling.200"
-          p={4}
-          borderRadius="lg"
-          shadow="md"
-        >
-          네, 안녕하세요. 질문이 있습니다.
-        </Text>
-        <Text
-          alignSelf="flex-start"
-          bg="linkling.100"
-          p={4}
-          borderRadius="lg"
-          shadow="md"
-        >
-          네, 어떤 질문인지 말씀해 주세요.
-        </Text>
-      </>
+          <Text fontSize="md" wordBreak="break-word">
+            {msg.message_content}
+          </Text>
+        </Box>
+      ))}
     </VStack>
   );
 }
