@@ -32,6 +32,7 @@ function ChatSideBar({
         const friendList = await getFriendList();
         setUsers(friendList);
       } catch (error) {
+        setUsers([]);
         console.error("Failed to fetch friend list", error);
       }
     };
