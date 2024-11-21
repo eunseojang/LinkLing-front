@@ -19,7 +19,7 @@ function MessageInput({ sendMessage }: MessageInputProps) {
   };
 
   return (
-    <HStack p={4} bg={"gray.50"} borderColor="gray.300">
+    <HStack p={4} bg={"#F7F9F4"} borderColor="gray.300">
       <Input
         placeholder={t(`chat.messageInputPla`) + "..."}
         bg={"white"}

@@ -30,6 +30,7 @@ const ChatComponent = () => {
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
+        console.log(data);
 
         if (data.type === "HISTORY") {
           setMessages(data.messages); // 이전 메시지 로드
@@ -62,17 +63,29 @@ const ChatComponent = () => {
     console.log(selectedUser);
     setSelectedUser(user);
 
-    if (wsRef.current && selectedUser) {
+    // 현재 URL 쿼리 업데이트
+    const params = new URLSearchParams(window.location.search);
+    params.set("roomId", roomCrId.toString()); // roomId 추가 또는 업데이트
+
+    // URL 변경 (페이지 리로드 없이)
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState({}, "", newUrl); // URL 변경
+    console.log(`URL 변경됨: ${newUrl}`);
+
+    if (wsRef.current) {
       setCrId(roomCrId);
+
       const enterPayload = {
         message_type: "ENTER",
         sender_id: id,
-        receiver_id: selectedUser.user_id,
         cr_id: roomCrId,
+        receiver_id: user?.user_id || null, // 선택한 유저가 없으면 null
       };
+
       wsRef.current.send(JSON.stringify(enterPayload));
-      console.log("방에 입장했습니다.");
+      console.log("방에 입장했습니다.", enterPayload);
     }
+
     console.log(crId, selectedUser, "방입장상태");
   };
 
@@ -93,21 +106,6 @@ const ChatComponent = () => {
       wsRef.current.send(JSON.stringify(chatPayload));
     }
   };
-
-  // // 방 나가기
-  // const leaveRoom = () => {
-  //   if (wsRef.current && crId) {
-  //     const leavePayload = {
-  //       message_type: "LEAVE",
-  //       sender_id: "본인아이디",
-  //       receiver_id: selectedUser?.user_id,
-  //       cr_id: crId,
-  //     };
-  //     wsRef.current.send(JSON.stringify(leavePayload));
-  //     setCrId(null);
-  //     setMessages([]);
-  //   }
-  // };
 
   return (
     <HStack spacing={0} width="100%" h={"100%"}>
