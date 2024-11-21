@@ -15,12 +15,13 @@ import "flag-icons/css/flag-icons.min.css";
 import { getProfile } from "../api/ProfileAPI";
 import { default_img } from "../../../common/utils/img";
 import { getFlagClass, UserProfile } from "../utils/ProfileUtils";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ProfileEditModal from "./ProfileEditModal";
-import { requestFriend } from "../api/FreindAPI";
+import { confirmFriend, requestFriend } from "../api/FreindAPI";
 import { useToastMessage } from "../../../common/components/useToastMessage";
 import { fetcheImage } from "../../../common/utils/fetchImage";
 import { useTranslation } from "react-i18next"; // useTranslation import 추가
+import { getChatRoomID } from "../../chat/api/ChatAPI";
 
 const UserProfileComponent: FC = () => {
   const { t } = useTranslation(); // useTranslation 훅 사용
@@ -31,6 +32,7 @@ const UserProfileComponent: FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { showToast } = useToastMessage();
   const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const fetchProfile = async () => {
     try {
@@ -141,7 +143,19 @@ const UserProfileComponent: FC = () => {
             </Button>
           )}
           {profile.profile_info === "FRIEND" && (
-            <Button colorScheme="gray" onClick={() => alert("Message sent!")}>
+            <Button
+              colorScheme="gray"
+              onClick={async (e) => {
+                e.stopPropagation();
+                try {
+                  const id = await getChatRoomID(profile.user_id);
+                  navigate("/linkchat?roomId=" + id);
+                  console.log("채팅창으로 이동하게 setting 필요", id);
+                } catch (error) {
+                  console.error("Failed to get chat room ID", error);
+                }
+              }}
+            >
               {t("profile.send_message")} {/* 번역 파일 사용 */}
             </Button>
           )}
@@ -151,7 +165,13 @@ const UserProfileComponent: FC = () => {
             </Button>
           )}
           {profile.profile_info === "ACCEPT" && (
-            <Button colorScheme="green" onClick={() => alert("Accept friend!")}>
+            <Button
+              colorScheme="green"
+              onClick={async () => {
+                await confirmFriend(profile.user_id, true);
+                window.location.reload();
+              }}
+            >
               {t("profile.accept_friend")} {/* 번역 파일 사용 */}
             </Button>
           )}

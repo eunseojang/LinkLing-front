@@ -11,11 +11,13 @@ import {
 import { useTranslation } from "react-i18next";
 import { User } from "../Utils/ChatUtils";
 import { getFriendList } from "../api/ChatAPI";
+import { fetcheImage } from "../../../common/utils/fetchImage"; // 이미지 fetching 함수
+import { default_img } from "../../../common/utils/img"; // 기본 이미지
 
 interface ChatSideBarProps {
   selectedUser: User | null;
   setSelectedUser: (user: User | null) => void;
-  enterRoom: (user: User, crId: number) => void; // 대화방 입장 함수 추가
+  enterRoom: (user: User, crId: number) => void; // 대화방 입장 함수
 }
 
 function ChatSideBar({
@@ -25,20 +27,40 @@ function ChatSideBar({
 }: ChatSideBarProps) {
   const { t } = useTranslation();
   const [users, setUsers] = useState<User[]>([]);
+  const [loadedImages, setLoadedImages] = useState<{ [key: string]: string }>(
+    {}
+  ); // 이미지 로드 상태
 
+  // 친구 리스트와 프로필 이미지 로드
   useEffect(() => {
-    const fetchFriendList = async () => {
+    const fetchFriendListAndImages = async () => {
       try {
         const friendList = await getFriendList();
-        setUsers(friendList);
+        setUsers(friendList); // 유저 목록 업데이트
+
+        // 각 사용자 프로필 이미지를 비동기로 로드
+        const imagePromises = friendList.map(async (user: User) => {
+          const image = user.user_profile
+            ? await fetcheImage(user.user_profile)
+            : default_img;
+          return { user_id: user.user_id, image };
+        });
+
+        const images = await Promise.all(imagePromises);
+        const imageMap = images.reduce((acc, cur) => {
+          acc[cur.user_id] = cur.image || default_img;
+          return acc;
+        }, {} as { [key: string]: string });
+
+        setLoadedImages(imageMap); // 이미지 상태 업데이트
       } catch (error) {
-        setUsers([]);
-        console.error("Failed to fetch friend list", error);
+        console.error("Failed to fetch friend list or images", error);
+        setUsers([]); // 친구 목록이 없을 경우 빈 배열로 처리
       }
     };
 
-    fetchFriendList();
-  }, []);
+    fetchFriendListAndImages();
+  }, []); // 최초 실행 시 한 번만 실행
 
   const handleUserSelect = (user: User) => {
     console.log("선택한 유저", user);
@@ -51,7 +73,7 @@ function ChatSideBar({
   return (
     <Box
       width="280px"
-      bg={"gray.100"}
+      bg={"linkling.50"}
       p={4}
       h={"100%"}
       borderRight="1px solid"
@@ -85,12 +107,13 @@ function ChatSideBar({
             <Button
               key={user.cr_id}
               width="100%"
-              colorScheme="gray"
+              colorScheme="linkling"
               variant={
                 selectedUser && selectedUser.cr_id === user.cr_id
                   ? "solid"
                   : "ghost"
               }
+              h={"60px"}
               p={6}
               borderRadius="xl"
               justifyContent="flex-start"
@@ -99,10 +122,11 @@ function ChatSideBar({
             >
               <HStack w="full" justify="space-between">
                 <HStack>
+                  {/* 프로필 이미지 로드 */}
                   <Avatar
+                    my={2}
                     size="md"
-                    name={user.user_nickname}
-                    src={user.user_profile}
+                    src={loadedImages[user.user_id] || default_img} // 로드된 이미지 또는 기본 이미지
                   />
                   <VStack align="flex-start" spacing={0}>
                     <Text fontSize="lg" fontWeight="bold">
