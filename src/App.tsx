@@ -21,6 +21,7 @@ import { Box } from "@chakra-ui/react";
 import PopoverMenu from "./domain/community/components/PopoverMenu";
 import { detectDominantLanguage } from "./common/utils/language";
 import LevelTestPage from "./domain/level/LevelTestPage";
+import ShowUnity from "./domain/unity/ShowUnity";
 
 function App() {
   const { checkAuth, isAuthenticated } = useAuthStore();
@@ -140,6 +141,10 @@ function App() {
           <Route
             path="/setting"
             element={<PrivateRoute element={<SettingPage />} />}
+          />
+          <Route
+            path="/unity"
+            element={<PrivateRoute element={<ShowUnity roomCode="123456" />} />}
           />
           <Route path="/tts" element={<SpeechPage />} />
           <Route path="/sst" element={<SpeechToText />} />
