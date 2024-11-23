@@ -8,12 +8,12 @@ import {
   Spinner,
   Center,
 } from "@chakra-ui/react";
+import { useParams } from "react-router-dom";
+import VoiceChat from "./Unity";
 
-interface ShowUnityProps {
-  roomCode: string;
-}
+const ShowUnityWithVoiceChat = () => {
+  const { roomCode } = useParams<{ roomCode: string }>(); // URL에서 roomCode 추출
 
-const ShowUnity = ({ roomCode }: ShowUnityProps) => {
   const { unityProvider, isLoaded, sendMessage } = useUnityContext({
     loaderUrl: "/Build/ws-test.loader.js",
     dataUrl: "/Build/ws-test.data",
@@ -84,20 +84,26 @@ const ShowUnity = ({ roomCode }: ShowUnityProps) => {
           </VStack>
         </Center>
       ) : (
-        <Box
-          w="960px"
-          h="600px"
-          mt="20px"
-          mx="auto"
-          border="1px solid"
-          borderColor="gray.300"
-          borderRadius="md"
-          overflow="hidden"
-        >
-          <Unity
-            unityProvider={unityProvider}
-            style={{ width: "100%", height: "100%" }}
-          />
+        <Box>
+          <Box
+            w="960px"
+            h="600px"
+            mt="20px"
+            mx="auto"
+            border="1px solid"
+            borderColor="gray.300"
+            borderRadius="md"
+            overflow="hidden"
+          >
+            <Unity
+              unityProvider={unityProvider}
+              style={{ width: "100%", height: "100%" }}
+            />
+          </Box>
+
+          <Box mt="20px">
+            <VoiceChat roomId={roomCode || ""} />
+          </Box>
         </Box>
       )}
       {!isUnityReady && !showRoomSelection && (
@@ -110,4 +116,4 @@ const ShowUnity = ({ roomCode }: ShowUnityProps) => {
   );
 };
 
-export default ShowUnity;
+export default ShowUnityWithVoiceChat;

@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { fetcheImage } from "../../../common/utils/fetchImage"; // 이미지 fetching 함수 import
 import { default_img } from "../../../common/utils/img"; // 기본 이미지 import
+import { useWebSocket } from "../../unity/WebSocketContext";
 
 interface ChatAppBarProps {
   selectedUser: User;
@@ -31,6 +32,7 @@ function ChatAppBar({
 }: ChatAppBarProps) {
   const { t } = useTranslation();
   const [profileImage, setProfileImage] = useState<string>(default_img);
+  const { socket } = useWebSocket();
 
   // 프로필 이미지 로드
   useEffect(() => {
@@ -46,6 +48,12 @@ function ChatAppBar({
     loadImage();
   }, [selectedUser]);
 
+  const startCall = (toUserId: string) => {
+    if (socket && toUserId) {
+      socket.send(`ALERT:TO:${toUserId}|MESSAGE:Call Request`);
+      console.log(`Call request sent to ${toUserId}`);
+    }
+  };
   const handleRemoveFriend = (user: User) => {
     console.log(`Removing ${user.user_nickname} from friends list.`);
   };
@@ -81,7 +89,7 @@ function ChatAppBar({
             size="lg"
             colorScheme="blue"
             variant="ghost"
-            onClick={() => console.log(selectedUser.user_id)} // 전화 이벤트 핸들링
+            onClick={() => startCall(selectedUser.user_id)} // 전화 이벤트 핸들링
             mr={4}
           />
         </Tooltip>

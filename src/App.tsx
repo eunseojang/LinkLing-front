@@ -12,7 +12,6 @@ import AuthCallback from "./domain/auth/oauth/Components/AuthCallback";
 import LoginPage from "./domain/auth/login/LoginPage";
 import FindPasswordPage from "./domain/auth/findPassword/FindPasswordPage";
 import SettingPage from "./domain/setting/SettingPage";
-import SpeechPage from "./domain/chat/speech";
 import SpeechToText from "./domain/chat/stt";
 import { useTextSelection } from "./domain/community/hooks/useTextSelection";
 import { translateText } from "./common/utils/translate";
@@ -22,6 +21,9 @@ import PopoverMenu from "./domain/community/components/PopoverMenu";
 import { detectDominantLanguage } from "./common/utils/language";
 import LevelTestPage from "./domain/level/LevelTestPage";
 import ShowUnity from "./domain/unity/ShowUnity";
+import { WebSocketProvider } from "./domain/unity/WebSocketContext";
+import NotificationBar from "./domain/unity/NotoficationBar";
+import CallPage from "./domain/unity/CallPage";
 
 function App() {
   const { checkAuth, isAuthenticated } = useAuthStore();
@@ -32,7 +34,6 @@ function App() {
   const { selectedText, setMenuPosition, menuPosition, handleTextSelection } =
     useTextSelection(containerRef);
   const { i18n } = useTranslation();
-  const socketRef = useRef<WebSocket | null>(null); // WebSocket 인스턴스를 저장할 ref
 
   useEffect(() => {
     const authenticate = () => {
@@ -42,54 +43,6 @@ function App() {
 
     authenticate();
   }, [checkAuth]);
-
-  useEffect(() => {
-    if (
-      !socketRef.current ||
-      socketRef.current.readyState === WebSocket.CLOSED
-    ) {
-      const socket = new WebSocket(
-        `wss://unbiased-evenly-worm.ngrok-free.app/ping`
-      );
-      socketRef.current = socket;
-
-      socket.onopen = function () {
-        console.log("WebSocket connection established");
-        setInterval(() => {
-          if (socket.readyState === WebSocket.OPEN) {
-            socket.send("ping:" + localStorage.getItem("accessToken"));
-            console.log("ping");
-          }
-        }, 60000);
-      };
-
-      socket.onmessage = function (event) {
-        console.log("Message from server: ", event.data);
-      };
-
-      socket.onclose = function (event) {
-        console.log("WebSocket connection closed", event);
-        socketRef.current = null;
-      };
-
-      socket.onerror = function (event) {
-        console.error("WebSocket error observed: ", event);
-      };
-    }
-
-    return () => {
-      if (
-        socketRef.current &&
-        socketRef.current.readyState !== WebSocket.CLOSED
-      ) {
-        socketRef.current.close();
-      }
-    };
-  }, []);
-
-  if (!initialized) {
-    return null;
-  }
 
   const handleTranslateClick = async () => {
     if (selectedText) {
@@ -117,64 +70,73 @@ function App() {
     setTranslatedText(null);
   };
 
-  return (
-    <Box onMouseUp={handleTextSelectionWrapper} ref={containerRef}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route
-            path="/:nickName"
-            element={<PrivateRoute element={<ProfilePage />} />}
-          />
-          <Route
-            path="/community"
-            element={<PrivateRoute element={<CommunityPage />} />}
-          />
-          <Route
-            path="/leveltest"
-            element={<PrivateRoute element={<LevelTestPage />} />}
-          />
-          <Route
-            path="/linkchat"
-            element={<PrivateRoute element={<ChatPage />} />}
-          />
-          <Route
-            path="/setting"
-            element={<PrivateRoute element={<SettingPage />} />}
-          />
-          <Route
-            path="/unity"
-            element={<PrivateRoute element={<ShowUnity roomCode="123456" />} />}
-          />
-          <Route path="/tts" element={<SpeechPage />} />
-          <Route path="/sst" element={<SpeechToText />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/signup/oauth/:email" element={<OauthSignupPage />} />
-          <Route path="/auth/callback" element={<AuthCallback />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/findpassword" element={<FindPasswordPage />} />
-          <Route path="/" element={<HomePage />} />
-          <Route
-            path="*"
-            element={
-              isAuthenticated ? (
-                <Navigate to="/" replace />
-              ) : (
-                <Navigate to="/login" replace />
-              )
-            }
-          />
-        </Routes>
-      </BrowserRouter>
+  if (!initialized) {
+    return null;
+  }
 
-      <PopoverMenu
-        menuPosition={menuPosition}
-        translatedText={translatedText}
-        handleTranslateClick={handleTranslateClick}
-        handleSpeakClick={handleSpeakClick}
-        closeMenu={() => setMenuPosition(null)}
-      />
-    </Box>
+  return (
+    <BrowserRouter>
+      <WebSocketProvider>
+        <NotificationBar />
+        <Box onMouseUp={handleTextSelectionWrapper} ref={containerRef}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route
+              path="/:nickName"
+              element={<PrivateRoute element={<ProfilePage />} />}
+            />
+            <Route
+              path="/community"
+              element={<PrivateRoute element={<CommunityPage />} />}
+            />
+            <Route
+              path="/leveltest"
+              element={<PrivateRoute element={<LevelTestPage />} />}
+            />
+            <Route
+              path="/linkchat"
+              element={<PrivateRoute element={<ChatPage />} />}
+            />
+            <Route
+              path="/setting"
+              element={<PrivateRoute element={<SettingPage />} />}
+            />
+            <Route
+              path="/unity/:roomCode"
+              element={
+                <PrivateRoute element={<ShowUnity />} />
+              }
+            />
+            <Route path="/call" element={<CallPage />} />
+            <Route path="/sst" element={<SpeechToText />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/signup/oauth/:email" element={<OauthSignupPage />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/findpassword" element={<FindPasswordPage />} />
+            <Route path="/" element={<HomePage />} />
+            <Route
+              path="*"
+              element={
+                isAuthenticated ? (
+                  <Navigate to="/" replace />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+          </Routes>
+
+          <PopoverMenu
+            menuPosition={menuPosition}
+            translatedText={translatedText}
+            handleTranslateClick={handleTranslateClick}
+            handleSpeakClick={handleSpeakClick}
+            closeMenu={() => setMenuPosition(null)}
+          />
+        </Box>
+      </WebSocketProvider>
+    </BrowserRouter>
   );
 }
 
