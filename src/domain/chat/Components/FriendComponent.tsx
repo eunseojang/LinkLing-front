@@ -13,7 +13,11 @@ import { Friend } from "../Utils/FriendUtils";
 import FriendListContainer from "./FreindListContainer";
 import { useToastMessage } from "../../../common/components/useToastMessage";
 
-const FriendComponent: FC = () => {
+interface FriendComponentProps {
+  handleChatGo: (id: number) => void;
+}
+
+const FriendComponent: FC<FriendComponentProps> = ({ handleChatGo }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [friends, setFriends] = useState<Friend[]>([]);
   const [friendRequests, setFriendRequests] = useState<Friend[]>([]);
@@ -43,11 +47,7 @@ const FriendComponent: FC = () => {
         "success"
       );
     } catch (error) {
-      showToast(
-        "친구 요청 실패",
-        "이미 친구입니다",
-        "error"
-      );
+      showToast("친구 요청 실패", "이미 친구입니다", "error");
     }
   };
 
@@ -71,6 +71,7 @@ const FriendComponent: FC = () => {
         handleSearch={handleSearch}
       />
       <FriendListContainer
+        handleChatGo={handleChatGo}
         friends={friends}
         friendRequests={friendRequests}
         handleConfirmRequest={handleConfirmRequest}

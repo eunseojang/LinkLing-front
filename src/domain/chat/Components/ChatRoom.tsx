@@ -1,4 +1,7 @@
 import { VStack, Box, Text, HStack, Flex } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
+import { useState, useEffect, useRef } from "react";
+import { translateText } from "../../../common/utils/translate";
 
 interface Message {
   cr_id: number;
@@ -13,9 +16,49 @@ interface Message {
 interface ChatRoomProps {
   messages: Message[]; // 받아온 메시지 목록
   userId: string; // 현재 사용자 ID
+  translateMode: boolean;
 }
 
-function ChatRoom({ messages, userId }: ChatRoomProps) {
+function ChatRoom({ messages, userId, translateMode }: ChatRoomProps) {
+  const { i18n } = useTranslation();
+
+  // 번역된 메시지를 상태로 관리
+  const [translatedMessages, setTranslatedMessages] = useState<string[]>([]);
+
+  // Scroll reference
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  // 비동기 번역 작업 처리
+  useEffect(() => {
+    const fetchTranslations = async () => {
+      if (translateMode) {
+        const translations = await Promise.all(
+          messages.map((msg) =>
+            translateText(msg.message_content, i18n.language)
+          )
+        );
+
+        // const translations = await Promise.all(
+        //   messages.map((msg) =>
+        //     msg.sender_id !== userId
+        //       ? translateText(msg.message_content, i18n.language)
+        //       : msg.message_content // 자신의 메시지는 번역하지 않음
+        //   )
+        // );
+
+        setTranslatedMessages(translations);
+      } else {
+        setTranslatedMessages(messages.map((msg) => msg.message_content));
+      }
+    };
+    fetchTranslations();
+  }, [messages, translateMode, i18n.language]);
+
+  // 새로운 메시지가 추가되면 맨 아래로 스크롤
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat("ko-KR", {
@@ -24,6 +67,7 @@ function ChatRoom({ messages, userId }: ChatRoomProps) {
       hour12: true, // 12시간제로 표시
     }).format(date);
   };
+
   return (
     <VStack
       align="stretch"
@@ -55,6 +99,18 @@ function ChatRoom({ messages, userId }: ChatRoomProps) {
             </Flex>
           )}
 
+          {msg.sender_id === userId && msg.read && (
+            <Flex
+              flexDirection="column"
+              justifyContent="flex-end"
+              alignItems="flex-end"
+            >
+              <Text fontSize="xs" color="gray.500">
+                {formatTime(msg.sent_at)} {/* 시간 표시 */}
+              </Text>
+            </Flex>
+          )}
+
           {/* 메시지 박스 */}
           <Box
             bg={msg.sender_id === userId ? "linkling.200" : "gray.200"}
@@ -63,11 +119,14 @@ function ChatRoom({ messages, userId }: ChatRoomProps) {
             shadow="base"
           >
             <Text fontSize="md" wordBreak="break-word">
-              {msg.message_content}
+              {translatedMessages[index]}
             </Text>
           </Box>
         </HStack>
       ))}
+
+      {/* 자동 스크롤용 Ref */}
+      <div ref={bottomRef} />
     </VStack>
   );
 }

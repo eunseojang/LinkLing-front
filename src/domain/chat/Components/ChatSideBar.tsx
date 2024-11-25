@@ -63,8 +63,6 @@ function ChatSideBar({
   }, []); // 최초 실행 시 한 번만 실행
 
   const handleUserSelect = (user: User) => {
-    console.log("선택한 유저", user);
-    setSelectedUser(user); // 선택된 유저 업데이트
     if (user.cr_id) {
       enterRoom(user, user.cr_id); // 방 입장
     }
@@ -88,7 +86,11 @@ function ChatSideBar({
         py={3}
         borderRadius="lg"
         _hover={{ bg: "linkling.300" }}
-        onClick={() => setSelectedUser(null)}
+        onClick={() => {
+          setSelectedUser(null);
+          const newUrl = `${window.location.pathname}`;
+          window.history.replaceState({}, "", newUrl); // URL 변경
+        }}
       >
         {t(`friend.matching`)}
       </Button>
