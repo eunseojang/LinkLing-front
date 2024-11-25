@@ -105,7 +105,7 @@ function ChatRoom({ messages, userId, translateMode }: ChatRoomProps) {
               justifyContent="flex-end"
               alignItems="flex-end"
             >
-              <Text fontSize="xs" color="gray.500">
+              <Text fontSize="xs" color="gray.500" mt={5}>
                 {formatTime(msg.sent_at)} {/* 시간 표시 */}
               </Text>
             </Flex>
@@ -122,6 +122,18 @@ function ChatRoom({ messages, userId, translateMode }: ChatRoomProps) {
               {translatedMessages[index]}
             </Text>
           </Box>
+
+          {msg.sender_id !== userId && msg.read && (
+            <Flex
+              flexDirection="column"
+              justifyContent="flex-end"
+              alignItems="flex-end"
+            >
+              <Text fontSize="xs" color="gray.500">
+                {formatTime(msg.sent_at)} {/* 시간 표시 */}
+              </Text>
+            </Flex>
+          )}
         </HStack>
       ))}
 
