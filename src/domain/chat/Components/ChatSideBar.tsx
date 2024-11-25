@@ -134,7 +134,12 @@ function ChatSideBar({
                     <Text fontSize="lg" fontWeight="bold">
                       {user.user_nickname}
                     </Text>
-                    <Text fontSize="sm" color="gray.600">
+                    <Text
+                      fontSize="sm"
+                      color="gray.600"
+                      maxW={"150px"}
+                      isTruncated
+                    >
                       {user.recent_msg}
                     </Text>
                   </VStack>

@@ -34,6 +34,7 @@ function App() {
   const { selectedText, setMenuPosition, menuPosition, handleTextSelection } =
     useTextSelection(containerRef);
   const { i18n } = useTranslation();
+  const socketRef = useRef<WebSocket | null>(null); // WebSocket 인스턴스를 저장할 ref
 
   useEffect(() => {
     const authenticate = () => {
@@ -43,6 +44,48 @@ function App() {
 
     authenticate();
   }, [checkAuth]);
+
+  useEffect(() => {
+    if (
+      !socketRef.current ||
+      socketRef.current.readyState === WebSocket.CLOSED
+    ) {
+      const socket = new WebSocket(
+        `wss://unbiased-evenly-worm.ngrok-free.app/ping`
+      );
+      socketRef.current = socket;
+      socket.onopen = function () {
+        console.log("WebSocket connection established");
+        setInterval(() => {
+          if (socket.readyState === WebSocket.OPEN) {
+            socket.send("ping:" + localStorage.getItem("accessToken"));
+            console.log("ping");
+          }
+        }, 60000);
+      };
+      socket.onmessage = function (event) {
+        console.log("Message from server: ", event.data);
+      };
+      socket.onclose = function (event) {
+        console.log("WebSocket connection closed", event);
+        socketRef.current = null;
+      };
+      socket.onerror = function (event) {
+        console.error("WebSocket error observed: ", event);
+      };
+    }
+    return () => {
+      if (
+        socketRef.current &&
+        socketRef.current.readyState !== WebSocket.CLOSED
+      ) {
+        socketRef.current.close();
+      }
+    };
+  }, []);
+  if (!initialized) {
+    return null;
+  }
 
   const handleTranslateClick = async () => {
     if (selectedText) {
@@ -103,9 +146,7 @@ function App() {
             />
             <Route
               path="/unity/:roomCode"
-              element={
-                <PrivateRoute element={<ShowUnity />} />
-              }
+              element={<PrivateRoute element={<ShowUnity />} />}
             />
             <Route path="/call" element={<CallPage />} />
             <Route path="/sst" element={<SpeechToText />} />
