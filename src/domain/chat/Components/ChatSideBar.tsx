@@ -63,7 +63,9 @@ function ChatSideBar({
   }, []); // 최초 실행 시 한 번만 실행
 
   const handleUserSelect = (user: User) => {
-    setSelectedUser(user); // 선택된 유저 업데이트
+    if (user.cr_id) {
+      enterRoom(user, user.cr_id); // 방 입장
+    }
   };
 
   return (
