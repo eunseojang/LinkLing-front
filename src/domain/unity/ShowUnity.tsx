@@ -15,7 +15,7 @@ import { SendIcon } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Unity, useUnityContext } from "react-unity-webgl";
-import VoiceChat from "./Unity";
+import VoiceChat from "./VoiceChat";
 
 type ChatMessage = {
   sender: string;
@@ -267,9 +267,8 @@ const ShowUnityWithVoiceChat = () => {
         <Box>
           <Box
             ref={unityContainerRef}
-            w="960px"
-            h="600px"
-            mt="20px"
+            w="100%"
+            h="100vh"
             mx="auto"
             border="1px solid"
             borderColor="gray.300"
