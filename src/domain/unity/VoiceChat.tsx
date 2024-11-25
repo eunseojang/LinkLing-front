@@ -1,6 +1,5 @@
 // WebRTCChat.tsx
 import React, { useState, useEffect, useRef } from "react";
-import "./WebRTCChat.css";
 
 interface Language {
   code: string;
