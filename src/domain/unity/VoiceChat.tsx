@@ -24,7 +24,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId }) => {
   const webSocketRef = useRef<WebSocket | null>(null);
   useEffect(() => {
     const webSocket = new WebSocket(
-      `wss://${import.meta.env.VITE_API_URL}/voice-chat?roomId=${roomId}`
+      `wss://unbiased-evenly-worm.ngrok-free.app/voice-chat?roomId=${roomId}`
     );
 
     webSocketRef.current = webSocket;
