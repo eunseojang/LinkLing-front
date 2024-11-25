@@ -40,8 +40,8 @@ const ShowUnityWithVoiceChat = () => {
     unityProvider,
     isLoaded,
     sendMessage,
-    addEventListener,
-    removeEventListener,
+    // addEventListener,
+    // removeEventListener,
   } = useUnityContext({
     loaderUrl: "/Build/ws-test.loader.js",
     dataUrl: "/Build/ws-test.data",
