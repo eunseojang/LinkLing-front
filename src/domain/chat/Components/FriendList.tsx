@@ -18,12 +18,14 @@ interface FriendListProps {
   friends: any[];
   deleteFriend: (id: string) => void;
   navigate: (userId: string) => void;
+  handleChatGo: (id: number) => void;
 }
 
 const FriendList: FC<FriendListProps> = ({
   friends,
   deleteFriend,
   navigate,
+  handleChatGo,
 }) => {
   const { t } = useTranslation();
   const [loadedImages, setLoadedImages] = useState<{ [key: string]: string }>(
@@ -44,7 +46,6 @@ const FriendList: FC<FriendListProps> = ({
       const imageMap = images.reduce((acc, cur) => {
         const userId = cur.user_id; // userId를 추출
         if (userId) {
-          // userId가 null이 아닐 때만 추가
           acc[userId] = cur.image || default_img;
         }
         return acc;
@@ -108,7 +109,7 @@ const FriendList: FC<FriendListProps> = ({
                 e.stopPropagation();
                 try {
                   const id = await getChatRoomID(friend.user_id);
-                  console.log(id);
+                  handleChatGo(id);
                 } catch (error) {
                   console.error("Failed to get chat room ID", error);
                 }

@@ -8,6 +8,7 @@ import ChatSideBar from "./ChatSideBar";
 import MatchingComponent from "./MatchingCompontnet";
 import FriendComponent from "./FriendComponent";
 import { getNicknameToken } from "../../../common/utils/nickname";
+import { getFriendList } from "../api/ChatAPI";
 
 const WS_URL = "wss://unbiased-evenly-worm.ngrok-free.app/chat";
 
@@ -30,7 +31,6 @@ const ChatComponent = () => {
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        console.log(data);
 
         if (data.type === "HISTORY") {
           setMessages(data.messages); // 이전 메시지 로드
@@ -56,42 +56,76 @@ const ChatComponent = () => {
       ws.close();
     };
   }, []);
+  useEffect(() => {
+    const initializeChat = async () => {
+      const urlParams = new URLSearchParams(location.search); // 쿼리 파라미터 가져오기
+      const roomIdString = urlParams.get("roomId");
+
+      if (roomIdString) {
+        const roomId = parseInt(roomIdString, 10);
+
+        try {
+          const friendList = await getFriendList();
+          const foundUser = friendList.find(
+            (friend: any) => friend.cr_id === roomId
+          );
+
+          if (foundUser) {
+            setSelectedUser(foundUser);
+            setCrId(roomId);
+          } else {
+            console.error("해당 roomId에 일치하는 사용자가 없습니다.");
+          }
+        } catch (error) {
+          console.error("친구 목록 가져오기 오류:", error);
+        }
+      } else {
+        setSelectedUser(null); // roomId가 없으면 선택된 사용자 초기화
+        setCrId(null);
+      }
+    };
+
+    initializeChat();
+  }, [location.search]); // 쿼리 파라미터가 변경될 때 실행
+
+  // selectedUser와 crId가 설정되었을 때 채팅방 열기
+  useEffect(() => {
+    if (selectedUser && crId !== null) {
+      enterRoom(selectedUser, crId);
+    }
+  }, [selectedUser, crId]);
+
+  const handleChatGo = async (id: number) => {
+    const friendList = await getFriendList();
+    const foundUser = friendList.find((friend: any) => friend.cr_id === id);
+
+    if (foundUser) {
+      setSelectedUser(foundUser);
+      setCrId(id);
+    }
+  };
 
   // 방에 입장
   const enterRoom = (user: User, roomCrId: number) => {
-    console.log(roomCrId);
-    console.log(selectedUser);
-    setSelectedUser(user);
-
-    // 현재 URL 쿼리 업데이트
     const params = new URLSearchParams(window.location.search);
-    params.set("roomId", roomCrId.toString()); // roomId 추가 또는 업데이트
-
-    // URL 변경 (페이지 리로드 없이)
+    params.set("roomId", roomCrId.toString());
     const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.replaceState({}, "", newUrl); // URL 변경
-    console.log(`URL 변경됨: ${newUrl}`);
+    window.history.replaceState({}, "", newUrl); // URL 업데이트
 
     if (wsRef.current) {
-      setCrId(roomCrId);
-
       const enterPayload = {
         message_type: "ENTER",
         sender_id: id,
         cr_id: roomCrId,
-        receiver_id: user?.user_id || null, // 선택한 유저가 없으면 null
+        receiver_id: user.user_id,
       };
 
       wsRef.current.send(JSON.stringify(enterPayload));
-      console.log("방에 입장했습니다.", enterPayload);
     }
-
-    console.log(crId, selectedUser, "방입장상태");
   };
 
   // 메시지 보내기
   const sendMessage = (messageContent: string) => {
-    console.log(selectedUser, crId);
     if (wsRef.current && selectedUser && crId) {
       const chatPayload = {
         message_type: "CHAT",
@@ -100,10 +134,9 @@ const ChatComponent = () => {
         cr_id: crId,
         message_content: messageContent,
       };
-      console.log(chatPayload);
 
-      console.log(wsRef.current, "웹소켓 연결 상태");
       wsRef.current.send(JSON.stringify(chatPayload));
+      console.log("메시지 전송:", chatPayload);
     }
   };
 
@@ -130,13 +163,17 @@ const ChatComponent = () => {
               translateMode={translateMode}
               setTranslateMode={setTranslateMode}
             />
-            <ChatRoom messages={messages} userId={id} />
+            <ChatRoom
+              translateMode={translateMode}
+              messages={messages}
+              userId={id}
+            />
             <MessageInput sendMessage={sendMessage} />
           </>
         ) : (
           <Flex m={"auto"}>
             <MatchingComponent />
-            <FriendComponent />
+            <FriendComponent handleChatGo={handleChatGo} />
           </Flex>
         )}
       </Box>

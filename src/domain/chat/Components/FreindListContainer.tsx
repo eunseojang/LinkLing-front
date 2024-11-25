@@ -21,6 +21,7 @@ interface FriendListContainerProps {
   friendRequests: Friend[];
   handleConfirmRequest: (id: string, confirm: boolean) => void;
   deleteFriend: (id: string) => void;
+  handleChatGo: (id: number) => void;
 }
 
 const FriendListContainer: FC<FriendListContainerProps> = ({
@@ -28,6 +29,7 @@ const FriendListContainer: FC<FriendListContainerProps> = ({
   friendRequests,
   handleConfirmRequest,
   deleteFriend,
+  handleChatGo,
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -67,6 +69,7 @@ const FriendListContainer: FC<FriendListContainerProps> = ({
           {/* Friend list tab */}
           <TabPanel p={0} hidden={filter !== "all"}>
             <FriendList
+              handleChatGo={handleChatGo}
               friends={friends}
               deleteFriend={deleteFriend}
               navigate={navigate}

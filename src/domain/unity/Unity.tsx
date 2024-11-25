@@ -4,7 +4,7 @@ import {
   Button,
   Input,
   Text,
-  Select,
+  // Select,
   VStack,
   HStack,
   Progress,
@@ -14,15 +14,15 @@ import {
   AlertTitle,
 } from "@chakra-ui/react";
 
-interface Language {
-  code: string;
-  label: string;
-  sttConfig: {
-    continuous: boolean;
-    interimResults: boolean;
-    maxAlternatives?: number;
-  };
-}
+// interface Language {
+//   code: string;
+//   label: string;
+//   sttConfig: {
+//     continuous: boolean;
+//     interimResults: boolean;
+//     maxAlternatives?: number;
+//   };
+// }
 
 interface VoiceChatProps {
   roomId: string;
@@ -33,33 +33,34 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
   const [isAudioOn, setIsAudioOn] = useState<boolean>(false);
   const [roomId, setRoomId] = useState<string>(initialRoomId || "");
   const [hasJoinedRoom, setHasJoinedRoom] = useState<boolean>(!!initialRoomId);
-  const [localVolume, setLocalVolume] = useState<number>(0);
-  const [remoteVolume, setRemoteVolume] = useState<number>(0);
+  // const [localVolume, setLocalVolume] = useState<number>(0);
+  // const [remoteVolume, setRemoteVolume] = useState<number>(0);
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [transcript, setTranscript] = useState<string>("");
+  console.log(isAudioOn);
 
-  const languages: Language[] = [
-    {
-      code: "ko-KR",
-      label: "한국어",
-      sttConfig: { continuous: true, interimResults: true },
-    },
-    {
-      code: "en-US",
-      label: "English",
-      sttConfig: { continuous: true, interimResults: true },
-    },
-    {
-      code: "zh-CN",
-      label: "中文",
-      sttConfig: { continuous: true, interimResults: true, maxAlternatives: 1 },
-    },
-    {
-      code: "ja-JP",
-      label: "日本語",
-      sttConfig: { continuous: true, interimResults: true },
-    },
-  ];
+  // const languages: Language[] = [
+  //   {
+  //     code: "ko-KR",
+  //     label: "한국어",
+  //     sttConfig: { continuous: true, interimResults: true },
+  //   },
+  //   {
+  //     code: "en-US",
+  //     label: "English",
+  //     sttConfig: { continuous: true, interimResults: true },
+  //   },
+  //   {
+  //     code: "zh-CN",
+  //     label: "中文",
+  //     sttConfig: { continuous: true, interimResults: true, maxAlternatives: 1 },
+  //   },
+  //   {
+  //     code: "ja-JP",
+  //     label: "日本語",
+  //     sttConfig: { continuous: true, interimResults: true },
+  //   },
+  // ];
 
   const joinRoom = () => {
     if (roomId.trim() === "") {
@@ -123,7 +124,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
                 <VStack flex={1}>
                   <Text>Your Voice Volume</Text>
                   <Progress
-                    value={localVolume}
+                    // value={localVolume}
                     size="sm"
                     colorScheme="green"
                     width="100%"
@@ -132,7 +133,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
                 <VStack flex={1}>
                   <Text>Remote Voice Volume</Text>
                   <Progress
-                    value={remoteVolume}
+                    // value={remoteVolume}
                     size="sm"
                     colorScheme="green"
                     width="100%"
@@ -140,7 +141,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
                 </VStack>
               </HStack>
 
-              <Select
+              {/* <Select
                 placeholder="Select Language"
                 onChange={(e) => setTranscript("")}
               >
@@ -149,7 +150,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
                     {lang.label}
                   </option>
                 ))}
-              </Select>
+              </Select> */}
 
               <Box p={2} borderWidth="1px" borderRadius="md" w="100%">
                 <Text fontWeight="bold" mb={2}>
