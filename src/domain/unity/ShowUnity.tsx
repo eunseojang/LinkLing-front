@@ -228,7 +228,7 @@ const ShowUnityWithVoiceChat = () => {
   };
 
   return (
-    <Box>
+    <Box position="relative" h="100vh">
       {showRoomSelection ? (
         <Center h="100vh">
           <VStack spacing={4}>
@@ -264,17 +264,15 @@ const ShowUnityWithVoiceChat = () => {
           </VStack>
         </Center>
       ) : (
-        <Box>
+        <Box position="relative" h="100vh">
+          {/* Unity Container - Full screen */}
           <Box
             ref={unityContainerRef}
-            w="100%"
-            h="100vh"
-            mx="auto"
-            border="1px solid"
-            borderColor="gray.300"
-            borderRadius="md"
-            overflow="hidden"
-            position="relative"
+            position="absolute"
+            top={0}
+            left={0}
+            right={0}
+            bottom={0}
             backgroundColor="black"
           >
             <Unity
@@ -295,32 +293,51 @@ const ShowUnityWithVoiceChat = () => {
             )}
           </Box>
 
+          {/* Chat Overlay */}
           <Box
-            w="960px"
-            mx="auto"
-            mt="4"
-            mb="4"
-            border="1px solid"
-            borderColor="gray.300"
-            borderRadius="md"
-            bg="white"
+            position="absolute"
+            bottom={4}
+            left={4}
+            w="30%"
+            h="20vh"
+            display="flex"
+            flexDirection="column"
+            bg="rgba(255, 255, 255, 0.1)"
+            borderRadius="xl"
+            boxShadow="lg"
+            overflow="hidden"
+            backdropFilter="blur(10px)"
           >
+            {/* Chat Header */}
+            <Flex
+              p={2}
+              bg="blue.500"
+              color="white"
+              alignItems="center"
+              borderBottom="1px"
+              borderColor="blue.600"
+            >
+              <Heading size="sm">Chat Room</Heading>
+              <Text ml="auto" fontSize="sm">
+                {roomCode || ""}
+              </Text>
+            </Flex>
+
+            {/* Chat Messages */}
             <Box
               ref={chatContainerRef}
-              h="200px"
-              p="4"
+              flex={1}
+              p={3}
               overflowY="auto"
-              backgroundColor="gray.50"
               css={{
                 "&::-webkit-scrollbar": {
-                  width: "8px",
+                  width: "4px",
                 },
                 "&::-webkit-scrollbar-track": {
-                  background: "#f1f1f1",
-                  borderRadius: "4px",
+                  background: "rgba(241, 241, 241, 0.5)",
                 },
                 "&::-webkit-scrollbar-thumb": {
-                  background: "#888",
+                  background: "rgba(136, 136, 136, 0.5)",
                   borderRadius: "4px",
                 },
               }}
@@ -328,59 +345,89 @@ const ShowUnityWithVoiceChat = () => {
               {messages.map((msg, index) => (
                 <Flex
                   key={index}
-                  mb="2"
+                  mb={2}
                   justifyContent={msg.isMine ? "flex-end" : "flex-start"}
                 >
                   <Box
-                    maxW="70%"
+                    maxW="80%"
                     bg={
                       msg.isMine
-                        ? "blue.100"
+                        ? "blue.500"
                         : msg.sender === "System"
-                        ? "gray.200"
-                        : "gray.100"
+                        ? "gray.500"
+                        : "gray.200"
+                    }
+                    color={
+                      msg.isMine || msg.sender === "System" ? "white" : "black"
                     }
                     borderRadius="lg"
-                    px="3"
-                    py="2"
+                    px={3}
+                    py={1.5}
                     shadow="sm"
                   >
-                    <Text fontSize="xs" color="gray.500" mb={1}>
+                    <Text
+                      fontSize="xs"
+                      color={
+                        msg.isMine || msg.sender === "System"
+                          ? "whiteAlpha.800"
+                          : "gray.500"
+                      }
+                      mb={0.5}
+                    >
                       {msg.sender} • {msg.timestamp}
                     </Text>
-                    <Text>{msg.content}</Text>
+                    <Text fontSize="sm">{msg.content}</Text>
                   </Box>
                 </Flex>
               ))}
             </Box>
 
-            <Flex p="3" borderTop="1px" borderColor="gray.200">
-              <Input
-                ref={inputRef}
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                onFocus={handleInputFocus}
-                onBlur={handleInputBlur}
-                placeholder="Type a message..."
-                mr="2"
-              />
-              <IconButton
-                aria-label="Send message"
-                icon={<SendIcon />}
-                onClick={handleSendMessage}
-                colorScheme="blue"
-              />
-            </Flex>
+            {/* Input Area */}
+            <Box p={2} bg="white" borderTop="1px" borderColor="gray.100">
+              <Flex>
+                <Input
+                  ref={inputRef}
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onFocus={handleInputFocus}
+                  onBlur={handleInputBlur}
+                  placeholder="Type a message..."
+                  mr={2}
+                  bg="gray.50"
+                  size="sm"
+                  borderRadius="full"
+                  _focus={{
+                    bg: "white",
+                    borderColor: "blue.500",
+                    boxShadow: "0 0 0 1px var(--chakra-colors-blue-500)",
+                  }}
+                />
+                <IconButton
+                  aria-label="Send message"
+                  icon={<SendIcon size={16} />}
+                  onClick={handleSendMessage}
+                  colorScheme="blue"
+                  size="sm"
+                  borderRadius="full"
+                />
+              </Flex>
+            </Box>
           </Box>
 
-          <Box mt="20px">
+          {/* Voice Chat */}
+          <Box position="absolute" bottom={4} right={4}>
             <VoiceChat roomId={roomCode || ""} />
           </Box>
         </Box>
       )}
 
       {!isUnityReady && !showRoomSelection && (
-        <Center mt="20px">
+        <Center
+          position="absolute"
+          top="50%"
+          left="50%"
+          transform="translate(-50%, -50%)"
+        >
           <Spinner size="xl" />
           <Box ml="10px">Loading Unity, please wait...</Box>
         </Center>
