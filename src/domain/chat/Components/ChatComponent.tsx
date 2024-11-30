@@ -56,6 +56,7 @@ const ChatComponent = () => {
       ws.close();
     };
   }, []);
+  
   useEffect(() => {
     const initializeChat = async () => {
       const urlParams = new URLSearchParams(location.search); // 쿼리 파라미터 가져오기

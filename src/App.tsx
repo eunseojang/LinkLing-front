@@ -61,13 +61,13 @@ function App() {
             socket.send("ping:" + localStorage.getItem("accessToken"));
             console.log("ping");
           }
-        }, 60000);
+        }, 10000);
       };
       socket.onmessage = function (event) {
         console.log("Message from server: ", event.data);
       };
       socket.onclose = function (event) {
-        console.log("WebSocket connection closed", event);
+        console.log("WebSocket connection closed ping pong", event);
         socketRef.current = null;
       };
       socket.onerror = function (event) {
