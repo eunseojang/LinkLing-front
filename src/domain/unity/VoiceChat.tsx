@@ -24,7 +24,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
   const [isAudioOn, setIsAudioOn] = useState<boolean>(false);
   const [roomId, setRoomId] = useState<string>(initialRoomId || "");
   const [hasJoinedRoom, setHasJoinedRoom] = useState<boolean>(!!initialRoomId);
-  const [localVolume, setLocalVolume] = useState<number>(0);
+  // const [localVolume, setLocalVolume] = useState<number>(0);
   const [remoteVolume, setRemoteVolume] = useState<number>(0);
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [transcript, setTranscript] = useState<string>("");
@@ -33,7 +33,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
     "idle" | "calling" | "receiving" | "connected"
   >("idle");
   const [showIncomingCall, setShowIncomingCall] = useState<boolean>(false);
-  const [connectionState, setConnectionState] = useState<string>("new");
+  // const [connectionState, setConnectionState] = useState<string>("new");
 
   // Refs
   const localAudioRef = useRef<HTMLAudioElement>(null);
@@ -87,7 +87,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
 
     // 연결 상태 모니터링 추가
     peerConnection.onconnectionstatechange = () => {
-      setConnectionState(peerConnection.connectionState);
+      // setConnectionState(peerConnection.connectionState);
       console.log("Connection State Changed:", peerConnection.connectionState);
     };
 
@@ -442,40 +442,40 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
   };
 
   // 오디오 분석 설정
-  const setupLocalAudioAnalyser = (stream: MediaStream): void => {
-    if (localAudioContextRef.current?.audioContext) {
-      localAudioContextRef.current.audioContext.close();
-    }
+  // const setupLocalAudioAnalyser = (stream: MediaStream): void => {
+  //   if (localAudioContextRef.current?.audioContext) {
+  //     localAudioContextRef.current.audioContext.close();
+  //   }
 
-    const audioContext = new AudioContext();
-    const analyser = audioContext.createAnalyser();
-    const source = audioContext.createMediaStreamSource(stream);
+  //   const audioContext = new AudioContext();
+  //   const analyser = audioContext.createAnalyser();
+  //   const source = audioContext.createMediaStreamSource(stream);
 
-    const gainNode = audioContext.createGain();
-    gainNode.gain.value = 0.8;
+  //   const gainNode = audioContext.createGain();
+  //   gainNode.gain.value = 0.8;
 
-    const filter = audioContext.createBiquadFilter();
-    filter.type = "lowpass";
-    filter.frequency.value = 2000;
+  //   const filter = audioContext.createBiquadFilter();
+  //   filter.type = "lowpass";
+  //   filter.frequency.value = 2000;
 
-    source.connect(filter);
-    filter.connect(gainNode);
-    gainNode.connect(analyser);
+  //   source.connect(filter);
+  //   filter.connect(gainNode);
+  //   gainNode.connect(analyser);
 
-    localAudioContextRef.current = { audioContext, analyser };
+  //   localAudioContextRef.current = { audioContext, analyser };
 
-    const dataArray = new Uint8Array(analyser.frequencyBinCount);
-    const updateVolume = () => {
-      analyser.getByteFrequencyData(dataArray);
-      const volume = dataArray.reduce((a, b) => a + b) / dataArray.length;
-      setLocalVolume(volume);
-      if (isAudioOn) {
-        requestAnimationFrame(updateVolume);
-      }
-    };
+  //   const dataArray = new Uint8Array(analyser.frequencyBinCount);
+  //   const updateVolume = () => {
+  //     analyser.getByteFrequencyData(dataArray);
+  //     const volume = dataArray.reduce((a, b) => a + b) / dataArray.length;
+  //     setLocalVolume(volume);
+  //     if (isAudioOn) {
+  //       requestAnimationFrame(updateVolume);
+  //     }
+  //   };
 
-    updateVolume();
-  };
+  //   updateVolume();
+  // };
 
   const setupRemoteAudioAnalyser = (stream: MediaStream): void => {
     if (remoteAudioContextRef.current?.audioContext) {
@@ -690,12 +690,12 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
                     <div className="mt-1 h-2 bg-white/10 rounded-full overflow-hidden">
                       <div
                         className="h-full transition-all duration-300"
-                        style={{
-                          width: `${Math.min(100, localVolume)}%`,
-                          backgroundColor: `hsl(${
-                            120 - localVolume
-                          }, 80%, 50%)`,
-                        }}
+                        // style={{
+                        //   width: `${Math.min(100, localVolume)}%`,
+                        //   backgroundColor: `hsl(${
+                        //     120 - localVolume
+                        //   }, 80%, 50%)`,
+                        // }}
                       />
                     </div>
                   </div>
