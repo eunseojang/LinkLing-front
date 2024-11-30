@@ -125,7 +125,7 @@ const ShowUnityWithVoiceChat = () => {
   useEffect(() => {
     if (isUnityReady && selectedRoom && roomCode) {
       const message = `${roomCode}-${selectedRoom}`;
-      sendMessage("Walking", "ReceiveCode", message);
+      sendMessage("Man", "ReceiveCode", message);
 
       const wsUrl = `wss://unbiased-evenly-worm.ngrok-free.app/real-time-chat?code=${roomCode}`;
       ws.current = new WebSocket(wsUrl);
