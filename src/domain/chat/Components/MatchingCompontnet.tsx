@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -8,30 +8,101 @@ import {
   Image,
   Center,
   Spinner,
+  Tab,
 } from "@chakra-ui/react";
 import { default_img } from "../../../common/utils/img";
 import { useTranslation } from "react-i18next";
+import { getNicknameToken } from "../../../common/utils/nickname";
 
-const MatchingComponent = () => {
+interface MatchData {
+  userId: string;
+  preferredNation: string;
+  isMatching: boolean;
+  language: string;
+  levelRange: "EQUAL" | "HIGH" | "LOW" | "IGNORE";
+}
+
+interface MatchedUser {
+  userId: string;
+  userName: string;
+  userProfile: string;
+  userNation: string;
+  matchType: "EQUAL_LEVEL";
+  languageLevels: { language: string; level: number }[];
+}
+
+const MatchingComponent: React.FC = () => {
   const { t } = useTranslation();
-  const [isMatched, setIsMatched] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const [selectedLevel, setSelectedLevel] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isMatched, setIsMatched] = useState<boolean>(false);
+  const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [selectedLevel, setSelectedLevel] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [ws, setWs] = useState<WebSocket | null>(null);
+  const [matchedUser, setMatchedUser] = useState<MatchedUser | null>(null);
+
+  useEffect(() => {
+    const socket = new WebSocket(
+      "wss://unbiased-evenly-worm.ngrok-free.app/matching?userId=" +
+        getNicknameToken()
+    );
+
+    socket.onopen = () => {
+      console.log("WebSocket matching 연결됨!");
+    };
+
+    socket.onmessage = (event) => {
+      const response = JSON.parse(event.data);
+      console.log(response);
+      if (response.success) {
+        setIsMatched(true);
+        setMatchedUser(response.matchedUser);
+        setIsLoading(false);
+      }
+    };
+
+    socket.onerror = (error) => {
+      console.error("WebSocket 오류:", error);
+      setIsLoading(false);
+    };
+
+    socket.onclose = () => {
+      console.log("WebSocket 연결 종료됨!");
+    };
+
+    setWs(socket);
+
+    return () => {
+      if (socket) {
+        socket.close();
+      }
+    };
+  }, []);
 
   const handleMatchStart = () => {
     setIsLoading(true);
 
-    setTimeout(() => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      const matchData: MatchData = {
+        userId: getNicknameToken(),
+        preferredNation: selectedCountry,
+        isMatching: true,
+        language: "KR",
+        levelRange: selectedLevel as "EQUAL" | "HIGH" | "LOW" | "IGNORE",
+      };
+
+      ws.send(JSON.stringify(matchData));
+      console.log("매칭 데이터 전송:", matchData);
+    } else {
+      console.error("WebSocket이 열리지 않았습니다.");
       setIsLoading(false);
-      setIsMatched(true);
-    }, 2000);
+    }
   };
 
   const handleRematch = () => {
     setIsMatched(false);
     setSelectedCountry("");
     setSelectedLevel("");
+   
   };
 
   return (
@@ -91,9 +162,10 @@ const MatchingComponent = () => {
                 color="gray.700"
                 mt={4}
               >
-                <option value="low">{"⬇️" + t(`matching.lower`)}</option>
-                <option value="ignore">{t(`matching.ignore`)}</option>
-                <option value="high">{"⬆️" + t(`matching.upper`)}</option>
+                <option value="LOW">{"⬇️" + t(`matching.lower`)}</option>
+                <option value="IGNORE">{t(`matching.ignore`)}</option>
+                <option value="EQUAL">{t(`matching.equal`)}</option>
+                <option value="HIGH">{"⬆️" + t(`matching.upper`)}</option>
               </Select>
 
               <Button
@@ -144,14 +216,14 @@ const MatchingComponent = () => {
               </Text>
               <Text fontSize="md" color="gray.600">
                 {t(`matching.selectedLevel`)}:{" "}
-                {selectedLevel === "low"
+                {selectedLevel === "LOW"
                   ? t(`matching.lower`) + "⬇️"
-                  : selectedLevel === "ignore"
+                  : selectedLevel === "IGNORE"
                   ? t(`matching.ignore`)
-                  : t(`matching.upper`) + "⬆️"}
+                  :selectedLevel === "HIGH"? t(`matching.upper`) + "⬆️" : "동등한 레벨"}
               </Text>
               <Text fontSize="md" color="gray.600">
-                {t(`matching.opponent`)}: John Doe
+                {t(`matching.opponent`)}: {matchedUser?.userName || "John Doe"}
               </Text>
               <Button
                 colorScheme="teal"
