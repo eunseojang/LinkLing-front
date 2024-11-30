@@ -8,7 +8,6 @@ import {
   Image,
   Center,
   Spinner,
-  Tab,
 } from "@chakra-ui/react";
 import { default_img } from "../../../common/utils/img";
 import { useTranslation } from "react-i18next";
