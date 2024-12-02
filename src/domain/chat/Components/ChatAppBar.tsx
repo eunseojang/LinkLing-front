@@ -46,7 +46,7 @@ function ChatAppBar({
     };
 
     loadImage();
-  }, [selectedUser]);
+  }, [selectedUser]); // selectedUser가 변경될 때마다 실행
 
   const startCall = (toUserId: string) => {
     if (socket && toUserId) {
@@ -54,6 +54,7 @@ function ChatAppBar({
       console.log(`Call request sent to ${toUserId}`);
     }
   };
+
   const handleRemoveFriend = (user: User) => {
     console.log(`Removing ${user.user_nickname} from friends list.`);
   };

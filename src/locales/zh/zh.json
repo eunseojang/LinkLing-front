@@ -158,7 +158,8 @@
     "idNicknameSearch": "按ID或昵称搜索",
     "approve": "批准",
     "reject": "拒绝",
-    "request": "发送好友请求"
+    "request": "发送好友请求",
+    "noFriends": "没有好友列表"
   },
   "matching": {
     "selectNation": "请选择语言",

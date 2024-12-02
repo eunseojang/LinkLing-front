@@ -11,19 +11,19 @@ import {
 import { useTranslation } from "react-i18next";
 import { User } from "../Utils/ChatUtils";
 import { getFriendList } from "../api/ChatAPI";
-import { fetcheImage } from "../../../common/utils/fetchImage"; // 이미지 fetching 함수
-import { default_img } from "../../../common/utils/img"; // 기본 이미지
+import { fetcheImage } from "../../../common/utils/fetchImage";
+import { default_img } from "../../../common/utils/img";
 
 interface ChatSideBarProps {
   selectedUser: User | null;
   setSelectedUser: (user: User | null) => void;
-  enterRoom: (user: User, crId: number) => void; // 대화방 입장 함수
+  setCrId: (id: number) => void;
 }
 
 function ChatSideBar({
   selectedUser,
   setSelectedUser,
-  enterRoom,
+  setCrId,
 }: ChatSideBarProps) {
   const { t } = useTranslation();
   const [users, setUsers] = useState<User[]>([]);
@@ -31,14 +31,12 @@ function ChatSideBar({
     {}
   ); // 이미지 로드 상태
 
-  // 친구 리스트와 프로필 이미지 로드
   useEffect(() => {
     const fetchFriendListAndImages = async () => {
       try {
         const friendList = await getFriendList();
-        setUsers(friendList); // 유저 목록 업데이트
+        setUsers(friendList);
 
-        // 각 사용자 프로필 이미지를 비동기로 로드
         const imagePromises = friendList.map(async (user: User) => {
           const image = user.user_profile
             ? await fetcheImage(user.user_profile)
@@ -52,19 +50,24 @@ function ChatSideBar({
           return acc;
         }, {} as { [key: string]: string });
 
-        setLoadedImages(imageMap); // 이미지 상태 업데이트
+        setLoadedImages(imageMap);
       } catch (error) {
         console.error("Failed to fetch friend list or images", error);
-        setUsers([]); // 친구 목록이 없을 경우 빈 배열로 처리
+        setUsers([]);
       }
     };
 
-    fetchFriendListAndImages();
-  }, []); // 최초 실행 시 한 번만 실행
+    fetchFriendListAndImages(); // 최초 실행
+
+    const intervalId = setInterval(fetchFriendListAndImages, 1000); // 1초마다 실행
+
+    return () => clearInterval(intervalId); // 컴포넌트 언마운트 시 인터벌 정리
+  }, []); // 의존성 배열 비워둠
 
   const handleUserSelect = (user: User) => {
     if (user.cr_id) {
-      enterRoom(user, user.cr_id); // 방 입장
+      setSelectedUser(user);
+      setCrId(user.cr_id);
     }
   };
 
@@ -124,7 +127,6 @@ function ChatSideBar({
             >
               <HStack w="full" justify="space-between">
                 <HStack>
-                  {/* 프로필 이미지 로드 */}
                   <Avatar
                     my={2}
                     size="md"

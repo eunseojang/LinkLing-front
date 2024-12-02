@@ -158,7 +158,8 @@
     "idNicknameSearch": "Search by ID or Nickname",
     "approve": "Approve",
     "reject": "Reject",
-    "request": "Friend Request"
+    "request": "Friend Request",
+    "noFriends": "No friends list available"
   },
   "matching": {
     "selectNation": "Please select a language",

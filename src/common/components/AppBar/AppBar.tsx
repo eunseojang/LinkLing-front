@@ -24,6 +24,7 @@ import LanguageMenu from "./LanguageMenu";
 import { useAuthStore } from "../../store/AuthStore";
 import { getNicknameToken } from "../../utils/nickname";
 import { useTranslation } from "react-i18next";
+import AlarmDropdown from "./AlarmDropDown";
 
 const AppBar: React.FC = () => {
   const { isAuthenticated, logout } = useAuthStore();
@@ -148,7 +149,7 @@ const AppBar: React.FC = () => {
               </MenuItem>
             </MenuList>
           </Menu>
-
+          <AlarmDropdown />
           <LanguageMenu />
         </Flex>
       )}

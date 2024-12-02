@@ -105,7 +105,8 @@
     "profile": "프로필",
     "setting": "설정",
     "login": "로그인",
-    "logout": "로그아웃"
+    "logout": "로그아웃",
+    "noAlarms": "알람이 없습니다."
   },
   "settings": {
     "id": "아이디",
@@ -158,13 +159,15 @@
     "idNicknameSearch": "아이디 또는 닉네임으로 검색",
     "approve": "수락",
     "reject": "거절",
-    "request": "친구 요청하기"
+    "request": "친구 요청하기",
+    "noFriends": "친구 목록이 없습니다"
   },
   "matching": {
     "selectNation": "언어을 선택하세요",
     "seclectLevel": "레벨을 선택하세요",
+    "equal": "나랑 레벨이 똑같은 사람",
     "upper": "나보다 높은 사람",
-    "ignore": "상관없음",
+    "ignore": "레벨 상관없음",
     "lower": "나보다 낮은 사람",
     "start": "매칭 시작",
     "re": "다시 매칭하기",
@@ -173,7 +176,8 @@
     "success": "매칭 완료",
     "selectedNation": "선택한 국적",
     "selectedLevel": "선택한 레벨",
-    "opponent": "매칭된 상대"
+    "opponent": "매칭된 상대",
+    "chatGo": "친구 요청하기"
   },
   "country": {
     "kr": "대한민국",

@@ -15,10 +15,15 @@ const WS_URL = "wss://unbiased-evenly-worm.ngrok-free.app/chat";
 const ChatComponent = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [translateMode, setTranslateMode] = useState<boolean>(false);
-  const [messages, setMessages] = useState<any[]>([]); // 메시지 리스트
-  const [crId, setCrId] = useState<number | null>(null); // 현재 방 ID
+  const [messages, setMessages] = useState<any[]>([]);
+  const [crId, setCrId] = useState<number | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const id = getNicknameToken();
+  const urlParams = new URLSearchParams(location.search); // 쿼리 파라미터 가져오기
+
+  useEffect(() => {
+    console.log(selectedUser?.user_id, selectedUser?.cr_id);
+  }, [selectedUser]);
 
   useEffect(() => {
     const ws = new WebSocket(WS_URL);
@@ -33,11 +38,11 @@ const ChatComponent = () => {
         const data = JSON.parse(event.data);
 
         if (data.type === "HISTORY") {
-          setMessages(data.messages); // 이전 메시지 로드
+          setMessages(data.messages); //이전 메시지 로드
         } else if (data.type === "READ") {
           console.log("상대방이 메시지를 읽음:", data.messages);
         } else if (data.message_type === "CHAT") {
-          setMessages((prev) => [...prev, data]); // 새로운 메시지 추가
+          setMessages((prev) => [...prev, data]); //새로운 메시지 추가
         }
       } catch (err) {
         console.error("WebSocket 메시지 처리 중 오류:", err);
@@ -56,13 +61,14 @@ const ChatComponent = () => {
       ws.close();
     };
   }, []);
-  
+
   useEffect(() => {
     const initializeChat = async () => {
-      const urlParams = new URLSearchParams(location.search); // 쿼리 파라미터 가져오기
+      console.log(urlParams);
       const roomIdString = urlParams.get("roomId");
 
       if (roomIdString) {
+        console.log(roomIdString);
         const roomId = parseInt(roomIdString, 10);
 
         try {
@@ -71,7 +77,7 @@ const ChatComponent = () => {
             (friend: any) => friend.cr_id === roomId
           );
 
-          if (foundUser) {
+          if (foundUser !== selectedUser?.cr_id) {
             setSelectedUser(foundUser);
             setCrId(roomId);
           } else {
@@ -81,15 +87,14 @@ const ChatComponent = () => {
           console.error("친구 목록 가져오기 오류:", error);
         }
       } else {
-        setSelectedUser(null); // roomId가 없으면 선택된 사용자 초기화
+        setSelectedUser(null);
         setCrId(null);
       }
     };
 
     initializeChat();
-  }, [location.search]); // 쿼리 파라미터가 변경될 때 실행
+  }, []);
 
-  // selectedUser와 crId가 설정되었을 때 채팅방 열기
   useEffect(() => {
     if (selectedUser && crId !== null) {
       enterRoom(selectedUser, crId);
@@ -106,12 +111,13 @@ const ChatComponent = () => {
     }
   };
 
-  // 방에 입장
+  //방에 입장
   const enterRoom = (user: User, roomCrId: number) => {
     const params = new URLSearchParams(window.location.search);
+
     params.set("roomId", roomCrId.toString());
     const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.replaceState({}, "", newUrl); // URL 업데이트
+    window.history.replaceState({}, "", newUrl); //URL 업데이트
 
     if (wsRef.current) {
       const enterPayload = {
@@ -125,7 +131,7 @@ const ChatComponent = () => {
     }
   };
 
-  // 메시지 보내기
+  //메시지 보내기
   const sendMessage = (messageContent: string) => {
     if (wsRef.current && selectedUser && crId) {
       const chatPayload = {
@@ -144,9 +150,9 @@ const ChatComponent = () => {
   return (
     <HStack spacing={0} width="100%" h={"100%"}>
       <ChatSideBar
+        setCrId={setCrId}
         selectedUser={selectedUser}
         setSelectedUser={setSelectedUser}
-        enterRoom={enterRoom} // 방 입장 함수 전달
       />
 
       <Box

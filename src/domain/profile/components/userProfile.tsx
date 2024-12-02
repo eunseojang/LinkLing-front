@@ -184,13 +184,13 @@ const UserProfileComponent: FC = () => {
                   window.location.reload();
                   showToast(
                     t("profile.friend_request_success"),
-                    "ㄴㅇ",
+                    "",
                     "success"
                   ); // 번역 파일 사용
                 } catch (error) {
                   showToast(
                     t("profile.friend_request_failure"),
-                    "ㄴㅇ",
+                    "",
                     "error"
                   ); // 번역 파일 사용
                 }
