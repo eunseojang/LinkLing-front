@@ -158,7 +158,8 @@
     "idNicknameSearch": "IDまたはニックネームで検索",
     "approve": "承認",
     "reject": "拒否",
-    "request": "友達リクエストを送信"
+    "request": "友達リクエストを送信",
+    "noFriends": "友達リストがありません"
   },
   "matching": {
     "selectNation": "言語を選択してください",

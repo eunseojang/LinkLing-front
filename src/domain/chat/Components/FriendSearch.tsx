@@ -138,7 +138,7 @@ const FriendSearch: FC<FriendSearchProps> = ({
                     size="sm"
                     colorScheme="blue"
                     onClick={(e) => {
-                      e.stopPropagation(); // navigate와 분리되도록 이벤트 전파 중지
+                      e.stopPropagation();
                       handleRequestFriend(result.user_id);
                     }}
                   >

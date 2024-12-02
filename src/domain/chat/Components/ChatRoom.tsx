@@ -22,7 +22,6 @@ interface ChatRoomProps {
 function ChatRoom({ messages, userId, translateMode }: ChatRoomProps) {
   const { i18n } = useTranslation();
 
-  // 번역된 메시지를 상태로 관리
   const [translatedMessages, setTranslatedMessages] = useState<string[]>([]);
 
   // Scroll reference
@@ -37,14 +36,6 @@ function ChatRoom({ messages, userId, translateMode }: ChatRoomProps) {
             translateText(msg.message_content, i18n.language)
           )
         );
-
-        // const translations = await Promise.all(
-        //   messages.map((msg) =>
-        //     msg.sender_id !== userId
-        //       ? translateText(msg.message_content, i18n.language)
-        //       : msg.message_content // 자신의 메시지는 번역하지 않음
-        //   )
-        // );
 
         setTranslatedMessages(translations);
       } else {

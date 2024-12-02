@@ -19,11 +19,16 @@ import VoiceChat from "./VoiceChat";
 
 type ChatMessage = {
   sender: string;
-  content: string;
+  content: string | undefined; // undefined를 허용
   timestamp: string;
   isMine: boolean;
 };
-
+type RoomMessage = {
+  type: "room_select" | "chat";
+  senderId: string;
+  chatContent?: string;
+  selectedRoom?: string;
+};
 const ShowUnityWithVoiceChat = () => {
   const { roomCode } = useParams<{ roomCode: string }>();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -36,13 +41,7 @@ const ShowUnityWithVoiceChat = () => {
   const ws = useRef<WebSocket | null>(null);
   const toast = useToast();
 
-  const {
-    unityProvider,
-    isLoaded,
-    sendMessage,
-    // addEventListener,
-    // removeEventListener,
-  } = useUnityContext({
+  const { unityProvider, isLoaded, sendMessage } = useUnityContext({
     loaderUrl: "/Build/ws-test.loader.js",
     dataUrl: "/Build/ws-test.data",
     frameworkUrl: "/Build/ws-test.framework.js",
@@ -57,13 +56,9 @@ const ShowUnityWithVoiceChat = () => {
   const disableUnityInput = useCallback(() => {
     const unityCanvas = unityContainerRef.current?.querySelector("canvas");
     if (unityCanvas) {
-      // Unity 캔버스의 모든 입력 이벤트를 비활성화
       unityCanvas.style.pointerEvents = "none";
-      // 캔버스의 tabIndex를 -1로 설정하여 포커스를 받지 않도록 함
       unityCanvas.setAttribute("tabindex", "-1");
-      // 캔버스에서 포커스 제거
       unityCanvas.blur();
-      // Unity WebGL의 키보드 캡처 비활성화를 위한 스타일 추가
       unityCanvas.style.outline = "none";
       document.body.style.cursor = "default";
     }
@@ -80,6 +75,70 @@ const ShowUnityWithVoiceChat = () => {
       }
     }
   }, [isTyping]);
+
+  // WebSocket 연결 설정
+  useEffect(() => {
+    if (roomCode) {
+      const wsUrl = `wss://unbiased-evenly-worm.ngrok-free.app/real-time-chat?code=${roomCode}`;
+      ws.current = new WebSocket(wsUrl);
+
+      ws.current.onopen = () => {
+        console.log("WebSocket Connected");
+        toast({
+          title: "Connected",
+          status: "success",
+          duration: 2000,
+        });
+      };
+
+      ws.current.onmessage = (event) => {
+        try {
+          const data: RoomMessage = JSON.parse(event.data);
+
+          if (data.type === "room_select" && data.senderId !== myId) {
+            setSelectedRoom(data.selectedRoom || null);
+            setShowRoomSelection(false);
+            if (isUnityReady && data.selectedRoom) {
+              const message = `${roomCode}-${data.selectedRoom}`;
+              sendMessage("Man", "ReceiveCode", message);
+            }
+          } else if (data.type === "chat" && data.chatContent) {
+            if (data.senderId === "system" || data.senderId !== myId) {
+              setMessages((prev) => [
+                ...prev,
+                {
+                  sender: data.senderId === "system" ? "System" : "Other",
+                  content: data.chatContent,
+                  timestamp: new Date().toLocaleTimeString(),
+                  isMine: false,
+                },
+              ]);
+            }
+          }
+        } catch (error) {
+          console.error("Error parsing message:", error);
+        }
+      };
+
+      return () => ws.current?.close();
+    }
+  }, [roomCode, isUnityReady, myId, sendMessage, toast]);
+
+  // Unity 로딩 상태 감지
+  useEffect(() => {
+    if (isLoaded) {
+      setIsUnityReady(true);
+      console.log("Unity is loaded");
+    }
+  }, [isLoaded]);
+
+  // Unity 로드 후 선택된 방 적용
+  useEffect(() => {
+    if (isUnityReady && selectedRoom && roomCode) {
+      const message = `${roomCode}-${selectedRoom}`;
+      sendMessage("Man", "ReceiveCode", message);
+    }
+  }, [isUnityReady, selectedRoom, roomCode, sendMessage]);
 
   // 키보드 이벤트 처리
   useEffect(() => {
@@ -99,7 +158,6 @@ const ShowUnityWithVoiceChat = () => {
       }
     };
 
-    // 이벤트 리스너 등록
     window.addEventListener("keydown", preventUnityInput, true);
     window.addEventListener("keyup", preventUnityInput, true);
     window.addEventListener("keypress", preventUnityInput, true);
@@ -113,58 +171,6 @@ const ShowUnityWithVoiceChat = () => {
     };
   }, [isTyping, disableUnityInput]);
 
-  // Unity 로딩 상태 감지
-  useEffect(() => {
-    if (isLoaded) {
-      setIsUnityReady(true);
-      console.log("Unity is loaded");
-    }
-  }, [isLoaded]);
-
-  // WebSocket 연결 관리
-  useEffect(() => {
-    if (isUnityReady && selectedRoom && roomCode) {
-      const message = `${roomCode}-${selectedRoom}`;
-      sendMessage("Man", "ReceiveCode", message);
-
-      const wsUrl = `wss://unbiased-evenly-worm.ngrok-free.app/real-time-chat?code=${roomCode}`;
-      ws.current = new WebSocket(wsUrl);
-
-      ws.current.onopen = () => {
-        console.log("WebSocket Connected");
-        toast({
-          title: "Connected",
-          status: "success",
-          duration: 2000,
-        });
-      };
-
-      ws.current.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          if (
-            data.type === "chat" &&
-            (data.senderId === "system" || data.senderId !== myId)
-          ) {
-            setMessages((prev) => [
-              ...prev,
-              {
-                sender: data.senderId === "system" ? "System" : "Other",
-                content: data.chatContent,
-                timestamp: new Date().toLocaleTimeString(),
-                isMine: false,
-              },
-            ]);
-          }
-        } catch (error) {
-          console.error("Error parsing message:", error);
-        }
-      };
-
-      return () => ws.current?.close();
-    }
-  }, [isUnityReady, selectedRoom, roomCode, sendMessage, myId, toast]);
-
   // 채팅창 자동 스크롤
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -173,14 +179,12 @@ const ShowUnityWithVoiceChat = () => {
     }
   }, [messages]);
 
-  // 채팅 입력 관련 핸들러
   const handleInputFocus = () => {
     setIsTyping(true);
     disableUnityInput();
   };
 
   const handleInputBlur = () => {
-    // 입력창이 여전히 포커스를 가지고 있는지 확인
     if (document.activeElement === inputRef.current) {
       return;
     }
@@ -192,7 +196,7 @@ const ShowUnityWithVoiceChat = () => {
     if (!inputMessage.trim() || !ws.current) return;
 
     try {
-      const chatMessage = {
+      const chatMessage: RoomMessage = {
         type: "chat",
         senderId: myId,
         chatContent: inputMessage,
@@ -223,10 +227,18 @@ const ShowUnityWithVoiceChat = () => {
   };
 
   const handleRoomSelect = (room: string) => {
+    if (ws.current) {
+      const roomMessage: RoomMessage = {
+        type: "room_select",
+        senderId: myId,
+        selectedRoom: room,
+      };
+      ws.current.send(JSON.stringify(roomMessage));
+    }
+
     setSelectedRoom(room);
     setShowRoomSelection(false);
   };
-
   return (
     <Box position="relative" h="100vh">
       {showRoomSelection ? (

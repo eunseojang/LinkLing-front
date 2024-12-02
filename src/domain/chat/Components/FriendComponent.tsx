@@ -34,7 +34,6 @@ const FriendComponent: FC<FriendComponentProps> = ({ handleChatGo }) => {
 
   const handleSearch = async () => {
     const results = await searchUser(searchTerm);
-    console.log(results);
     setSearchResults(results);
   };
 

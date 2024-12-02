@@ -12,6 +12,9 @@ import {
 import { default_img } from "../../../common/utils/img";
 import { useTranslation } from "react-i18next";
 import { getNicknameToken } from "../../../common/utils/nickname";
+import { fetcheImage } from "../../../common/utils/fetchImage";
+import { requestFriend } from "../api/FriendAPI";
+import { useToastMessage } from "../../../common/components/useToastMessage";
 
 interface MatchData {
   userId: string;
@@ -38,7 +41,9 @@ const MatchingComponent: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [ws, setWs] = useState<WebSocket | null>(null);
   const [matchedUser, setMatchedUser] = useState<MatchedUser | null>(null);
-
+  const [userImage, setUserImage] = useState<string | null>(null);
+  const [image, setImage] = useState<string | null>(null);
+  const { showToast } = useToastMessage();
   useEffect(() => {
     const socket = new WebSocket(
       "wss://unbiased-evenly-worm.ngrok-free.app/matching?userId=" +
@@ -55,6 +60,7 @@ const MatchingComponent: React.FC = () => {
       if (response.success) {
         setIsMatched(true);
         setMatchedUser(response.matchedUser);
+        setUserImage(response.matchedUser.userProfile);
         setIsLoading(false);
       }
     };
@@ -76,6 +82,14 @@ const MatchingComponent: React.FC = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    const imageLoad = async () => {
+      const image = userImage ? await fetcheImage(userImage) : default_img;
+      setImage(image);
+    };
+    imageLoad();
+  }, [userImage]);
 
   const handleMatchStart = () => {
     setIsLoading(true);
@@ -101,7 +115,20 @@ const MatchingComponent: React.FC = () => {
     setIsMatched(false);
     setSelectedCountry("");
     setSelectedLevel("");
-   
+    setMatchedUser(null);
+    setImage(null);
+    setUserImage(null);
+  };
+
+  const handleChatStart = async (user_id: string | undefined) => {
+    if (user_id) {
+      try {
+        await requestFriend(user_id);
+        showToast(t("profile.friend_request_success"), "", "success"); // 번역 파일 사용
+      } catch {
+        showToast(t("profile.friend_request_failure"), "", "error");
+      }
+    }
   };
 
   return (
@@ -161,10 +188,10 @@ const MatchingComponent: React.FC = () => {
                 color="gray.700"
                 mt={4}
               >
+                <option value="HIGH">{"⬆️" + t(`matching.upper`)}</option>
                 <option value="LOW">{"⬇️" + t(`matching.lower`)}</option>
                 <option value="IGNORE">{t(`matching.ignore`)}</option>
                 <option value="EQUAL">{t(`matching.equal`)}</option>
-                <option value="HIGH">{"⬆️" + t(`matching.upper`)}</option>
               </Select>
 
               <Button
@@ -219,11 +246,36 @@ const MatchingComponent: React.FC = () => {
                   ? t(`matching.lower`) + "⬇️"
                   : selectedLevel === "IGNORE"
                   ? t(`matching.ignore`)
-                  :selectedLevel === "HIGH"? t(`matching.upper`) + "⬆️" : "동등한 레벨"}
+                  : selectedLevel === "HIGH"
+                  ? t(`matching.upper`) + "⬆️"
+                  : t(`matching.equal`)}
               </Text>
               <Text fontSize="md" color="gray.600">
                 {t(`matching.opponent`)}: {matchedUser?.userName || "John Doe"}
               </Text>
+              <Image
+                borderRadius="full"
+                boxSize="150px"
+                src={image || default_img}
+                alt={matchedUser?.userName || "Matched User"}
+                border="2px solid"
+                borderColor="blue.500"
+                mt={4}
+              />
+              <Button
+                colorScheme="teal"
+                onClick={() => handleChatStart(matchedUser?.userId)}
+                w="full"
+                size="lg"
+                fontSize="md"
+                mt={4}
+                bgGradient="linear(to-r, #73DA95, green.500)"
+                _hover={{
+                  bgGradient: "linear(to-r,  #73DA95, green.600)",
+                }}
+              >
+                {t(`matching.chatGo`)}
+              </Button>
               <Button
                 colorScheme="teal"
                 onClick={handleRematch}
