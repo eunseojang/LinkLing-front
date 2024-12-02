@@ -19,7 +19,7 @@ const ChatComponent = () => {
   const [crId, setCrId] = useState<number | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const id = getNicknameToken();
-  const urlParams = new URLSearchParams(location.search); // 쿼리 파라미터 가져오기
+  const urlParams = new URLSearchParams(location.search);
 
   useEffect(() => {
     console.log(selectedUser?.user_id, selectedUser?.cr_id);
@@ -38,11 +38,11 @@ const ChatComponent = () => {
         const data = JSON.parse(event.data);
 
         if (data.type === "HISTORY") {
-          setMessages(data.messages); //이전 메시지 로드
+          setMessages(data.messages);
         } else if (data.type === "READ") {
           console.log("상대방이 메시지를 읽음:", data.messages);
         } else if (data.message_type === "CHAT") {
-          setMessages((prev) => [...prev, data]); //새로운 메시지 추가
+          setMessages((prev) => [...prev, data]);
         }
       } catch (err) {
         console.error("WebSocket 메시지 처리 중 오류:", err);
@@ -111,13 +111,12 @@ const ChatComponent = () => {
     }
   };
 
-  //방에 입장
   const enterRoom = (user: User, roomCrId: number) => {
     const params = new URLSearchParams(window.location.search);
 
     params.set("roomId", roomCrId.toString());
     const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.replaceState({}, "", newUrl); //URL 업데이트
+    window.history.replaceState({}, "", newUrl);
 
     if (wsRef.current) {
       const enterPayload = {
@@ -131,7 +130,6 @@ const ChatComponent = () => {
     }
   };
 
-  //메시지 보내기
   const sendMessage = (messageContent: string) => {
     if (wsRef.current && selectedUser && crId) {
       const chatPayload = {

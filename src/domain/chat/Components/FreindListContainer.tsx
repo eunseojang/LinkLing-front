@@ -66,7 +66,6 @@ const FriendListContainer: FC<FriendListContainerProps> = ({
         </TabList>
         <Divider mb={4} />
         <TabPanels>
-          {/* Friend list tab */}
           <TabPanel p={0} hidden={filter !== "all"}>
             <FriendList
               handleChatGo={handleChatGo}
@@ -76,7 +75,6 @@ const FriendListContainer: FC<FriendListContainerProps> = ({
             />
           </TabPanel>
 
-          {/* Friend requests tab */}
           <TabPanel p={0} hidden={filter !== "request"}>
             <FriendRequestList
               friendRequests={friendRequests}

@@ -124,7 +124,7 @@ const MatchingComponent: React.FC = () => {
     if (user_id) {
       try {
         await requestFriend(user_id);
-        showToast(t("profile.friend_request_success"), "", "success"); // 번역 파일 사용
+        showToast(t("profile.friend_request_success"), "", "success");
       } catch {
         showToast(t("profile.friend_request_failure"), "", "error");
       }
@@ -142,15 +142,16 @@ const MatchingComponent: React.FC = () => {
         h={"550px"}
         textAlign="center"
       >
-        <VStack spacing={5}>
+        <VStack spacing={2}>
           <Center>
             <Image
               borderRadius="full"
               boxSize="150px"
-              src={default_img}
-              alt="Profile Placeholder"
+              src={image || default_img}
+              alt={matchedUser?.userName || "Matched User"}
               border="2px solid"
-              borderColor="green.500"
+              borderColor="blue.500"
+              mt={4}
             />
           </Center>
           <Text fontSize="2xl" fontWeight="extrabold">
@@ -253,22 +254,13 @@ const MatchingComponent: React.FC = () => {
               <Text fontSize="md" color="gray.600">
                 {t(`matching.opponent`)}: {matchedUser?.userName || "John Doe"}
               </Text>
-              <Image
-                borderRadius="full"
-                boxSize="150px"
-                src={image || default_img}
-                alt={matchedUser?.userName || "Matched User"}
-                border="2px solid"
-                borderColor="blue.500"
-                mt={4}
-              />
               <Button
                 colorScheme="teal"
                 onClick={() => handleChatStart(matchedUser?.userId)}
                 w="full"
                 size="lg"
                 fontSize="md"
-                mt={4}
+                mt={1}
                 bgGradient="linear(to-r, #73DA95, green.500)"
                 _hover={{
                   bgGradient: "linear(to-r,  #73DA95, green.600)",

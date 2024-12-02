@@ -10,8 +10,8 @@ import {
 } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { fetcheImage } from "../../../common/utils/fetchImage"; // 이미지 fetching 함수 import
-import { default_img } from "../../../common/utils/img"; // 기본 이미지 import
+import { fetcheImage } from "../../../common/utils/fetchImage";
+import { default_img } from "../../../common/utils/img";
 import { getChatRoomID } from "../api/ChatAPI";
 
 interface FriendListProps {
@@ -35,7 +35,6 @@ const FriendList: FC<FriendListProps> = ({
   useEffect(() => {
     const loadImages = async () => {
       const imagePromises = friends.map(async (friend) => {
-        // 이미지가 null이거나 비어있으면 기본 이미지를 사용
         const image = friend.user_img
           ? await fetcheImage(friend.user_img)
           : default_img;
@@ -44,7 +43,7 @@ const FriendList: FC<FriendListProps> = ({
 
       const images = await Promise.all(imagePromises);
       const imageMap = images.reduce((acc, cur) => {
-        const userId = cur.user_id; // userId를 추출
+        const userId = cur.user_id; 
         if (userId) {
           acc[userId] = cur.image || default_img;
         }
@@ -61,7 +60,7 @@ const FriendList: FC<FriendListProps> = ({
     <VStack spacing={4} align="stretch">
       {friends.map((friend) => (
         <HStack
-          key={friend.user_id || "unknown"} // userId가 없으면 fallback 키 사용
+          key={friend.user_id || "unknown"} 
           justify="space-between"
           p={2}
           _hover={{ bg: "gray.50" }}
@@ -73,7 +72,7 @@ const FriendList: FC<FriendListProps> = ({
           <HStack>
             <Avatar
               size="md"
-              src={loadedImages[friend.user_id] ?? default_img} // 이미지가 없을 경우 기본 이미지 사용
+              src={loadedImages[friend.user_id] ?? default_img}
             />
             <VStack spacing={0} align="start">
               <Flex>
