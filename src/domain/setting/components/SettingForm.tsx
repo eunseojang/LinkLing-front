@@ -47,7 +47,7 @@ const SettingForm = () => {
         "ID가 성공적으로 변경되었습니다.",
         "success"
       );
-      localStorage.removeItem("showToast"); // 표시 후 상태 초기화
+      localStorage.removeItem("showToast");
     }
   }, []);
 
@@ -62,11 +62,11 @@ const SettingForm = () => {
     if (profile) {
       try {
         await changeID(profile.user_id, newID);
-        localStorage.setItem("showToast", "true"); // 새로고침 전에 toast 상태 저장
+        localStorage.setItem("showToast", "true");
 
         window.location.reload();
 
-        setNewID(""); // 성공 시 입력 초기화
+        setNewID("");
       } catch (error) {
         showToast("settrings.currentfail", "settrings.currentfaildes", "error");
       }
@@ -111,7 +111,7 @@ const SettingForm = () => {
         gender!,
         nation!
       );
-      await fetchProfile(); // 프로필 업데이트 후 새로 가져오기
+      await fetchProfile();
     }
   };
 

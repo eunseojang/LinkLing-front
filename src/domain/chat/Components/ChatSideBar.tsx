@@ -29,7 +29,7 @@ function ChatSideBar({
   const [users, setUsers] = useState<User[]>([]);
   const [loadedImages, setLoadedImages] = useState<{ [key: string]: string }>(
     {}
-  ); // 이미지 로드 상태
+  );
 
   useEffect(() => {
     const fetchFriendListAndImages = async () => {
@@ -57,12 +57,11 @@ function ChatSideBar({
       }
     };
 
-    fetchFriendListAndImages(); // 최초 실행
+    fetchFriendListAndImages();
 
-    const intervalId = setInterval(fetchFriendListAndImages, 1000); // 1초마다 실행
-
-    return () => clearInterval(intervalId); // 컴포넌트 언마운트 시 인터벌 정리
-  }, []); // 의존성 배열 비워둠
+    const intervalId = setInterval(fetchFriendListAndImages, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   const handleUserSelect = (user: User) => {
     if (user.cr_id) {
@@ -92,7 +91,7 @@ function ChatSideBar({
         onClick={() => {
           setSelectedUser(null);
           const newUrl = `${window.location.pathname}`;
-          window.history.replaceState({}, "", newUrl); // URL 변경
+          window.history.replaceState({}, "", newUrl);
         }}
       >
         {t(`friend.matching`)}
@@ -122,7 +121,7 @@ function ChatSideBar({
               p={6}
               borderRadius="xl"
               justifyContent="flex-start"
-              onClick={() => handleUserSelect(user)} // 유저 선택 및 방 입장
+              onClick={() => handleUserSelect(user)}
               _hover={{ bg: "gray.200" }}
             >
               <HStack w="full" justify="space-between">
@@ -130,7 +129,7 @@ function ChatSideBar({
                   <Avatar
                     my={2}
                     size="md"
-                    src={loadedImages[user.user_id] || default_img} // 로드된 이미지 또는 기본 이미지
+                    src={loadedImages[user.user_id] || default_img}
                   />
                   <VStack align="flex-start" spacing={0}>
                     <Text fontSize="lg" fontWeight="bold">

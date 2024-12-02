@@ -14,9 +14,9 @@ export interface UserProfile {
 export const getFlagClass = (nation: string) => {
   switch (nation) {
     case "KR":
-      return "fi fi-kr"; // South Korea
+      return "fi fi-kr";
     case "US":
-      return "fi fi-us"; // United States
+      return "fi fi-us";
     case "JP":
       return "fi fi-jp"; // Japan
     case "CN":

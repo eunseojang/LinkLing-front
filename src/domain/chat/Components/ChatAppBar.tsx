@@ -15,8 +15,8 @@ import { User } from "../Utils/ChatUtils";
 import { FiMoreVertical, FiPhone } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { fetcheImage } from "../../../common/utils/fetchImage"; // 이미지 fetching 함수 import
-import { default_img } from "../../../common/utils/img"; // 기본 이미지 import
+import { fetcheImage } from "../../../common/utils/fetchImage"; 
+import { default_img } from "../../../common/utils/img"; 
 import { useWebSocket } from "../../unity/WebSocketContext";
 
 interface ChatAppBarProps {
@@ -34,7 +34,6 @@ function ChatAppBar({
   const [profileImage, setProfileImage] = useState<string>(default_img);
   const { socket } = useWebSocket();
 
-  // 프로필 이미지 로드
   useEffect(() => {
     const loadImage = async () => {
       if (selectedUser.user_profile) {
@@ -46,7 +45,7 @@ function ChatAppBar({
     };
 
     loadImage();
-  }, [selectedUser]); // selectedUser가 변경될 때마다 실행
+  }, [selectedUser]);
 
   const startCall = (toUserId: string) => {
     if (socket && toUserId) {

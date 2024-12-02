@@ -579,6 +579,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
 
   const handleLanguageChange = (newLanguage: string): void => {
     setSelectedLanguage(newLanguage);
+    console.log(newLanguage);
 
     if (isAudioOn) {
       stopSpeechRecognition();
