@@ -43,7 +43,7 @@ const FriendList: FC<FriendListProps> = ({
 
       const images = await Promise.all(imagePromises);
       const imageMap = images.reduce((acc, cur) => {
-        const userId = cur.user_id; 
+        const userId = cur.user_id;
         if (userId) {
           acc[userId] = cur.image || default_img;
         }
@@ -60,7 +60,7 @@ const FriendList: FC<FriendListProps> = ({
     <VStack spacing={4} align="stretch">
       {friends.map((friend) => (
         <HStack
-          key={friend.user_id || "unknown"} 
+          key={friend.user_id || "unknown"}
           justify="space-between"
           p={2}
           _hover={{ bg: "gray.50" }}
@@ -114,7 +114,7 @@ const FriendList: FC<FriendListProps> = ({
                 }
               }}
             >
-              {"메세지 보내기"}
+              {t(`friend.send`)}
             </Button>
             <Button
               size="sm"

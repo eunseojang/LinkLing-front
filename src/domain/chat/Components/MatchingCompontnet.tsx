@@ -191,7 +191,7 @@ const MatchingComponent: React.FC = () => {
               >
                 <option value="HIGH">{"⬆️" + t(`matching.upper`)}</option>
                 <option value="LOW">{"⬇️" + t(`matching.lower`)}</option>
-                <option value="IGNORE">{t(`matching.ignore`)}</option>
+                {/* <option value="IGNORE">{t(`matching.ignore`)}</option> */}
                 <option value="EQUAL">{t(`matching.equal`)}</option>
               </Select>
 
