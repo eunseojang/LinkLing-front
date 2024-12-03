@@ -9,8 +9,7 @@ import {
   Button,
   HStack,
   useDisclosure,
-  VStack,
-  GridItem,
+
 } from "@chakra-ui/react";
 import { FC } from "react";
 import "flag-icons/css/flag-icons.min.css";
@@ -26,7 +25,6 @@ import { useTranslation } from "react-i18next"; // useTranslation import 추가
 import { getChatRoomID } from "../../chat/api/ChatAPI";
 import { UserLanguage } from "../../level/utils/LevelUtils";
 import { getLevel } from "../../level/api/LevelAPI";
-import { Grid } from "lucide-react";
 
 const UserProfileComponent: FC = () => {
   const { t } = useTranslation(); // useTranslation 훅 사용
