@@ -64,8 +64,14 @@ const AlarmDropdown: React.FC = () => {
     try {
       // 알람 상태 업데이트 (읽음으로 표시)
       await alarmCheck(notification_id);
+
       // 업데이트 후 알람 목록 새로 고침
-      fetchAlarms();
+      const data = await getAlarm();
+      setAlarms(data);
+
+      // 새로운 알람 여부 다시 확인
+      const unreadAlarms = data.some((alarm: any) => !alarm.notification_status);
+      setHasNew(unreadAlarms);
     } catch (error) {
       console.error("Failed to update alarm status:", error);
     }

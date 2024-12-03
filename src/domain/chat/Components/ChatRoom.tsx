@@ -45,7 +45,6 @@ function ChatRoom({ messages, userId, translateMode }: ChatRoomProps) {
     fetchTranslations();
   }, [messages, translateMode, i18n.language]);
 
-  // 새로운 메시지가 추가되면 맨 아래로 스크롤
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);

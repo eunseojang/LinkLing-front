@@ -1,13 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Input,
+  Select,
+  Text,
+  VStack,
+  HStack,
+  Progress,
+} from "@chakra-ui/react";
 
 interface Language {
   code: string;
   label: string;
-  sttConfig: {
-    continuous: boolean;
-    interimResults: boolean;
-    maxAlternatives?: number;
-  };
 }
 
 interface AudioContextRef {
@@ -24,16 +31,16 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
   const [isAudioOn, setIsAudioOn] = useState<boolean>(false);
   const [roomId, setRoomId] = useState<string>(initialRoomId || "");
   const [hasJoinedRoom, setHasJoinedRoom] = useState<boolean>(!!initialRoomId);
-  // const [localVolume, setLocalVolume] = useState<number>(0);
   const [remoteVolume, setRemoteVolume] = useState<number>(0);
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [transcript, setTranscript] = useState<string>("");
-  const [selectedLanguage, setSelectedLanguage] = useState<string>("ko-KR");
+  const [remoteTranscript, setRemoteTranscript] = useState<string>("");
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("ko");
   const [callState, setCallState] = useState<
     "idle" | "calling" | "receiving" | "connected"
   >("idle");
   const [showIncomingCall, setShowIncomingCall] = useState<boolean>(false);
-  // const [connectionState, setConnectionState] = useState<string>("new");
+  const [isRecording, setIsRecording] = useState<boolean>(false);
 
   // Refs
   const localAudioRef = useRef<HTMLAudioElement>(null);
@@ -42,31 +49,18 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
   const webSocketRef = useRef<WebSocket | null>(null);
   const localAudioContextRef = useRef<AudioContextRef | null>(null);
   const remoteAudioContextRef = useRef<AudioContextRef | null>(null);
-  const recognitionRef = useRef<any>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
   const pendingICECandidatesRef = useRef<RTCIceCandidate[]>([]);
+  const recordingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
 
   const languages: Language[] = [
-    {
-      code: "ko-KR",
-      label: "한국어",
-      sttConfig: { continuous: true, interimResults: true },
-    },
-    {
-      code: "en-US",
-      label: "English",
-      sttConfig: { continuous: true, interimResults: true },
-    },
-    {
-      code: "zh-CN",
-      label: "中文",
-      sttConfig: { continuous: true, interimResults: true, maxAlternatives: 1 },
-    },
-    {
-      code: "ja-JP",
-      label: "日本語",
-      sttConfig: { continuous: true, interimResults: true },
-    },
+    { code: "ko", label: "한국어" },
+    { code: "en", label: "English" },
+    { code: "zh", label: "中文" },
+    { code: "ja", label: "日本語" },
   ];
 
   // WebRTC 연결 설정
@@ -85,9 +79,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
       rtcpMuxPolicy: "require",
     });
 
-    // 연결 상태 모니터링 추가
     peerConnection.onconnectionstatechange = () => {
-      // setConnectionState(peerConnection.connectionState);
       console.log("Connection State Changed:", peerConnection.connectionState);
     };
 
@@ -99,7 +91,6 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
       }
     };
 
-    // ICE 후보 이벤트 처리
     peerConnection.onicecandidate = (event) => {
       if (event.candidate && webSocketRef.current) {
         webSocketRef.current.send(
@@ -111,15 +102,6 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
       }
     };
 
-    // ICE 연결 상태 변경 처리
-    peerConnection.oniceconnectionstatechange = () => {
-      console.log("ICE Connection State:", peerConnection.iceConnectionState);
-      if (peerConnection.iceConnectionState === "failed") {
-        peerConnection.restartIce();
-      }
-    };
-
-    // 원격 스트림 처리
     peerConnection.ontrack = (event) => {
       if (remoteAudioRef.current) {
         remoteAudioRef.current.srcObject = event.streams[0];
@@ -128,6 +110,117 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
     };
 
     return peerConnection;
+  };
+
+  // Whisper API 호출 함수
+  const sendAudioToWhisper = async (audioBlob: Blob) => {
+    const formData = new FormData();
+    formData.append("model", "whisper-1");
+    formData.append("file", audioBlob, "audio.webm");
+
+    try {
+      const response = await fetch(
+        "https://api.openai.com/v1/audio/transcriptions",
+        {
+          method: "POST",
+          headers: {
+            Authorization: import.meta.env.VITE_UNITY,
+          },
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (data.text) {
+        setTranscript((prev) => prev + data.text + " ");
+        // WebSocket으로 상대방에게 전송
+        if (webSocketRef.current) {
+          webSocketRef.current.send(
+            JSON.stringify({
+              type: "transcript",
+              text: data.text,
+            })
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Whisper API 오류:", error);
+    }
+  };
+
+  // 녹음 시작 함수
+  const startRecording = () => {
+    if (!localStreamRef.current) return;
+
+    const mediaRecorder = new MediaRecorder(localStreamRef.current);
+    const audioChunks: Blob[] = [];
+    let silenceTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    // 오디오 컨텍스트 설정
+    const audioContext = new AudioContext();
+    const analyser = audioContext.createAnalyser();
+    const source = audioContext.createMediaStreamSource(localStreamRef.current);
+    source.connect(analyser);
+
+    // 음성 감지를 위한 설정
+    analyser.fftSize = 256;
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        audioChunks.push(event.data);
+      }
+    };
+
+    // 음성 감지 함수
+    const detectSilence = () => {
+      analyser.getByteFrequencyData(dataArray);
+      const average = dataArray.reduce((a, b) => a + b) / bufferLength;
+
+      // 음성 감지 임계값을 50으로 높임 (기존 20)
+      if (average > 30) {
+        if (silenceTimeout) {
+          clearTimeout(silenceTimeout);
+        }
+        silenceTimeout = setTimeout(async () => {
+          if (mediaRecorder.state === "recording") {
+            mediaRecorder.stop();
+          }
+        }, 1000); // 1초간 침묵 후 처리
+      }
+
+      if (mediaRecorder.state === "recording") {
+        requestAnimationFrame(detectSilence);
+      }
+    };
+
+    mediaRecorder.onstop = async () => {
+      const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+      await sendAudioToWhisper(audioBlob);
+      audioChunks.length = 0;
+
+      if (isAudioOn) {
+        mediaRecorder.start();
+        requestAnimationFrame(detectSilence);
+      }
+    };
+
+    mediaRecorder.start();
+    requestAnimationFrame(detectSilence);
+    mediaRecorderRef.current = mediaRecorder;
+    setIsRecording(true);
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current?.state === "recording") {
+      mediaRecorderRef.current.stop();
+    }
+    setIsRecording(false);
   };
 
   // 방 관리
@@ -150,6 +243,9 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
       const data = JSON.parse(message.data);
 
       switch (data.type) {
+        case "transcript":
+          setRemoteTranscript(data.text);
+          break;
         case "call-request":
           setShowIncomingCall(true);
           setCallState("receiving");
@@ -229,7 +325,6 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
         },
       });
 
-      // 상태 체크 추가
       if (
         !peerConnection.signalingState ||
         peerConnection.signalingState === "closed"
@@ -237,7 +332,6 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
         throw new Error("Invalid connection state");
       }
 
-      // Remote Description 설정 전에 로컬 스트림 추가
       localStreamRef.current = localStream;
       localStream.getTracks().forEach((track) => {
         if (peerConnection.signalingState !== "closed") {
@@ -245,16 +339,13 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
         }
       });
 
-      // Remote Description 설정
       await peerConnection.setRemoteDescription(
         new RTCSessionDescription(offer)
       );
 
-      // Answer 생성 및 설정
       const answer = await peerConnection.createAnswer();
       await peerConnection.setLocalDescription(answer);
 
-      // Answer 전송
       webSocketRef.current?.send(
         JSON.stringify({
           type: "answer",
@@ -267,28 +358,12 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
     }
   };
 
-  const cleanupExistingConnection = async (): Promise<void> => {
-    if (peerConnectionRef.current) {
-      peerConnectionRef.current.close();
-      peerConnectionRef.current = null;
-    }
-
-    if (localStreamRef.current) {
-      localStreamRef.current.getTracks().forEach((track) => track.stop());
-      localStreamRef.current = null;
-    }
-
-    if (localAudioContextRef.current?.audioContext?.state !== "closed") {
-      await localAudioContextRef.current?.audioContext?.close();
-    }
-  };
   const handleAnswer = async (
     answer: RTCSessionDescriptionInit
   ): Promise<void> => {
     if (!peerConnectionRef.current) return;
 
     try {
-      // 현재 signalingState 확인
       if (peerConnectionRef.current.signalingState === "stable") {
         console.log("Connection already in stable state, ignoring answer");
         return;
@@ -298,7 +373,6 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
         new RTCSessionDescription(answer)
       );
 
-      // 저장된 ICE candidate 처리
       while (pendingICECandidatesRef.current.length > 0) {
         const candidate = pendingICECandidatesRef.current.shift();
         if (candidate) {
@@ -310,7 +384,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
       handleCallEnd();
     }
   };
-  // startCall 함수 수정
+
   const startCall = async (): Promise<void> => {
     try {
       await cleanupExistingConnection();
@@ -334,12 +408,10 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
       const peerConnection = createPeerConnection();
       peerConnectionRef.current = peerConnection;
 
-      // 스트림 추가
       stream.getTracks().forEach((track) => {
         peerConnection.addTrack(track, stream);
       });
 
-      // Offer 생성 전 상태 확인
       if (peerConnection.signalingState !== "stable") {
         console.warn("Connection not in stable state, waiting...");
         await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -357,7 +429,6 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
           offer: offer,
         })
       );
-
       setIsAudioOn(true);
     } catch (error) {
       console.error("통화 시작 중 오류:", error);
@@ -372,7 +443,6 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
       !peerConnectionRef.current ||
       !peerConnectionRef.current.remoteDescription
     ) {
-      // Remote description이 없으면 candidate를 저장
       pendingICECandidatesRef.current.push(new RTCIceCandidate(candidate));
       return;
     }
@@ -385,9 +455,26 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
       console.error("Error adding ICE candidate:", error);
     }
   };
+
   const handleCallEnd = (): void => {
     cleanupCall();
     setCallState("idle");
+  };
+
+  const cleanupExistingConnection = async (): Promise<void> => {
+    if (peerConnectionRef.current) {
+      peerConnectionRef.current.close();
+      peerConnectionRef.current = null;
+    }
+
+    if (localStreamRef.current) {
+      localStreamRef.current.getTracks().forEach((track) => track.stop());
+      localStreamRef.current = null;
+    }
+
+    if (localAudioContextRef.current?.audioContext?.state !== "closed") {
+      await localAudioContextRef.current?.audioContext?.close();
+    }
   };
 
   const cleanupCall = (): void => {
@@ -415,7 +502,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
       remoteAudioContextRef.current.audioContext.close();
     }
 
-    stopSpeechRecognition();
+    stopRecording();
     setIsAudioOn(false);
     setShowIncomingCall(false);
   };
@@ -441,42 +528,6 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
     }
   };
 
-  // 오디오 분석 설정
-  // const setupLocalAudioAnalyser = (stream: MediaStream): void => {
-  //   if (localAudioContextRef.current?.audioContext) {
-  //     localAudioContextRef.current.audioContext.close();
-  //   }
-
-  //   const audioContext = new AudioContext();
-  //   const analyser = audioContext.createAnalyser();
-  //   const source = audioContext.createMediaStreamSource(stream);
-
-  //   const gainNode = audioContext.createGain();
-  //   gainNode.gain.value = 0.8;
-
-  //   const filter = audioContext.createBiquadFilter();
-  //   filter.type = "lowpass";
-  //   filter.frequency.value = 2000;
-
-  //   source.connect(filter);
-  //   filter.connect(gainNode);
-  //   gainNode.connect(analyser);
-
-  //   localAudioContextRef.current = { audioContext, analyser };
-
-  //   const dataArray = new Uint8Array(analyser.frequencyBinCount);
-  //   const updateVolume = () => {
-  //     analyser.getByteFrequencyData(dataArray);
-  //     const volume = dataArray.reduce((a, b) => a + b) / dataArray.length;
-  //     setLocalVolume(volume);
-  //     if (isAudioOn) {
-  //       requestAnimationFrame(updateVolume);
-  //     }
-  //   };
-
-  //   updateVolume();
-  // };
-
   const setupRemoteAudioAnalyser = (stream: MediaStream): void => {
     if (remoteAudioContextRef.current?.audioContext) {
       remoteAudioContextRef.current.audioContext.close();
@@ -493,7 +544,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
     const updateVolume = () => {
       analyser.getByteFrequencyData(dataArray);
       const volume = dataArray.reduce((a, b) => a + b) / dataArray.length;
-      setRemoteVolume(volume);
+      setRemoteVolume(normalizeVolume(volume));
       if (isAudioOn) {
         requestAnimationFrame(updateVolume);
       }
@@ -502,92 +553,25 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
     updateVolume();
   };
 
-  // 음성 인식 기능
-  const startSpeechRecognition = (): void => {
-    if (!("webkitSpeechRecognition" in window)) {
-      alert("이 브라우저는 음성 인식을 지원하지 않습니다.");
-      return;
-    }
-
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-    }
-
-    const recognition = new (window as any).webkitSpeechRecognition();
-    const selectedLang = languages.find(
-      (lang) => lang.code === selectedLanguage
-    );
-
-    if (!selectedLang) return;
-
-    recognition.lang = selectedLang.code;
-    recognition.continuous = false;
-    recognition.maxAlternatives = 1;
-    recognition.interimResults = false;
-
-    recognition.onstart = () => {
-      console.log(`${selectedLang.label} 음성 인식이 시작되었습니다`);
-    };
-
-    recognition.onresult = (event: any) => {
-      const result = event.results[0][0].transcript;
-      setTranscript((prev) => prev + result + "\n");
-    };
-
-    recognition.onerror = (event: any) => {
-      if (event.error === "no-speech" || event.error === "network") {
-        setTimeout(() => {
-          if (isAudioOn && recognitionRef.current) {
-            recognition.start();
-          }
-        }, 1000);
-      }
-    };
-
-    recognition.onend = () => {
-      if (isAudioOn) {
-        setTimeout(() => {
-          try {
-            recognition.start();
-          } catch (e) {
-            console.error("음성 인식 재시작 실패:", e);
-            setTimeout(() => {
-              if (isAudioOn) {
-                startSpeechRecognition();
-              }
-            }, 1000);
-          }
-        }, 1000);
-      }
-    };
-
-    try {
-      recognition.start();
-      recognitionRef.current = recognition;
-    } catch (e) {
-      console.error("음성 인식 시작 실패:", e);
-    }
-  };
-
-  const stopSpeechRecognition = (): void => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-      recognitionRef.current = null;
-    }
-    setTranscript("");
-  };
-
   const handleLanguageChange = (newLanguage: string): void => {
     setSelectedLanguage(newLanguage);
-    console.log(newLanguage);
+    console.log("Language changed to:", newLanguage);
 
-    if (isAudioOn) {
-      stopSpeechRecognition();
+    if (isRecording) {
+      stopRecording();
       setTimeout(() => {
-        startSpeechRecognition();
+        startRecording();
       }, 100);
     }
   };
+
+  useEffect(() => {
+    if (isAudioOn && !isRecording) {
+      startRecording();
+    } else if (!isAudioOn && isRecording) {
+      stopRecording();
+    }
+  }, [isAudioOn]);
 
   useEffect(() => {
     if (initialRoomId) {
@@ -599,208 +583,223 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
       if (webSocketRef.current) {
         webSocketRef.current.close();
       }
+      if (recordingTimeoutRef.current) {
+        clearInterval(recordingTimeoutRef.current);
+      }
+      stopRecording();
     };
   }, [initialRoomId]);
 
-  return (
-    <div className="w-80 bg-white/10 backdrop-blur-lg rounded-lg overflow-hidden shadow-lg border border-white/20">
-      {/* 헤더 */}
-      <div className="p-3 bg-blue-500 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-white">음성 채팅</h2>
-        {isConnected && (
-          <span className="px-2 py-0.5 text-xs bg-green-400 rounded-full text-white">
-            연결됨
-          </span>
-        )}
-      </div>
+  const normalizeVolume = (volume: number): number => {
+    const minDb = -60;
+    const maxDb = 0;
+    const normalized =
+      (20 * Math.log10(volume / 255) - minDb) / (maxDb - minDb);
+    return Math.max(0, Math.min(1, normalized)) * 100;
+  };
 
-      <div className="p-4 space-y-3">
+  return (
+    <Box
+      w="20rem"
+      bg="whiteAlpha.900"
+      backdropFilter="blur(10px)"
+      rounded="lg"
+      overflow="hidden"
+      shadow="lg"
+      border="1px solid"
+      borderColor="whiteAlpha.300"
+    >
+      <Flex
+        p={3}
+        bg="blue.500"
+        alignItems="center"
+        justifyContent="space-between"
+      >
+        <Heading size="sm" color="white">
+          음성 채팅
+        </Heading>
+        {isConnected && (
+          <Box
+            px={2}
+            py={0.5}
+            fontSize="xs"
+            bg="green.400"
+            color="white"
+            rounded="full"
+          >
+            연결됨
+          </Box>
+        )}
+      </Flex>
+
+      <VStack p={4} spacing={4}>
         {!hasJoinedRoom ? (
-          <div className="space-y-3">
-            <input
-              type="text"
+          <VStack spacing={3} w="full">
+            <Input
               placeholder="방 ID 입력"
               value={roomId}
               onChange={(e) => setRoomId(e.target.value)}
-              className="w-full px-3 py-2 text-sm bg-white/10 border border-white/20 rounded-full text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              size="sm"
+              bg="whiteAlpha.200"
+              borderColor="whiteAlpha.300"
+              _placeholder={{ color: "whiteAlpha.600" }}
+              focusBorderColor="blue.500"
             />
-            <button
-              onClick={joinRoom}
-              className="w-full py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors"
-            >
+            <Button onClick={joinRoom} w="full" colorScheme="blue" size="md">
               방 입장
-            </button>
-          </div>
+            </Button>
+          </VStack>
         ) : (
-          <div className="space-y-3">
-            {/* 통화 제어 */}
-            <div>
-              {callState === "idle" && (
-                <button
-                  onClick={requestCall}
-                  disabled={!isConnected}
-                  className="w-full py-2 bg-green-500 text-white rounded-full hover:bg-green-600 disabled:opacity-50 transition-colors"
+          <VStack spacing={4} w="full">
+            {callState === "idle" && (
+              <Button
+                onClick={requestCall}
+                w="full"
+                colorScheme="green"
+                size="md"
+              >
+                통화 시작
+              </Button>
+            )}
+            {callState === "calling" && (
+              <VStack spacing={2} w="full">
+                <Text fontSize="sm" textAlign="center">
+                  응답 대기중...
+                </Text>
+                <Button
+                  onClick={cleanupCall}
+                  w="full"
+                  colorScheme="gray"
+                  size="md"
                 >
-                  통화 시작
-                </button>
-              )}
-
-              {callState === "calling" && (
-                <div className="space-y-2">
-                  <p className="text-sm text-center text-white">
-                    응답 대기중...
-                  </p>
-                  <button
-                    onClick={() => {
-                      setCallState("idle");
-                      cleanupCall();
-                    }}
-                    className="w-full py-2 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors"
-                  >
-                    취소
-                  </button>
-                </div>
-              )}
-
-              {callState === "connected" && (
-                <div className="flex gap-2">
-                  <button
-                    onClick={toggleMute}
-                    className="flex-1 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors"
-                  >
-                    {isMuted ? "음성 켜기" : "음성 끄기"}
-                  </button>
-                  <button
-                    onClick={endCall}
-                    className="flex-1 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-                  >
-                    통화 종료
-                  </button>
-                </div>
-              )}
-            </div>
-
+                  취소
+                </Button>
+              </VStack>
+            )}
+            {callState === "connected" && (
+              <HStack spacing={2} w="full">
+                <Button
+                  onClick={toggleMute}
+                  flex="1"
+                  colorScheme="blue"
+                  size="md"
+                >
+                  {isMuted ? "음성 켜기" : "음성 끄기"}
+                </Button>
+                <Button onClick={endCall} flex="1" colorScheme="red" size="md">
+                  통화 종료
+                </Button>
+              </HStack>
+            )}
             {isAudioOn && (
               <>
-                {/* 볼륨 미터 */}
-                <div className="space-y-2">
-                  <div>
-                    <label className="text-xs font-medium text-white">
-                      내 음성
-                    </label>
-                    <div className="mt-1 h-2 bg-white/10 rounded-full overflow-hidden">
-                      <div
-                        className="h-full transition-all duration-300"
-                        // style={{
-                        //   width: `${Math.min(100, localVolume)}%`,
-                        //   backgroundColor: `hsl(${
-                        //     120 - localVolume
-                        //   }, 80%, 50%)`,
-                        // }}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-xs font-medium text-white">
-                      상대방 음성
-                    </label>
-                    <div className="mt-1 h-2 bg-white/10 rounded-full overflow-hidden">
-                      <div
-                        className="h-full transition-all duration-300"
-                        style={{
-                          width: `${Math.min(100, remoteVolume)}%`,
-                          backgroundColor: `hsl(${
-                            120 - remoteVolume
-                          }, 80%, 50%)`,
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* 언어 선택 */}
-                <div>
-                  <label className="text-xs font-medium block mb-1 text-white">
+                <Box w="full">
+                  <Text fontSize="xs" mb={1}>
+                    상대방 음성
+                  </Text>
+                  <Progress
+                    value={remoteVolume}
+                    size="xs"
+                    colorScheme="green"
+                  />
+                </Box>
+                <Box w="full">
+                  <Text fontSize="xs" mb={1}>
                     음성 인식 언어
-                  </label>
-                  <select
+                  </Text>
+                  <Select
                     value={selectedLanguage}
                     onChange={(e) => handleLanguageChange(e.target.value)}
-                    className="w-full px-3 py-2 text-sm bg-white/10 border border-white/20 rounded-full text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    size="sm"
                   >
                     {languages.map((lang) => (
-                      <option
-                        key={lang.code}
-                        value={lang.code}
-                        className="bg-gray-800"
-                      >
+                      <option key={lang.code} value={lang.code}>
                         {lang.label}
                       </option>
                     ))}
-                  </select>
-                </div>
-
-                {/* 스크립트 */}
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-xs font-medium text-white">
-                      스크립트
-                    </label>
-                    {transcript && (
-                      <button
+                  </Select>
+                </Box>
+                <VStack spacing={3} w="full">
+                  <Box w="full">
+                    <Flex justifyContent="space-between" mb={1}>
+                      <Text fontSize="xs">내 스크립트</Text>
+                      <Button
                         onClick={() => setTranscript("")}
-                        className="text-xs text-white/70 hover:text-white"
+                        size="xs"
+                        variant="link"
                       >
                         지우기
-                      </button>
-                    )}
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-3 h-32 overflow-y-auto text-sm text-white">
-                    {transcript || "음성 입력 대기중..."}
-                  </div>
-                </div>
+                      </Button>
+                    </Flex>
+                    <Box
+                      p={3}
+                      bg="whiteAlpha.200"
+                      rounded="md"
+                      h="8rem"
+                      overflowY="auto"
+                    >
+                      {transcript || "음성 입력 대기중..."}
+                    </Box>
+                  </Box>
+                  <Box w="full">
+                    <Flex justifyContent="space-between" mb={1}>
+                      <Text fontSize="xs">상대방 스크립트</Text>
+                      <Button
+                        onClick={() => setRemoteTranscript("")}
+                        size="xs"
+                        variant="link"
+                      >
+                        지우기
+                      </Button>
+                    </Flex>
+                    <Box
+                      p={3}
+                      bg="whiteAlpha.200"
+                      rounded="md"
+                      h="8rem"
+                      overflowY="auto"
+                    >
+                      {remoteTranscript || "상대방 음성 입력 대기중..."}
+                    </Box>
+                  </Box>
+                </VStack>
               </>
             )}
-          </div>
+          </VStack>
         )}
-      </div>
+      </VStack>
 
-      {/* 수신 통화 알림 */}
       {showIncomingCall && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-white/10 p-6 rounded-lg shadow-xl max-w-sm mx-4 border border-white/20">
-            <h3 className="text-lg font-semibold mb-2 text-white">수신 통화</h3>
-            <p className="text-white/80 mb-4">
-              누군가가 이 방에서 연결을 시도하고 있습니다.
-            </p>
-            <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  setShowIncomingCall(false);
-                  setCallState("idle");
-                  cleanupCall();
-                }}
-                className="flex-1 py-2 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors"
-              >
+        <Flex
+          position="fixed"
+          inset="0"
+          bg="blackAlpha.600"
+          align="center"
+          justify="center"
+          zIndex="overlay"
+        >
+          <Box bg="white" p={6} rounded="lg" shadow="xl" maxW="sm">
+            <Heading size="md" mb={2}>
+              수신 통화
+            </Heading>
+            <Text mb={4}>누군가가 연결을 시도 중입니다.</Text>
+            <HStack spacing={4}>
+              <Button onClick={cleanupCall} flex="1" colorScheme="gray">
                 거절
-              </button>
-              <button
-                onClick={acceptCall}
-                className="flex-1 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors"
-              >
+              </Button>
+              <Button onClick={acceptCall} flex="1" colorScheme="green">
                 수락
-              </button>
-            </div>
-          </div>
-        </div>
+              </Button>
+            </HStack>
+          </Box>
+        </Flex>
       )}
 
-      {/* 숨겨진 오디오 요소 */}
-      <div className="hidden">
+      <Box display="none">
         <audio ref={localAudioRef} autoPlay muted />
         <audio ref={remoteAudioRef} autoPlay />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 
