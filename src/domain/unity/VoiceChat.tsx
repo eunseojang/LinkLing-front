@@ -40,7 +40,6 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [transcript, setTranscript] = useState<string>("");
   const [remoteTranscript, setRemoteTranscript] = useState<string>("");
-  const [selectedLanguage, setSelectedLanguage] = useState<string>("ko");
   const [callState, setCallState] = useState<
     "idle" | "calling" | "receiving" | "connected"
   >("idle");
@@ -60,13 +59,6 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
   const recordingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null
   );
-
-  const languages: Language[] = [
-    { code: "ko", label: "한국어" },
-    { code: "en", label: "English" },
-    { code: "zh", label: "中文" },
-    { code: "ja", label: "日本語" },
-  ];
 
   // WebRTC 연결 설정
   const createPeerConnection = (): RTCPeerConnection => {
@@ -557,18 +549,6 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
 
     updateVolume();
   };
-
-  // const handleLanguageChange = (newLanguage: string): void => {
-  //   setSelectedLanguage(newLanguage);
-  //   console.log("Language changed to:", newLanguage);
-
-  //   if (isRecording) {
-  //     stopRecording();
-  //     setTimeout(() => {
-  //       startRecording();
-  //     }, 100);
-  //   }
-  // };
 
   useEffect(() => {
     if (isAudioOn && !isRecording) {
