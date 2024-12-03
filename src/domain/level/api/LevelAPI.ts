@@ -14,6 +14,11 @@ export const getLevel = async (): Promise<UserLanguage[] | null> => {
   }
 };
 
+//export interface UserLanguage {
+//   user_lang: Language;
+//   lang_level: number;
+// }
+
 // UserLanguage 배열을 받아 PUT 요청으로 변경
 export const postLevel = async (data: UserLanguage[]) => {
   try {

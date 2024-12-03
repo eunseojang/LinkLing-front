@@ -5,11 +5,16 @@ import {
   Flex,
   Heading,
   Input,
-  Select,
   Text,
   VStack,
   HStack,
   Progress,
+  Modal,
+  ModalBody,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
 } from "@chakra-ui/react";
 
 interface Language {
@@ -553,17 +558,17 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
     updateVolume();
   };
 
-  const handleLanguageChange = (newLanguage: string): void => {
-    setSelectedLanguage(newLanguage);
-    console.log("Language changed to:", newLanguage);
+  // const handleLanguageChange = (newLanguage: string): void => {
+  //   setSelectedLanguage(newLanguage);
+  //   console.log("Language changed to:", newLanguage);
 
-    if (isRecording) {
-      stopRecording();
-      setTimeout(() => {
-        startRecording();
-      }, 100);
-    }
-  };
+  //   if (isRecording) {
+  //     stopRecording();
+  //     setTimeout(() => {
+  //       startRecording();
+  //     }, 100);
+  //   }
+  // };
 
   useEffect(() => {
     if (isAudioOn && !isRecording) {
@@ -703,11 +708,12 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
                     colorScheme="green"
                   />
                 </Box>
-                <Box w="full">
+                {/* <Box w="full">
                   <Text fontSize="xs" mb={1}>
                     음성 인식 언어
                   </Text>
-                  <Select
+                 
+                </Box> <Select
                     value={selectedLanguage}
                     onChange={(e) => handleLanguageChange(e.target.value)}
                     size="sm"
@@ -717,8 +723,7 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
                         {lang.label}
                       </option>
                     ))}
-                  </Select>
-                </Box>
+                  </Select> */}
                 <VStack spacing={3} w="full">
                   <Box w="full">
                     <Flex justifyContent="space-between" mb={1}>
@@ -770,29 +775,25 @@ const VoiceChat: React.FC<VoiceChatProps> = ({ roomId: initialRoomId }) => {
       </VStack>
 
       {showIncomingCall && (
-        <Flex
-          position="fixed"
-          inset="0"
-          bg="blackAlpha.600"
-          align="center"
-          justify="center"
-          zIndex="overlay"
-        >
-          <Box bg="white" p={6} rounded="lg" shadow="xl" maxW="sm">
-            <Heading size="md" mb={2}>
-              수신 통화
-            </Heading>
-            <Text mb={4}>누군가가 연결을 시도 중입니다.</Text>
-            <HStack spacing={4}>
-              <Button onClick={cleanupCall} flex="1" colorScheme="gray">
-                거절
-              </Button>
-              <Button onClick={acceptCall} flex="1" colorScheme="green">
-                수락
-              </Button>
-            </HStack>
-          </Box>
-        </Flex>
+        <Modal isOpen={showIncomingCall} onClose={cleanupCall}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>수신 통화</ModalHeader>
+            <ModalBody>
+              <Text mb={4}>누군가가 연결을 시도 중입니다.</Text>
+            </ModalBody>
+            <ModalFooter>
+              <HStack spacing={4}>
+                <Button onClick={cleanupCall} colorScheme="gray">
+                  거절
+                </Button>
+                <Button onClick={acceptCall} colorScheme="green">
+                  수락
+                </Button>
+              </HStack>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       )}
 
       <Box display="none">

@@ -9,6 +9,8 @@ import {
   Button,
   HStack,
   useDisclosure,
+  VStack,
+  GridItem,
 } from "@chakra-ui/react";
 import { FC } from "react";
 import "flag-icons/css/flag-icons.min.css";
@@ -22,6 +24,9 @@ import { useToastMessage } from "../../../common/components/useToastMessage";
 import { fetcheImage } from "../../../common/utils/fetchImage";
 import { useTranslation } from "react-i18next"; // useTranslation import 추가
 import { getChatRoomID } from "../../chat/api/ChatAPI";
+import { UserLanguage } from "../../level/utils/LevelUtils";
+import { getLevel } from "../../level/api/LevelAPI";
+import { Grid } from "lucide-react";
 
 const UserProfileComponent: FC = () => {
   const { t } = useTranslation(); // useTranslation 훅 사용
@@ -33,7 +38,15 @@ const UserProfileComponent: FC = () => {
   const { showToast } = useToastMessage();
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const navigate = useNavigate();
-
+  const [levels, setLevels] = useState<UserLanguage[] | null>(null); // 레벨 상태 추가
+  const fetchLevels = async () => {
+    try {
+      const response = await getLevel();
+      setLevels(response);
+    } catch (err) {
+      console.error("Failed to fetch levels:", err);
+    }
+  };
   const fetchProfile = async () => {
     try {
       const response = await getProfile(id!);
@@ -47,6 +60,7 @@ const UserProfileComponent: FC = () => {
 
   useEffect(() => {
     fetchProfile();
+    fetchLevels(); // 레벨 데이터 가져오기
   }, [id]);
 
   useEffect(() => {
@@ -135,7 +149,39 @@ const UserProfileComponent: FC = () => {
           >
             {profile.online ? "온라인" : "오프라인"}
           </Badge>
+          {levels && (
+            <Box mt={1}>
+              <HStack spacing={4} wrap="wrap">
+                {levels?.slice(0, 4).map((lang) => (
+                  <Badge
+                    key={lang.user_lang}
+                    colorScheme={
+                      lang.lang_level <= 2
+                        ? "green"
+                        : lang.lang_level <= 4
+                        ? "blue"
+                        : "yellow"
+                    }
+                    fontSize="md"
+                    px={2}
+                    py={1}
+                    borderRadius="full"
+                    boxShadow="md"
+                    textAlign="center"
+                    _hover={{
+                      transform: "scale(1.05)",
+                      boxShadow: "lg",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {lang.user_lang}-{t(`${lang.lang_level}`)}{" "}
+                  </Badge>
+                ))}
+              </HStack>
+            </Box>
+          )}
         </Box>
+
         <HStack spacing={4} justify="center">
           {profile.profile_info === "HOST" && (
             <Button colorScheme="pink" onClick={onOpen}>
@@ -182,17 +228,9 @@ const UserProfileComponent: FC = () => {
                 try {
                   await requestFriend(profile.user_id);
                   window.location.reload();
-                  showToast(
-                    t("profile.friend_request_success"),
-                    "",
-                    "success"
-                  ); // 번역 파일 사용
+                  showToast(t("profile.friend_request_success"), "", "success"); // 번역 파일 사용
                 } catch (error) {
-                  showToast(
-                    t("profile.friend_request_failure"),
-                    "",
-                    "error"
-                  ); // 번역 파일 사용
+                  showToast(t("profile.friend_request_failure"), "", "error"); // 번역 파일 사용
                 }
               }}
             >
