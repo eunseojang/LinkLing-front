@@ -17,11 +17,6 @@ import {
   ModalFooter,
 } from "@chakra-ui/react";
 
-interface Language {
-  code: string;
-  label: string;
-}
-
 interface AudioContextRef {
   audioContext: AudioContext;
   analyser: AnalyserNode;
